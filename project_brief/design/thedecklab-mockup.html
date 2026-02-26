@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Deck Lab — Design Mockup v2</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F0F0E;
+  --surface: #1A1918;
+  --surface-2: #242220;
+  --surface-3: #2E2B28;
+  --text: #F5F1EC;
+  --text-2: #A8A099;
+  --text-3: #6B6560;
+  --border: #333028;
+  --ember: #E8742B;
+  --ember-dim: #D4622A;
+  --ember-glow: rgba(232,116,43,.12);
+  --ember-glow-2: rgba(232,116,43,.06);
+  --canopy: #5DAA68;
+  --honey: #D4A843;
+  --jarrah: #D44B3A;
+  --board: #C9A96E;
+  --board-dark: #A68B56;
+  --offcut: #6DAF62;
+  --grid-line: #2A2725;
+  --joist: #8B7355;
+  --sand-light: #F7F3EE;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Utility ── */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
+.mono { font-family: 'IBM Plex Mono', monospace; }
+.display { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.03em; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(15,15,14,.85);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+}
+.nav-in {
+  max-width: 1280px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px; padding: 0 40px;
+}
+.logo { display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--text); }
+.logo-mark { display: flex; gap: 3px; align-items: flex-end; height: 32px; }
+.logo-plank {
+  border-radius: 3px; transition: .3s;
+}
+.logo-plank.drift { background: #736B62; width: 8px; }
+.logo-plank.emb { background: var(--ember); width: 9px; }
+.logo-plank.h-full { height: 32px; }
+.logo-plank.h-short { height: 20px; }
+.logo-plank.h-top { height: 9px; border-radius: 3px; align-self: flex-start; }
+.logo-split { display: flex; flex-direction: column; gap: 3px; align-self: stretch; }
+.logo:hover .logo-plank.emb { filter: brightness(1.15); }
+.logo-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em;
+}
+.logo-text span { font-weight: 500; opacity: .5; }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a {
+  text-decoration: none; color: var(--text-2); font-size: .85rem;
+  font-weight: 500; transition: .2s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  background: var(--ember) !important; color: var(--bg) !important;
+  padding: 9px 20px; border-radius: 8px; font-weight: 600 !important;
+}
+.nav-cta:hover { opacity: .9; }
+
+/* ── HERO ── */
+.hero {
+  padding: 140px 0 80px;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+/* Subtle wood grain texture overlay on hero */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(
+      92deg,
+      transparent 0px,
+      transparent 18px,
+      rgba(201,169,110,.03) 18px,
+      rgba(201,169,110,.03) 19px
+    );
+  pointer-events: none;
+}
+/* Ember gradient glow */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -30%; right: -20%;
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(232,116,43,.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-in {
+  max-width: 1280px; margin: 0 auto; padding: 0 40px;
+  display: grid; grid-template-columns: 1fr 1.15fr;
+  gap: 64px; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; font-weight: 500; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ember);
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 24px;
+}
+.hero-tag::before {
+  content: ''; width: 32px; height: 1px; background: var(--ember);
+}
+.hero h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800; font-size: 4.2rem; line-height: 1.02;
+  letter-spacing: -0.045em; margin-bottom: 28px;
+}
+.hero h1 .ember { color: var(--ember); }
+.hero h1 .thin { font-weight: 500; opacity: .4; }
+.hero-sub {
+  font-size: 1.1rem; color: var(--text-2); line-height: 1.7;
+  margin-bottom: 20px; max-width: 420px;
+}
+.hero-stats {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px; color: var(--text-3);
+  margin-bottom: 40px; display: flex; gap: 8px; align-items: center;
+  flex-wrap: wrap;
+}
+.hero-stats .v {
+  background: var(--surface-2); padding: 6px 14px; border-radius: 6px;
+  border: 1px solid var(--border); color: var(--text);
+  font-weight: 500; font-size: 13px;
+}
+.hero-stats .v b { color: var(--ember); font-weight: 600; }
+.hero-btns { display: flex; gap: 14px; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Inter', sans-serif; font-weight: 600;
+  border: none; cursor: pointer; transition: all .2s;
+  text-decoration: none; border-radius: 10px;
+}
+.btn:active { transform: scale(.97); }
+.btn-lg { padding: 16px 32px; font-size: 1rem; }
+.btn-ember {
+  background: var(--ember); color: var(--bg);
+}
+.btn-ember:hover { box-shadow: 0 0 32px rgba(232,116,43,.35); transform: translateY(-2px); }
+.btn-ghost {
+  background: transparent; color: var(--text-2);
+  border: 1px solid var(--border); padding: 15px 28px;
+}
+.btn-ghost:hover { border-color: var(--text-3); color: var(--text); }
+
+/* ── DESIGNER PREVIEW (hero right) ── */
+.designer-frame {
+  background: var(--surface);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 40px 120px rgba(0,0,0,.4);
+  overflow: hidden;
+  position: relative;
+}
+.d-bar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.d-dots { display: flex; gap: 6px; margin-right: 12px; }
+.d-dots i { display: block; width: 10px; height: 10px; border-radius: 50%; background: var(--surface-3); }
+.d-dots i:first-child { background: #E65A50; }
+.d-dots i:nth-child(2) { background: #F5BF4F; }
+.d-dots i:nth-child(3) { background: #62C554; }
+.d-tool {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; font-weight: 500; padding: 4px 10px;
+  border-radius: 5px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-3);
+}
+.d-tool.on { background: var(--ember-glow); border-color: var(--ember-dim); color: var(--ember); }
+.d-sep { width: 1px; height: 16px; background: var(--border); margin: 0 4px; }
+.d-canvas {
+  position: relative; height: 380px;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, var(--grid-line) 39px, var(--grid-line) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, var(--grid-line) 39px, var(--grid-line) 40px);
+  background-size: 40px 40px;
+}
+.deck-boards { position: absolute; top: 44px; left: 44px; display: flex; flex-direction: column; gap: 2px; }
+.db { height: 12px; border-radius: 2px; opacity: 0; animation: bIn .35s ease-out forwards; }
+.db.n { background: var(--board); }
+.db.o { background: var(--offcut); }
+@keyframes bIn { from { opacity:0; transform:translateX(-14px); } to { opacity:1; transform:translateX(0); } }
+.deck-ext { position: absolute; top: 232px; left: 44px; display: flex; flex-direction: column; gap: 2px; }
+.joist-lines { position: absolute; top: 38px; pointer-events: none; }
+.jl { position: absolute; width: 1px; opacity: .25; background: var(--joist); }
+.dim {
+  position: absolute;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 500;
+  color: var(--text-2); background: var(--surface-2);
+  padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border);
+  white-space: nowrap;
+}
+.c-panel {
+  position: absolute; right: 12px; top: 12px;
+  background: rgba(26,25,24,.92); backdrop-filter: blur(12px);
+  border-radius: 10px; border: 1px solid var(--border);
+  padding: 14px 16px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  min-width: 150px;
+}
+.cp-title {
+  font-family: 'Inter', sans-serif; font-weight: 600;
+  font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 10px;
+}
+.cp-row { display: flex; justify-content: space-between; margin-bottom: 4px; color: var(--text-3); }
+.cp-row b { color: var(--text); font-weight: 500; }
+.cp-row.green b { color: var(--canopy); }
+.cp-hr { height: 1px; background: var(--border); margin: 8px 0; }
+.cp-total { display: flex; justify-content: space-between; font-weight: 600; font-size: 13px; color: var(--ember); }
+
+/* ── WOOD BANNER ── */
+.wood-banner {
+  height: 6px;
+  background:
+    linear-gradient(90deg,
+      #8B6B42 0%, #C9A96E 15%, #A68B56 30%, #D4B896 45%,
+      #B89B5E 55%, #C4A06A 70%, #A68B56 85%, #C9A96E 100%
+    );
+  position: relative;
+}
+.wood-banner::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    90deg, transparent 0px, transparent 80px,
+    rgba(0,0,0,.1) 80px, rgba(0,0,0,.1) 81px
+  );
+}
+.wood-banner.thick { height: 48px; }
+.wood-banner.thick::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    180deg, transparent 0px, transparent 10px,
+    rgba(0,0,0,.04) 10px, rgba(0,0,0,.04) 11px
+  );
+}
+
+/* ── HOW IT WORKS ── */
+.how-section { padding: 100px 0; position: relative; }
+.how-section::before {
+  content: '';
+  position: absolute; left: 0; right: 0; top: 0;
+  height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.how-header { text-align: center; margin-bottom: 72px; }
+.how-header h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800; font-size: 2.4rem; letter-spacing: -0.04em;
+  margin-bottom: 12px;
+}
+.how-header p { color: var(--text-2); font-size: 1rem; max-width: 480px; margin: 0 auto; }
+.how-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; /* board gap */
+  background: var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.how-step {
+  background: var(--surface);
+  padding: 48px 36px;
+  position: relative;
+}
+.how-step::before {
+  content: '';
+  position: absolute; top: 0; left: 36px; right: 36px;
+  height: 3px; background: var(--ember); opacity: 0;
+  transition: opacity .3s;
+}
+.how-step:hover::before { opacity: 1; }
+.how-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 48px; font-weight: 600; color: var(--surface-3);
+  line-height: 1; margin-bottom: 20px;
+}
+.how-step:hover .how-num { color: var(--ember); transition: .3s; }
+.how-step h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700; font-size: 1.3rem; letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+.how-step p { color: var(--text-2); font-size: .9rem; line-height: 1.65; }
+.how-cta { text-align: center; margin-top: 48px; }
+
+/* ── MATERIALS ── */
+.mat-section { padding: 100px 0; }
+.mat-header { margin-bottom: 56px; }
+.mat-header h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800; font-size: 2.2rem; letter-spacing: -0.04em;
+  margin-bottom: 10px;
+}
+.mat-header p { color: var(--text-2); max-width: 500px; }
+.mat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.mat {
+  background: var(--surface);
+  border-radius: 12px; border: 1px solid var(--border);
+  overflow: hidden; cursor: pointer; transition: all .25s;
+  position: relative;
+}
+.mat:hover { border-color: var(--ember-dim); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+.mat.sel { border-color: var(--ember); }
+.mat.sel .mat-badge { opacity: 1; }
+.mat-badge {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 24px; height: 24px; background: var(--ember);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 12px; font-weight: 700;
+  color: var(--bg); opacity: 0; transition: .2s;
+}
+.mat-sw {
+  height: 100px; position: relative; overflow: hidden;
+}
+.mat-sw.pine { background: linear-gradient(175deg, #D4B896, #C9A96E 30%, #B89B5E 50%, #D1AE78 70%, #C4A06A); }
+.mat-sw.balau { background: linear-gradient(175deg, #7A5A3A, #6B4C2F 30%, #8B6840 50%, #704F32 70%, #8A6538); }
+.mat-sw.garapa { background: linear-gradient(175deg, #C9A45A, #B89648 30%, #D4AF6A 50%, #C09A50 70%, #D0A95E); }
+.mat-sw.composite { background: linear-gradient(175deg, #8B8078, #7A7068 30%, #918880 50%, #847A72 70%, #8E857D); }
+.mat-sw::after {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,0,0,.08) 18px, rgba(0,0,0,.08) 19px);
+}
+.mat-body { padding: 16px; }
+.mat-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700; font-size: .95rem; margin-bottom: 4px;
+}
+.mat-sub { font-size: .78rem; color: var(--text-3); margin-bottom: 12px; }
+.mat-row { display: flex; justify-content: space-between; align-items: baseline; }
+.mat-stars { display: flex; gap: 2px; }
+.mat-stars i { font-style: normal; font-size: 10px; }
+.mat-stars .f { color: var(--ember); }
+.mat-stars .e { color: var(--surface-3); }
+.mat-price {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600; font-size: .95rem; color: var(--ember);
+}
+.mat-price span { font-weight: 400; font-size: .75rem; color: var(--text-3); }
+
+/* ── CONFIGURATOR STEP ── */
+.cfg-section { padding: 100px 0; }
+.cfg-section .mat-header { margin-bottom: 40px; }
+.cfg {
+  max-width: 960px;
+  background: var(--surface); border-radius: 14px;
+  border: 1px solid var(--border); overflow: hidden;
+}
+.cfg-bar {
+  display: flex; align-items: center; padding: 16px 24px;
+  border-bottom: 1px solid var(--border); gap: 0;
+}
+.cdot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--surface-3); flex-shrink: 0;
+}
+.cdot.done { background: var(--ember); }
+.cdot.cur { background: var(--ember); width: 12px; height: 12px; box-shadow: 0 0 0 3px var(--ember-glow), 0 0 12px var(--ember-glow); }
+.cline { width: 24px; height: 1px; background: var(--border); margin: 0 3px; }
+.cline.done { background: var(--ember-dim); }
+.cfg-label {
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px; color: var(--text-3);
+}
+.cfg-label b { color: var(--text); }
+.cfg-body { padding: 32px 24px; }
+.cfg-q {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.cfg-hint { font-size: .88rem; color: var(--text-3); margin-bottom: 28px; }
+
+/* Swatches */
+.swatches { display: flex; gap: 16px; flex-wrap: wrap; }
+.sw-wrap { text-align: center; }
+.sw {
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 2px solid var(--border); cursor: pointer;
+  transition: all .2s; position: relative;
+}
+.sw:hover { border-color: var(--text-3); transform: scale(1.06); }
+.sw.on {
+  border-color: var(--ember);
+  box-shadow: 0 0 0 3px var(--ember-glow), 0 0 16px var(--ember-glow);
+  transform: scale(1.1);
+}
+.sw.on::after {
+  content: '✓'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 16px; font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+}
+.sw-name { font-size: 10px; color: var(--text-3); margin-top: 8px; font-weight: 500; }
+
+/* ── QUOTE ── */
+.quote-section { padding: 100px 0; }
+.q-grid { display: grid; grid-template-columns: 280px 1fr; gap: 32px; max-width: 960px; }
+.q-preview {
+  background: var(--surface); border-radius: 12px;
+  border: 1px solid var(--border); overflow: hidden; height: fit-content;
+}
+.q-canvas {
+  height: 180px; display: flex; align-items: center; justify-content: center; padding: 20px;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 19px, var(--grid-line) 19px, var(--grid-line) 20px),
+    repeating-linear-gradient(90deg, transparent, transparent 19px, var(--grid-line) 19px, var(--grid-line) 20px);
+  background-size: 20px 20px;
+}
+.q-mini { display: flex; flex-direction: column; gap: 1px; }
+.q-mini i { display: block; height: 5px; border-radius: 1px; }
+.q-mini .qn { background: var(--board); }
+.q-mini .qo { background: var(--offcut); }
+.q-info { padding: 16px; }
+.q-info p { font-size: 12px; color: var(--text-3); margin-bottom: 3px; }
+.q-info strong { color: var(--text); font-weight: 500; }
+.q-save {
+  display: flex; align-items: center; gap: 5px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--canopy); margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.q-bd {
+  background: var(--surface); border-radius: 12px;
+  border: 1px solid var(--border); overflow: hidden;
+}
+.q-bd-head {
+  padding: 18px 24px; border-bottom: 1px solid var(--border);
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.05rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.q-ref { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-3); font-weight: 400; }
+.q-lines { padding: 16px 24px; }
+.q-l { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; font-size: .88rem; }
+.q-l .la { color: var(--text-2); }
+.q-l .am { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+.q-l.indent { padding-left: 16px; }
+.q-l.indent .la { font-size: .82rem; color: var(--text-3); }
+.q-hr { height: 1px; background: var(--border); margin: 4px 0; }
+.q-l.tot { font-weight: 600; font-size: 1rem; }
+.q-l.tot .am { font-size: 1.3rem; color: var(--ember); }
+.q-dep {
+  margin: 16px 24px; background: var(--ember-glow);
+  border: 1px solid rgba(232,116,43,.2);
+  border-radius: 10px; padding: 14px 18px;
+}
+.q-dep-r {
+  display: flex; justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace; font-size: .85rem; margin-bottom: 3px;
+}
+.q-dep-r:last-child { margin-bottom: 0; }
+.q-dep-r .dl { color: var(--text-3); }
+.q-dep-r .da { font-weight: 500; }
+.q-actions { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; }
+.q-shares { display: flex; gap: 8px; }
+.btn-share {
+  flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface-2); font-size: 12px; font-weight: 500;
+  color: var(--text-3); cursor: pointer; transition: .15s; font-family: 'Inter', sans-serif;
+}
+.btn-share:hover { border-color: var(--ember); color: var(--ember); }
+
+/* ── TRUST ── */
+.trust-section { padding: 80px 0; }
+.trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); border-radius: 12px; overflow: hidden; }
+.trust-item { background: var(--surface); padding: 32px 24px; text-align: center; }
+.trust-icon { font-size: 24px; margin-bottom: 12px; }
+.trust-item h4 {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;
+  font-size: .9rem; margin-bottom: 4px;
+}
+.trust-item p { font-size: .78rem; color: var(--text-3); line-height: 1.5; }
+
+/* ── CTA BANNER ── */
+.cta-banner {
+  position: relative; padding: 80px 40px; text-align: center;
+  background: var(--ember);
+  overflow: hidden;
+}
+.cta-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    90deg, transparent 0px, transparent 60px,
+    rgba(0,0,0,.06) 60px, rgba(0,0,0,.06) 61px
+  );
+  pointer-events: none;
+}
+.cta-banner h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800; font-size: 2.4rem; color: var(--bg);
+  letter-spacing: -0.03em; margin-bottom: 12px;
+  position: relative;
+}
+.cta-banner p {
+  color: rgba(15,15,14,.6); font-size: 1rem; margin-bottom: 36px;
+  position: relative;
+}
+.cta-banner .btn-dark {
+  background: var(--bg); color: var(--ember);
+  padding: 16px 36px; border-radius: 10px; font-size: 1rem;
+  font-weight: 600; font-family: 'Inter', sans-serif;
+  cursor: pointer; border: none; transition: .2s;
+  display: inline-flex; align-items: center; gap: 8px;
+  position: relative;
+}
+.cta-banner .btn-dark:hover { box-shadow: 0 8px 32px rgba(0,0,0,.3); transform: translateY(-2px); }
+.cta-banner .btn-link {
+  color: rgba(15,15,14,.5); text-decoration: underline;
+  text-underline-offset: 3px; font-size: .88rem; margin-left: 20px;
+  position: relative;
+}
+.cta-banner .btn-link:hover { color: var(--bg); }
+
+/* ── DESIGN SYSTEM SECTIONS ── */
+.ds-section { padding: 80px 0; }
+.ds-section + .ds-section { padding-top: 0; }
+.ds-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700; font-size: 1.1rem; letter-spacing: -0.01em;
+  margin-bottom: 6px; color: var(--text);
+}
+.ds-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; font-weight: 500; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ember);
+  margin-bottom: 16px;
+}
+.pal-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+.pal { width: 92px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+.pal-c { height: 52px; }
+.pal-m { padding: 7px 8px; background: var(--surface); }
+.pal-n { font-size: 9px; font-weight: 600; margin-bottom: 1px; }
+.pal-h { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--text-3); }
+
+/* Type samples */
+.type-row { margin-bottom: 24px; }
+.type-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; color: var(--text-3); margin-bottom: 6px; letter-spacing: .5px;
+}
+
+/* Logo showcase */
+.logo-showcase { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 24px; }
+.logo-card {
+  border-radius: 12px; padding: 36px 44px;
+  display: flex; align-items: center; gap: 18px;
+  border: 1px solid var(--border);
+}
+.logo-card.light { background: var(--sand-light); border-color: #DED6CC; }
+.logo-card.dark { background: var(--surface); }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 56px 0 32px; color: var(--text-3);
+}
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.footer h4 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700; font-size: .85rem; color: var(--text-2); margin-bottom: 14px;
+}
+.footer a { display: block; color: var(--text-3); text-decoration: none; font-size: .82rem; margin-bottom: 8px; transition: .2s; }
+.footer a:hover { color: var(--ember); }
+.footer-brand p { font-size: .82rem; line-height: 1.7; margin-bottom: 16px; max-width: 260px; }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding-top: 20px;
+  font-size: .75rem; display: flex; justify-content: space-between;
+}
+.footer-bottom a { display: inline; margin: 0; font-size: .75rem; }
+
+/* Separator line */
+.line-sep {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+/* Animations */
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+.fade-up { animation: fadeUp .6s ease-out both; }
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-in">
+    <a href="#" class="logo">
+      <div class="logo-mark">
+        <div class="logo-plank drift h-full"></div>
+        <div class="logo-plank emb h-full"></div>
+        <div class="logo-split">
+          <div class="logo-plank drift h-top"></div>
+          <div class="logo-plank drift h-short"></div>
+        </div>
+      </div>
+      <div class="logo-text"><span>THE </span>DECK<span> LAB</span></div>
+    </a>
+    <div class="nav-links">
+      <a href="#">Materials</a>
+      <a href="#">Calculator</a>
+      <a href="#">Gallery</a>
+      <a href="#">About</a>
+      <a href="#" class="nav-cta">Design Your Deck</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-in">
+    <div class="fade-up">
+      <div class="hero-tag">Deck Design Tool</div>
+      <h1>Design<br>Your <span class="ember">Deck.</span><br><span class="thin">To the last screw.</span></h1>
+      <p class="hero-sub">Draw your shape. Pick your wood. See every board, joist, and screw calculated live — then order materials or we install it.</p>
+      <div class="hero-stats">
+        <span class="v"><b>31</b> boards</span>
+        <span class="v"><b>11</b> joists</span>
+        <span class="v"><b>682</b> screws</span>
+        <span class="v"><b>R43,046</b></span>
+      </div>
+      <div class="hero-btns">
+        <a href="#" class="btn btn-lg btn-ember">Start Designing →</a>
+        <a href="#" class="btn btn-lg btn-ghost">Free Calculator</a>
+      </div>
+    </div>
+
+    <!-- DESIGNER PREVIEW -->
+    <div class="designer-frame fade-up d2">
+      <div class="d-bar">
+        <div class="d-dots"><i></i><i></i><i></i></div>
+        <span class="d-tool on">▭ Rectangle</span>
+        <span class="d-tool">⌐ L-Shape</span>
+        <span class="d-tool">⊤ T-Shape</span>
+        <span class="d-sep"></span>
+        <span class="d-tool">↩</span>
+        <span class="d-tool">↪</span>
+      </div>
+      <div class="d-canvas">
+        <div class="deck-boards" id="mainBoards"></div>
+        <div class="deck-ext" id="extBoards"></div>
+        <div class="joist-lines" id="joists" style="left:44px;width:400px;height:300px"></div>
+        <div class="dim" style="bottom:12px;left:44px">4.5 m</div>
+        <div class="dim" style="top:44px;right:calc(100% - 38px);transform:rotate(-90deg);transform-origin:right center">3.2 m</div>
+        <div class="c-panel">
+          <div class="cp-title">Live Stats</div>
+          <div class="cp-row"><span>Area</span> <b>14.4 m²</b></div>
+          <div class="cp-row"><span>Boards</span> <b>31</b></div>
+          <div class="cp-row green"><span>♻ Offcuts</span> <b>3 saved</b></div>
+          <div class="cp-row"><span>Waste</span> <b>4.2%</b></div>
+          <div class="cp-hr"></div>
+          <div class="cp-row"><span>Joists</span> <b>11</b></div>
+          <div class="cp-row"><span>Screws</span> <b>682</b></div>
+          <div class="cp-hr"></div>
+          <div class="cp-total"><span>Cost</span> <b>R8,729</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WOOD BANNER -->
+<div class="wood-banner thick"></div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="container">
+    <div class="how-header">
+      <h2>How The <span style="color:var(--ember)">Lab</span> Works</h2>
+      <p>Three steps from idea to installed deck. Our designer does the maths.</p>
+    </div>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num">01</div>
+        <h3>Draw Your Shape</h3>
+        <p>Rectangle, L-shape, or custom polygon. Snap to grid, drag to resize. Any size deck.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">02</div>
+        <h3>Watch It Calculate</h3>
+        <p>Every board laid, every joist spaced, every screw counted. Live. Offcuts recycled automatically.</p>
+      </div>
+      <div class="how-step">
+        <div class="how-num">03</div>
+        <h3>Build or Buy</h3>
+        <p>Get a 7-page build plan PDF. Order materials nationwide. Or we install it in the Western Cape.</p>
+      </div>
+    </div>
+    <div class="how-cta">
+      <a href="#" class="btn btn-lg btn-ember">Try the Designer — It's Free →</a>
+    </div>
+  </div>
+</section>
+
+<div class="wood-banner"></div>
+
+<!-- MATERIALS -->
+<section class="mat-section">
+  <div class="container">
+    <div class="mat-header">
+      <h2>Choose Your Wood</h2>
+      <p>Four materials. Each with its own character, lifespan, and price point. Click to start configuring.</p>
+    </div>
+    <div class="mat-grid">
+      <div class="mat sel">
+        <div class="mat-badge">✓</div>
+        <div class="mat-sw pine"></div>
+        <div class="mat-body">
+          <div class="mat-name">SA Pine CCA</div>
+          <div class="mat-sub">Affordable · Stainable · 10–15yr</div>
+          <div class="mat-row">
+            <div class="mat-stars"><i class="f">★</i><i class="f">★</i><i class="f">★</i><i class="e">★</i><i class="e">★</i></div>
+            <div class="mat-price">R588<span>/m²</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mat">
+        <div class="mat-badge">✓</div>
+        <div class="mat-sw balau"></div>
+        <div class="mat-body">
+          <div class="mat-name">Balau Hardwood</div>
+          <div class="mat-sub">Premium · Natural · 25–40yr</div>
+          <div class="mat-row">
+            <div class="mat-stars"><i class="f">★</i><i class="f">★</i><i class="f">★</i><i class="f">★</i><i class="f">★</i></div>
+            <div class="mat-price">R1,176<span>/m²</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mat">
+        <div class="mat-badge">✓</div>
+        <div class="mat-sw garapa"></div>
+        <div class="mat-body">
+          <div class="mat-name">Garapa</div>
+          <div class="mat-sub">Golden · Durable · 20–30yr</div>
+          <div class="mat-row">
+            <div class="mat-stars"><i class="f">★</i><i class="f">★</i><i class="f">★</i><i class="f">★</i><i class="e">★</i></div>
+            <div class="mat-price">R1,059<span>/m²</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="mat">
+        <div class="mat-badge">✓</div>
+        <div class="mat-sw composite"></div>
+        <div class="mat-body">
+          <div class="mat-name">Composite WPC</div>
+          <div class="mat-sub">Zero Maint. · Eco · 25yr+</div>
+          <div class="mat-row">
+            <div class="mat-stars"><i class="f">★</i><i class="f">★</i><i class="f">★</i><i class="f">★</i><i class="e">★</i></div>
+            <div class="mat-price">R1,470<span>/m²</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="line-sep"></div>
+
+<!-- CONFIGURATOR STEP -->
+<section class="cfg-section">
+  <div class="container">
+    <div class="mat-header">
+      <h2>Configurator Preview</h2>
+      <p>Step 5 of 8 — guided, visual, contextual. Every step recalculates live.</p>
+    </div>
+    <div class="cfg">
+      <div class="cfg-bar">
+        <span class="cdot done"></span><span class="cline done"></span>
+        <span class="cdot done"></span><span class="cline done"></span>
+        <span class="cdot done"></span><span class="cline done"></span>
+        <span class="cdot done"></span><span class="cline done"></span>
+        <span class="cdot cur"></span><span class="cline"></span>
+        <span class="cdot"></span><span class="cline"></span>
+        <span class="cdot"></span><span class="cline"></span>
+        <span class="cdot"></span>
+        <span class="cfg-label"><b>Step 5</b> of 8 · Finish</span>
+      </div>
+      <div class="cfg-body">
+        <div class="cfg-q">What finish would you like?</div>
+        <div class="cfg-hint">Pine CCA is stainable — choose a colour. Staining protects the wood and extends life by 5–10 years.</div>
+        <div class="swatches">
+          <div class="sw-wrap"><div class="sw" style="background:#8B6B42"></div><div class="sw-name">Natural</div></div>
+          <div class="sw-wrap"><div class="sw on" style="background:#5C4033"></div><div class="sw-name">Walnut</div></div>
+          <div class="sw-wrap"><div class="sw" style="background:#3B2615"></div><div class="sw-name">Dark Oak</div></div>
+          <div class="sw-wrap"><div class="sw" style="background:#A0522D"></div><div class="sw-name">Mahogany</div></div>
+          <div class="sw-wrap"><div class="sw" style="background:#C4A882"></div><div class="sw-name">Honey</div></div>
+          <div class="sw-wrap"><div class="sw" style="background:#8B8682"></div><div class="sw-name">Grey Wash</div></div>
+          <div class="sw-wrap">
+            <div class="sw" style="background:transparent;border-style:dashed">
+              <span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--text-3)">∅</span>
+            </div>
+            <div class="sw-name">None</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wood-banner"></div>
+
+<!-- QUOTE SUMMARY -->
+<section class="quote-section">
+  <div class="container">
+    <div class="mat-header">
+      <h2>Quote Summary</h2>
+      <p>The payoff — full breakdown, deposit split, share options.</p>
+    </div>
+    <div class="q-grid">
+      <div class="q-preview">
+        <div class="q-canvas"><div class="q-mini" id="qMini"></div></div>
+        <div class="q-info">
+          <p><strong>Raised Deck</strong> — SA Pine CCA</p>
+          <p>4.5m × 3.2m = <strong>14.4 m²</strong></p>
+          <p>Lengthwise · Walnut Stain</p>
+          <p>Full Installation (Western Cape)</p>
+          <div class="q-save">♻ 3 offcuts reused — saved ~R750</div>
+        </div>
+      </div>
+      <div class="q-bd">
+        <div class="q-bd-head">Price Breakdown <span class="q-ref">DL-Q-abc123</span></div>
+        <div class="q-lines">
+          <div class="q-l"><span class="la">Deck boards (14.4 m²)</span><span class="am">R 8,467</span></div>
+          <div class="q-l"><span class="la">Substructure</span><span class="am">R 3,629</span></div>
+          <div class="q-l"><span class="la">Fixings</span><span class="am">R 706</span></div>
+          <div class="q-l"><span class="la">Walnut stain</span><span class="am">R 1,613</span></div>
+          <div class="q-hr"></div>
+          <div class="q-l indent"><span class="la">4 steps × 1.2m</span><span class="am">R 5,712</span></div>
+          <div class="q-l indent"><span class="la">Railings 6.4m (SS + Wood)</span><span class="am">R 10,752</span></div>
+          <div class="q-hr"></div>
+          <div class="q-l"><span class="la">Labour (14.4 m² raised)</span><span class="am">R 6,552</span></div>
+          <div class="q-hr"></div>
+          <div class="q-l"><span class="la">Subtotal</span><span class="am">R 37,431</span></div>
+          <div class="q-l"><span class="la">Delivery</span><span class="am" style="color:var(--canopy)">FREE</span></div>
+          <div class="q-l"><span class="la">VAT 15%</span><span class="am">R 5,615</span></div>
+          <div class="q-hr" style="background:var(--text-3);opacity:.3"></div>
+          <div class="q-l tot"><span class="la">Total</span><span class="am">R 43,046</span></div>
+        </div>
+        <div class="q-dep">
+          <div class="q-dep-r"><span class="dl">Deposit (50%)</span><span class="da">R 21,523</span></div>
+          <div class="q-dep-r"><span class="dl">Balance on completion</span><span class="da">R 21,523</span></div>
+        </div>
+        <div class="q-actions">
+          <a href="#" class="btn btn-lg btn-ember" style="justify-content:center;width:100%">Add to Cart & Checkout →</a>
+          <div class="q-shares">
+            <button class="btn-share">💾 Save</button>
+            <button class="btn-share">📧 Email</button>
+            <button class="btn-share">📲 WhatsApp</button>
+            <button class="btn-share">📥 PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="line-sep"></div>
+
+<!-- TRUST -->
+<section class="trust-section">
+  <div class="container">
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon">🏗️</div>
+        <h4>Pro Installation</h4>
+        <p>Western Cape — site prep to final coat</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🚚</div>
+        <h4>National Delivery</h4>
+        <p>Materials shipped anywhere in SA</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">📐</div>
+        <h4>7-Page Build Plan</h4>
+        <p>Every board numbered, every screw counted</p>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">♻️</div>
+        <h4>Waste Optimized</h4>
+        <p>Smart offcut reuse saves up to 15%</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-banner">
+  <h2>Ready? Design your deck<br>in under 5 minutes.</h2>
+  <p>No sign-up. See your exact board count and price instantly.</p>
+  <div>
+    <button class="btn-dark">Start Designing →</button>
+    <a href="#" class="btn-link">Book a free site visit instead</a>
+  </div>
+</div>
+
+<div class="wood-banner thick"></div>
+
+<!-- DESIGN SYSTEM -->
+<section class="ds-section">
+  <div class="container">
+    <div class="ds-tag">Design System</div>
+    <div class="ds-title">Colour Palette</div>
+    <div class="pal-row">
+      <div class="pal"><div class="pal-c" style="background:#0F0F0E"></div><div class="pal-m"><div class="pal-n">Night</div><div class="pal-h">#0F0F0E</div></div></div>
+      <div class="pal"><div class="pal-c" style="background:#1A1918"></div><div class="pal-m"><div class="pal-n">Surface</div><div class="pal-h">#1A1918</div></div></div>
+      <div class="pal"><div class="pal-c" style="background:#F5F1EC"></div><div class="pal-m"><div class="pal-n">Chalk</div><div class="pal-h">#F5F1EC</div></div></div>
+      <div class="pal"><div class="pal-c" style="background:#A8A099"></div><div class="pal-m"><div class="pal-n">Stone</div><div class="pal-h">#A8A099</div></div></div>
+      <div class="pal"><div class="pal-c" style="background:#E8742B"></div><div class="pal-m"><div class="pal-n">Ember</div><div class="pal-h">#E8742B</div></div></div>
+      <div class="pal"><div class="pal-c" style="background:#C9A96E"></div><div class="pal-m"><div class="pal-n">Board</div><div class="pal-h">#C9A96E</div></div></div>
+      <div class="pal"><div class="pal-c" style="background:#6DAF62"></div><div class="pal-m"><div class="pal-n">Offcut</div><div class="pal-h">#6DAF62</div></div></div>
+      <div class="pal"><div class="pal-c" style="background:#5DAA68"></div><div class="pal-m"><div class="pal-n">Canopy</div><div class="pal-h">#5DAA68</div></div></div>
+      <div class="pal"><div class="pal-c" style="background:#D4A843"></div><div class="pal-m"><div class="pal-n">Honey</div><div class="pal-h">#D4A843</div></div></div>
+      <div class="pal"><div class="pal-c" style="background:#D44B3A"></div><div class="pal-m"><div class="pal-n">Jarrah</div><div class="pal-h">#D44B3A</div></div></div>
+    </div>
+
+    <div style="margin-top:48px">
+      <div class="ds-title">Typography</div>
+      <div class="type-row">
+        <div class="type-tag">Plus Jakarta Sans 800 — Headings</div>
+        <div class="display" style="font-weight:800;font-size:3rem">Design Your Deck.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-tag">Plus Jakarta Sans 700 — Section Titles</div>
+        <div class="display" style="font-weight:700;font-size:1.8rem">Choose Your Wood</div>
+      </div>
+      <div class="type-row">
+        <div class="type-tag">Inter 400 — Body</div>
+        <div style="color:var(--text-2);max-width:500px">Draw your deck shape — any size, any layout. See every board, joist, and screw calculated in real time.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-tag">IBM Plex Mono 600 — Prices & Dimensions</div>
+        <div class="mono" style="font-weight:600;font-size:1.5rem;color:var(--ember)">R43,046 <span style="font-size:.9rem;color:var(--text-3)">· 14.4 m² · 31 boards</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:48px">
+      <div class="ds-title">Logo — Vertical Board Mark</div>
+      <div class="logo-showcase">
+        <!-- Dark bg full logo -->
+        <div class="logo-card dark">
+          <div style="display:flex;gap:4px;align-items:flex-end;height:56px">
+            <div style="width:14px;height:56px;border-radius:4px;background:#736B62"></div>
+            <div style="width:15px;height:56px;border-radius:4px;background:var(--ember)"></div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-self:stretch">
+              <div style="width:14px;height:15px;border-radius:4px;background:#736B62"></div>
+              <div style="width:14px;flex:1;border-radius:4px;background:#736B62"></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.3rem;letter-spacing:-0.02em"><span style="font-weight:400;color:#736B62">THE</span><br><span style="font-weight:800;color:#fff">DECK</span><br><span style="font-weight:400;color:#736B62">LAB</span></div>
+          </div>
+        </div>
+        <!-- Light bg full logo -->
+        <div class="logo-card light">
+          <div style="display:flex;gap:4px;align-items:flex-end;height:56px">
+            <div style="width:14px;height:56px;border-radius:4px;background:#736B62"></div>
+            <div style="width:15px;height:56px;border-radius:4px;background:#E97132"></div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-self:stretch">
+              <div style="width:14px;height:15px;border-radius:4px;background:#736B62"></div>
+              <div style="width:14px;flex:1;border-radius:4px;background:#736B62"></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.3rem;letter-spacing:-0.02em;color:#1E1E1C"><span style="font-weight:400;color:#736B62">THE</span><br><span style="font-weight:800">DECK</span><br><span style="font-weight:400;color:#736B62">LAB</span></div>
+          </div>
+        </div>
+        <!-- Favicon on ember -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="width:52px;height:52px;border-radius:12px;background:var(--ember);display:flex;gap:3px;align-items:flex-end;justify-content:center;padding:10px 8px">
+            <div style="width:8px;height:100%;border-radius:2px;background:rgba(15,15,14,.35)"></div>
+            <div style="width:9px;height:100%;border-radius:2px;background:#fff"></div>
+            <div style="display:flex;flex-direction:column;gap:2px;align-self:stretch">
+              <div style="width:8px;height:7px;border-radius:2px;background:rgba(15,15,14,.35)"></div>
+              <div style="width:8px;flex:1;border-radius:2px;background:rgba(15,15,14,.35)"></div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:var(--text-3)">Favicon</div>
+        </div>
+        <!-- Favicon on dark -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="width:52px;height:52px;border-radius:12px;background:var(--surface);border:1px solid var(--border);display:flex;gap:3px;align-items:flex-end;justify-content:center;padding:10px 8px">
+            <div style="width:8px;height:100%;border-radius:2px;background:#736B62"></div>
+            <div style="width:9px;height:100%;border-radius:2px;background:var(--ember)"></div>
+            <div style="display:flex;flex-direction:column;gap:2px;align-self:stretch">
+              <div style="width:8px;height:7px;border-radius:2px;background:#736B62"></div>
+              <div style="width:8px;flex:1;border-radius:2px;background:#736B62"></div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:var(--text-3)">Dark Icon</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <div style="display:flex;gap:2px;align-items:flex-end;height:24px">
+            <div style="width:6px;height:24px;border-radius:2px;background:var(--text-3)"></div>
+            <div style="width:7px;height:24px;border-radius:2px;background:var(--ember)"></div>
+            <div style="display:flex;flex-direction:column;gap:2px;align-self:stretch">
+              <div style="width:6px;height:6px;border-radius:2px;background:var(--text-3)"></div>
+              <div style="width:6px;flex:1;border-radius:2px;background:var(--text-3)"></div>
+            </div>
+          </div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1rem"><span style="font-weight:500;opacity:.4">THE </span>DECK<span style="font-weight:500;opacity:.4"> LAB</span></div>
+        </div>
+        <p>Custom decking solutions for the Western Cape and beyond. Design, quote, and order — all online.</p>
+      </div>
+      <div>
+        <h4>Products</h4>
+        <a href="#">Deck Boards</a><a href="#">Substructure</a><a href="#">Fixings</a><a href="#">Stains & Oils</a><a href="#">Kits</a>
+      </div>
+      <div>
+        <h4>Tools</h4>
+        <a href="#">Deck Designer</a><a href="#">Calculator</a><a href="#">Build Plans</a><a href="#">Free Samples</a>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <a href="#">info@thedecklab.co.za</a><a href="#">082 XXX XXXX</a><a href="#">WhatsApp</a><a href="#">Stellenbosch, WC</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 The Deck Lab</span>
+      <span><a href="#">Privacy</a> · <a href="#">Terms</a> · Powered by <a href="#" style="color:var(--ember)">Yoros</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Deck boards — staggered cascade
+const mb = document.getElementById('mainBoards');
+const eb = document.getElementById('extBoards');
+const jl = document.getElementById('joists');
+
+for (let i = 0; i < 12; i++) {
+  const b = document.createElement('div');
+  b.className = `db ${i===9||i===11?'o':'n'}`;
+  b.style.width = '340px';
+  b.style.animationDelay = `${0.8 + i * 0.05}s`;
+  mb.appendChild(b);
+}
+for (let i = 0; i < 5; i++) {
+  const b = document.createElement('div');
+  b.className = `db ${i===3?'o':'n'}`;
+  b.style.width = '160px';
+  b.style.animationDelay = `${1.5 + i * 0.05}s`;
+  eb.appendChild(b);
+}
+[0,56,112,168,224,280,340].forEach(x => {
+  const j = document.createElement('div');
+  j.className = 'jl';
+  j.style.left = x + 'px';
+  j.style.height = (x <= 160 ? '300px' : '190px');
+  jl.appendChild(j);
+});
+
+// Quote mini boards
+const qm = document.getElementById('qMini');
+for (let i = 0; i < 16; i++) {
+  const b = document.createElement('i');
+  b.className = i===11||i===14 ? 'qo' : 'qn';
+  b.style.width = (i < 13 ? '130' : '70') + 'px';
+  qm.appendChild(b);
+}
+
+// Material card selection
+document.querySelectorAll('.mat').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('.mat').forEach(m => m.classList.remove('sel'));
+    c.classList.add('sel');
+  });
+});
+
+// Swatch selection
+document.querySelectorAll('.sw').forEach(s => {
+  s.addEventListener('click', () => {
+    document.querySelectorAll('.sw').forEach(x => x.classList.remove('on'));
+    s.classList.add('on');
+  });
+});
+</script>
+
+</body>
+</html>

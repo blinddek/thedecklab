@@ -1,0 +1,258 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Brand colors — The Deck Lab (e.g. bg-brand-ember) */
+  --color-brand-ember: #D4622A;
+  --color-brand-ember-hover: #B8531F;
+  --color-brand-canopy: #3D7A4A;
+  --color-brand-canopy-hover: #326940;
+  --color-success: #3D7A4A;
+  --color-warning: #D4622A;
+  --color-error: #B83C2B;
+  --color-info: #3D7A4A;
+
+  /* Surface hover (for custom use beyond shadcn tokens) */
+  --color-surface-hover: var(--surface-hover);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+}
+
+/*
+ * Design System — Default palette
+ * Dark mode is the launch default. Customise per client.
+ */
+
+:root {
+  --radius: 0.5rem;
+
+  /* Light mode — Sandstone palette */
+  --background: #F7F3EE;
+  --foreground: #1E1E1C;
+  --card: #FDFBF8;
+  --card-foreground: #1E1E1C;
+  --popover: #FDFBF8;
+  --popover-foreground: #1E1E1C;
+  --primary: #D4622A;
+  --primary-foreground: #FFFFFF;
+  --secondary: #3D7A4A;
+  --secondary-foreground: #FFFFFF;
+  --muted: #F7F3EE;
+  --muted-foreground: #736B62;
+  --accent: #D4622A;
+  --accent-foreground: #FFFFFF;
+  --destructive: #B83C2B;
+  --destructive-foreground: #FFFFFF;
+  --border: #DED6CC;
+  --input: #DED6CC;
+  --ring: #D4622A;
+  --chart-1: #D4622A;
+  --chart-2: #3D7A4A;
+  --chart-3: #B83C2B;
+  --chart-4: #736B62;
+  --chart-5: #E07438;
+  --sidebar: #FDFBF8;
+  --sidebar-foreground: #1E1E1C;
+  --sidebar-primary: #D4622A;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F7F3EE;
+  --sidebar-accent-foreground: #1E1E1C;
+  --sidebar-border: #DED6CC;
+  --sidebar-ring: #D4622A;
+  --surface-hover: #F0EBE4;
+}
+
+.dark {
+  /* Surfaces — Charcoal Ash palette */
+  --background: #1E1D1B;
+  --foreground: #F7F3EE;
+  --card: #2A2826;
+  --card-foreground: #F7F3EE;
+  --popover: #2A2826;
+  --popover-foreground: #F7F3EE;
+
+  /* Primary = brand ember (boosted for dark) */
+  --primary: #E07438;
+  --primary-foreground: #FFFFFF;
+
+  /* Secondary = brand canopy */
+  --secondary: #3D7A4A;
+  --secondary-foreground: #FFFFFF;
+
+  /* Muted */
+  --muted: #2A2826;
+  --muted-foreground: #A69E95;
+
+  /* Accent (elevated surfaces) */
+  --accent: #E07438;
+  --accent-foreground: #FFFFFF;
+
+  /* Destructive */
+  --destructive: #B83C2B;
+  --destructive-foreground: #FFFFFF;
+
+  /* Borders & inputs */
+  --border: #3E3A36;
+  --input: #3E3A36;
+  --ring: #E07438;
+
+  /* Chart colors */
+  --chart-1: #E07438;
+  --chart-2: #3D7A4A;
+  --chart-3: #B83C2B;
+  --chart-4: #A69E95;
+  --chart-5: #D4622A;
+
+  /* Sidebar */
+  --sidebar: #2A2826;
+  --sidebar-foreground: #F7F3EE;
+  --sidebar-primary: #E07438;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #3E3A36;
+  --sidebar-accent-foreground: #F7F3EE;
+  --sidebar-border: #3E3A36;
+  --sidebar-ring: #E07438;
+
+  /* Hover */
+  --surface-hover: #3E3A36;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    background: linear-gradient(135deg, #D4622A, #3D7A4A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass {
+    background: rgba(253, 251, 248, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(212, 98, 42, 0.15);
+  }
+
+  .dark .glass {
+    background: rgba(42, 40, 38, 0.6);
+    border: 1px solid rgba(224, 116, 56, 0.1);
+  }
+
+  .dot-pattern {
+    background-image: radial-gradient(circle, #DED6CC 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .dark .dot-pattern {
+    background-image: radial-gradient(circle, #3E3A36 1px, transparent 1px);
+  }
+
+  /* Gradient section backgrounds — ember/canopy palette */
+  .section-gradient-ember-canopy {
+    background: linear-gradient(135deg, rgba(212,98,42,0.06) 0%, rgba(61,122,74,0.06) 100%);
+  }
+  .dark .section-gradient-ember-canopy {
+    background: linear-gradient(135deg, rgba(224,116,56,0.08) 0%, rgba(61,122,74,0.08) 100%);
+  }
+
+  .section-gradient-sandstone {
+    background: linear-gradient(135deg, rgba(212,98,42,0.05) 0%, rgba(247,243,238,0.08) 100%);
+  }
+  .dark .section-gradient-sandstone {
+    background: linear-gradient(135deg, rgba(224,116,56,0.07) 0%, rgba(42,40,38,0.05) 100%);
+  }
+
+  .section-gradient-vibrant {
+    background: linear-gradient(135deg, rgba(212,98,42,0.10) 0%, rgba(61,122,74,0.08) 50%, rgba(184,60,43,0.06) 100%);
+  }
+  .dark .section-gradient-vibrant {
+    background: linear-gradient(135deg, rgba(224,116,56,0.12) 0%, rgba(61,122,74,0.10) 50%, rgba(184,60,43,0.08) 100%);
+  }
+
+  .gradient-text-canopy {
+    background: linear-gradient(135deg, #3D7A4A, #D4622A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-warm {
+    background: linear-gradient(135deg, #D4622A, #B83C2B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
