@@ -1,5 +1,5 @@
 -- ============================================================
--- seed.sql — The Deck Lab starter data
+-- seed.sql — The Deck Lab site data
 -- Run after all migrations.
 -- ============================================================
 
@@ -19,142 +19,417 @@ insert into public.site_content (section_key, content) values
     "address": "",
     "google_maps_url": "",
     "google_maps_coordinates": null,
-    "business_hours": "Mon-Fri 08:00-17:00",
+    "business_hours": "Mon-Fri 07:30-17:00, Sat 08:00-13:00",
     "social_links": []
   }'::jsonb)
-on conflict (section_key) do nothing;
+on conflict (section_key) do update set content = excluded.content;
 
 -- ─── Navigation Links ────────────────────────────────────────
-insert into public.nav_links (label, href, display_order, is_active, is_cta) values
-  ('{"en": "Home", "af": "Tuis"}'::jsonb, '/', 1, true, false),
-  ('{"en": "Shop", "af": "Winkel"}'::jsonb, '/shop', 2, true, false),
-  ('{"en": "Gallery", "af": "Galery"}'::jsonb, '/gallery', 3, true, false),
-  ('{"en": "About", "af": "Oor Ons"}'::jsonb, '/about', 4, true, false),
-  ('{"en": "Contact", "af": "Kontak"}'::jsonb, '/contact', 5, true, false),
-  ('{"en": "FAQ", "af": "Vrae"}'::jsonb, '/faq', 6, true, false),
-  ('{"en": "Design Your Deck", "af": "Ontwerp Jou Dek"}'::jsonb, '/configure', 7, true, true)
-on conflict do nothing;
+delete from public.nav_links;
+insert into public.nav_links (label, href, display_order, is_active) values
+  ('{"en": "Home", "af": "Tuis"}'::jsonb, '/', 1, true),
+  ('{"en": "Shop", "af": "Winkel"}'::jsonb, '/shop', 2, true),
+  ('{"en": "Gallery", "af": "Galery"}'::jsonb, '/portfolio', 3, true),
+  ('{"en": "About", "af": "Oor Ons"}'::jsonb, '/about', 4, true),
+  ('{"en": "Contact", "af": "Kontak"}'::jsonb, '/contact', 5, true),
+  ('{"en": "FAQ", "af": "Vrae"}'::jsonb, '/faq', 6, true);
 
 -- ─── Footer Sections ─────────────────────────────────────────
+delete from public.footer_sections;
 insert into public.footer_sections (title, links, display_order, is_active) values
   (
     '{"en": "Products", "af": "Produkte"}'::jsonb,
     '[
-      {"label": {"en": "Shop All", "af": "Blaai Alles"}, "href": "/shop"},
-      {"label": {"en": "Deck Configurator", "af": "Dek Konfigurator"}, "href": "/configure"},
-      {"label": {"en": "Gallery", "af": "Galery"}, "href": "/gallery"}
+      {"label": {"en": "Shop All"}, "href": "/shop"},
+      {"label": {"en": "Deck Boards"}, "href": "/shop?category=boards"},
+      {"label": {"en": "Substructure"}, "href": "/shop?category=substructure"},
+      {"label": {"en": "Fixings & Accessories"}, "href": "/shop?category=fixings"},
+      {"label": {"en": "Stain & Finish"}, "href": "/shop?category=finishing"}
     ]'::jsonb,
     1, true
   ),
   (
     '{"en": "Company", "af": "Maatskappy"}'::jsonb,
     '[
-      {"label": {"en": "About Us", "af": "Oor Ons"}, "href": "/about"},
-      {"label": {"en": "Contact", "af": "Kontak"}, "href": "/contact"},
-      {"label": {"en": "FAQ", "af": "Vrae"}, "href": "/faq"}
+      {"label": {"en": "About Us"}, "href": "/about"},
+      {"label": {"en": "Gallery"}, "href": "/portfolio"},
+      {"label": {"en": "Contact"}, "href": "/contact"},
+      {"label": {"en": "FAQ"}, "href": "/faq"}
     ]'::jsonb,
     2, true
   ),
   (
     '{"en": "Legal", "af": "Regskennis"}'::jsonb,
     '[
-      {"label": {"en": "Terms of Service", "af": "Diensvoorwaardes"}, "href": "/terms"},
-      {"label": {"en": "Privacy Policy", "af": "Privaatheidsbeleid"}, "href": "/privacy"}
+      {"label": {"en": "Terms of Service"}, "href": "/terms"},
+      {"label": {"en": "Privacy Policy"}, "href": "/privacy"}
     ]'::jsonb,
     3, true
-  )
-on conflict do nothing;
+  );
 
 -- ─── Page SEO ────────────────────────────────────────────────
 insert into public.page_seo (page_key, title, description) values
-  ('home',     '{"en": "The Deck Lab — Custom Decking, Configured & Installed", "af": "The Deck Lab — Pasgemaakte Dekke, Gekonfigureer & Geïnstalleer"}'::jsonb,
-               '{"en": "Design your dream deck online. Choose materials, configure your layout, and get an instant quote — delivered or installed.", "af": "Ontwerp jou droomdek aanlyn. Kies materiale, konfigureer jou uitleg, en kry ''n onmiddellike kwotasie — afgelewer of geïnstalleer."}'::jsonb),
-  ('about',    '{"en": "About The Deck Lab", "af": "Oor The Deck Lab"}'::jsonb,
-               '{"en": "Part of the Nortier Group — bringing precision and craftsmanship to outdoor living.", "af": "Deel van die Nortier Groep — presisie en vakmanskap vir buite-leef."}'::jsonb),
-  ('shop',     '{"en": "Shop Decking Materials", "af": "Koop Dekmateriaal"}'::jsonb,
-               '{"en": "Browse our range of premium decking boards, substructure, and fixings.", "af": "Blaai deur ons reeks premium dekplanke, substruktuur, en hegstukke."}'::jsonb),
-  ('gallery',  '{"en": "Project Gallery", "af": "Projek Galery"}'::jsonb,
-               '{"en": "See our completed deck installations across the Western Cape.", "af": "Sien ons voltooide dekinstallasies regoor die Wes-Kaap."}'::jsonb),
-  ('contact',  '{"en": "Contact Us", "af": "Kontak Ons"}'::jsonb,
-               '{"en": "Get in touch for a free site visit or custom quote.", "af": "Kontak ons vir ''n gratis terreinbesoek of pasgemaakte kwotasie."}'::jsonb),
-  ('faq',      '{"en": "FAQ", "af": "Vrae"}'::jsonb,
-               '{"en": "Frequently asked questions about decking, materials, and installation.", "af": "Gereelde vrae oor dekke, materiale, en installasie."}'::jsonb),
-  ('terms',    '{"en": "Terms of Service", "af": "Diensvoorwaardes"}'::jsonb,
-               '{"en": "Our terms and conditions.", "af": "Ons bepalings en voorwaardes."}'::jsonb),
-  ('privacy',  '{"en": "Privacy Policy", "af": "Privaatheidsbeleid"}'::jsonb,
-               '{"en": "How we handle your data.", "af": "Hoe ons u data hanteer."}'::jsonb)
-on conflict (page_key) do nothing;
-
--- ─── Site Content (i18n JSONB) ──────────────────────────────
-insert into public.site_content (section_key, content) values
-  ('hero_heading', '{"en": "Design Your Deck. Built to Last.", "af": "Ontwerp Jou Dek. Gebou om te Hou."}'::jsonb),
-  ('hero_subheading', '{"en": "Custom decking — configured, quoted, and installed. Design your dream deck online or order materials for your DIY project.", "af": "Pasgemaakte dekke — gekonfigureer, gekwoteer, en geïnstalleer. Ontwerp jou droomdek aanlyn of bestel materiale vir jou DIY-projek."}'::jsonb),
-  ('hero_cta_primary', '{"en": "Design Your Deck", "af": "Ontwerp Jou Dek"}'::jsonb),
-  ('hero_cta_secondary', '{"en": "Browse Materials", "af": "Blaai deur Materiale"}'::jsonb),
-  ('about_story', '{"en": "The Deck Lab is part of the Nortier Group, bringing the same precision and craftsmanship to outdoor living. We believe designing a deck should be as enjoyable as using one. Our online configurator lets you choose your material, design your layout, and get an instant quote — complete with an exact bill of materials down to the last screw.", "af": "The Deck Lab is deel van die Nortier Groep en bring dieselfde presisie en vakmanskap na buite-leef. Ons glo die ontwerp van ''n dek moet net so lekker wees soos om een te gebruik."}'::jsonb),
-  ('trust_strip', '{"en": "Installation in WC · Delivery Nationwide · Free Build Plans · Waste Optimized", "af": "Installasie in WK · Aflewering Landwyd · Gratis Bouplanne · Vermorsing Geoptimeer"}'::jsonb),
-  ('cta_heading', '{"en": "Ready? Design your deck in under 5 minutes.", "af": "Gereed? Ontwerp jou dek in minder as 5 minute."}'::jsonb),
-  ('cta_text', '{"en": "Our configurator calculates everything — materials, substructure, fixings, and labour. Get an instant quote or book a free site visit.", "af": "Ons konfigurator bereken alles — materiale, substruktuur, hegstukke, en arbeid. Kry ''n onmiddellike kwotasie of bespreek ''n gratis terreinbesoek."}'::jsonb)
-on conflict (section_key) do nothing;
+  ('home',     '{"en": "The Deck Lab — Custom Decking, Configured & Installed"}'::jsonb,
+               '{"en": "Design your dream deck online. Choose materials, configure your layout, and get an instant quote — delivered or professionally installed."}'::jsonb),
+  ('about',    '{"en": "About The Deck Lab — Precision Decking by Nortier Group"}'::jsonb,
+               '{"en": "Part of the Nortier Group — bringing precision craftsmanship and smart technology to outdoor living spaces."}'::jsonb),
+  ('services', '{"en": "Deck Types — The Deck Lab"}'::jsonb,
+               '{"en": "Ground-level, raised, pool, and balcony decks — custom designed and built to last."}'::jsonb),
+  ('shop',     '{"en": "Shop Decking Materials — The Deck Lab"}'::jsonb,
+               '{"en": "Browse premium deck boards, substructure, fixings, and finishing products. Pine, hardwood, and composite options."}'::jsonb),
+  ('gallery',  '{"en": "Project Gallery — The Deck Lab"}'::jsonb,
+               '{"en": "See our completed deck installations across the Western Cape."}'::jsonb),
+  ('contact',  '{"en": "Contact The Deck Lab"}'::jsonb,
+               '{"en": "Get in touch for a free site visit, custom quote, or material advice."}'::jsonb),
+  ('faq',      '{"en": "FAQ — The Deck Lab"}'::jsonb,
+               '{"en": "Frequently asked questions about decking materials, pricing, installation, and maintenance."}'::jsonb),
+  ('terms',    '{"en": "Terms of Service — The Deck Lab"}'::jsonb,
+               '{"en": "Terms and conditions for purchases and installations from The Deck Lab."}'::jsonb),
+  ('privacy',  '{"en": "Privacy Policy — The Deck Lab"}'::jsonb,
+               '{"en": "How The Deck Lab collects, uses, and protects your personal data."}'::jsonb)
+on conflict (page_key) do update set
+  title = excluded.title,
+  description = excluded.description;
 
 -- ─── Homepage Sections ───────────────────────────────────────
+delete from public.homepage_sections;
 insert into public.homepage_sections (section_key, content, display_order, is_active) values
   ('hero', '{
-    "heading": {"en": "Design Your Deck. Built to Last.", "af": "Ontwerp Jou Dek. Gebou om te Hou."},
-    "subheading": {"en": "Custom decking — configured, quoted, and installed. Design your dream deck online or order materials for your DIY project.", "af": "Pasgemaakte dekke — gekonfigureer, gekwoteer, en geïnstalleer. Ontwerp jou droomdek aanlyn of bestel materiale vir jou DIY-projek."},
-    "cta_text": {"en": "Design Your Deck", "af": "Ontwerp Jou Dek"},
+    "heading": {"en": "Design Your Deck. Built to Last."},
+    "subheading": {"en": "Custom decking — configured, quoted, and installed. Design your dream deck online or order materials for your DIY project."},
+    "cta_text": {"en": "Design Your Deck"},
     "cta_url": "/configure",
-    "cta_secondary_text": {"en": "Browse Materials", "af": "Blaai deur Materiale"},
+    "cta_secondary_text": {"en": "Browse Materials"},
     "cta_secondary_url": "/shop",
     "background_image": null
   }'::jsonb, 1, true),
 
-  ('trust_strip', '{
-    "text": {"en": "Installation in WC · Delivery Nationwide · Free Build Plans · Waste Optimized", "af": "Installasie in WK · Aflewering Landwyd · Gratis Bouplanne · Vermorsing Geoptimeer"}
+  ('trust_stats', '{
+    "items": [
+      {"icon": "🔨", "value": "Pro", "label": {"en": "Installation in WC"}},
+      {"icon": "🚚", "value": "National", "label": {"en": "Materials Delivery"}},
+      {"icon": "📋", "value": "Free", "label": {"en": "Build Plans Included"}},
+      {"icon": "♻️", "value": "<5%", "label": {"en": "Material Waste"}}
+    ]
   }'::jsonb, 2, true),
 
-  ('services', '{
-    "heading": {"en": "How It Works", "af": "Hoe Dit Werk"},
-    "subheading": {"en": "From design to delivery — or full installation", "af": "Van ontwerp tot aflewering — of volledige installasie"},
+  ('how_it_works', '{
+    "heading": {"en": "How It Works"},
+    "subheading": {"en": "From design to delivery — or full professional installation."},
     "items": [
-      {"title": {"en": "Configure", "af": "Konfigureer"}, "description": {"en": "Use our online deck designer to choose materials, set dimensions, and see your layout.", "af": "Gebruik ons aanlyn dek-ontwerper om materiale te kies, afmetings te stel, en jou uitleg te sien."}},
-      {"title": {"en": "Quote", "af": "Kwotasie"}, "description": {"en": "Get an instant, itemised quote with an exact bill of materials — down to the last screw.", "af": "Kry ''n onmiddellike, geïtemiseerde kwotasie met ''n presiese materiaalstaat — tot die laaste skroef."}},
-      {"title": {"en": "Build", "af": "Bou"}, "description": {"en": "Order materials for DIY delivery, or book our team for professional installation.", "af": "Bestel materiale vir DIY-aflewering, of bespreek ons span vir professionele installasie."}}
+      {"step": "1", "title": {"en": "Configure"}, "description": {"en": "Choose your deck type, material, dimensions, and extras using our online designer."}},
+      {"step": "2", "title": {"en": "Quote"}, "description": {"en": "Get an instant, itemised quote with an exact bill of materials — down to the last screw."}},
+      {"step": "3", "title": {"en": "Order"}, "description": {"en": "Pay securely online. Choose supply-only delivery or full professional installation."}},
+      {"step": "4", "title": {"en": "Enjoy"}, "description": {"en": "Receive your materials with a detailed build plan, or sit back while our team builds your deck."}}
     ]
   }'::jsonb, 3, true),
 
-  ('about', '{
-    "heading": {"en": "About The Deck Lab", "af": "Oor The Deck Lab"},
-    "body": {"en": "The Deck Lab is part of the Nortier Group, bringing the same precision and craftsmanship to outdoor living. We believe designing a deck should be as enjoyable as using one.", "af": "The Deck Lab is deel van die Nortier Groep en bring dieselfde presisie en vakmanskap na buite-leef. Ons glo die ontwerp van ''n dek moet net so lekker wees soos om een te gebruik."},
-    "image": null
+  ('materials', '{
+    "heading": {"en": "Choose Your Material"},
+    "subheading": {"en": "Premium decking materials for every budget and style."},
+    "items": [
+      {
+        "icon": "🌲",
+        "title": {"en": "Treated Pine (CCA)"},
+        "description": {"en": "Affordable, versatile, and stainable. The most popular choice for residential decks."},
+        "from_price": null,
+        "image": null
+      },
+      {
+        "icon": "🪵",
+        "title": {"en": "Hardwood (Balau)"},
+        "description": {"en": "Dense, durable, and naturally beautiful. Rich grain with excellent weather resistance."},
+        "from_price": null,
+        "image": null
+      },
+      {
+        "icon": "✨",
+        "title": {"en": "Hardwood (Garapa)"},
+        "description": {"en": "Golden tones that age beautifully. Excellent durability with a premium finish."},
+        "from_price": null,
+        "image": null
+      },
+      {
+        "icon": "🏗️",
+        "title": {"en": "Composite (WPC)"},
+        "description": {"en": "Low maintenance, consistent colour, and eco-friendly. No staining or sealing required."},
+        "from_price": null,
+        "image": null
+      }
+    ]
   }'::jsonb, 4, true),
 
+  ('services', '{
+    "heading": {"en": "How It Works"},
+    "subheading": {"en": "From design to delivery — or full installation."},
+    "items": [
+      {"title": {"en": "Configure"}, "description": {"en": "Use our online deck designer to choose materials, set dimensions, and see your layout."}},
+      {"title": {"en": "Quote"}, "description": {"en": "Get an instant, itemised quote with an exact bill of materials — down to the last screw."}},
+      {"title": {"en": "Build"}, "description": {"en": "Order materials for DIY delivery, or book our team for professional installation."}}
+    ]
+  }'::jsonb, 5, true),
+
+  ('about', '{
+    "heading": {"en": "About The Deck Lab"},
+    "body": {"en": "Part of the Nortier Group, The Deck Lab brings decades of craftsmanship and precision to outdoor living. We believe designing a deck should be as enjoyable as using one."}
+  }'::jsonb, 6, true),
+
   ('cta', '{
-    "heading": {"en": "Ready? Design your deck in under 5 minutes.", "af": "Gereed? Ontwerp jou dek in minder as 5 minute."},
-    "body": {"en": "Our configurator calculates everything — materials, substructure, fixings, and labour. Get an instant quote or book a free site visit.", "af": "Ons konfigurator bereken alles — materiale, substruktuur, hegstukke, en arbeid. Kry ''n onmiddellike kwotasie of bespreek ''n gratis terreinbesoek."},
-    "button_text": {"en": "Design Your Deck", "af": "Ontwerp Jou Dek"},
+    "heading": {"en": "Ready? Design your deck in under 5 minutes."},
+    "body": {"en": "Our configurator calculates everything — materials, substructure, fixings, and labour. Get an instant quote or book a free site visit."},
+    "button_text": {"en": "Design Your Deck"},
     "button_url": "/configure"
-  }'::jsonb, 5, true)
-on conflict (section_key) do nothing;
+  }'::jsonb, 7, true);
+
+-- ─── Trust Strip (key-value) ─────────────────────────────────
+insert into public.site_content (section_key, content) values
+  ('trust_strip', '{"values": ["Installation in Western Cape", "Delivery Nationwide", "Free Build Plans", "Waste Optimized", "Exact Bill of Materials"]}'::jsonb)
+on conflict (section_key) do update set content = excluded.content;
+
+-- ─── About Page Content ──────────────────────────────────────
+insert into public.site_content (section_key, content) values
+  ('about', '{
+    "heading": {"en": "About The Deck Lab"},
+    "mission": {"en": "Making custom decking accessible — design online, get exact pricing, and choose supply-only or full installation."},
+    "body": {"en": "The Deck Lab was born from a simple idea: building a deck shouldn''t require guesswork. Traditional quotes involve site visits, phone tag, and vague estimates. We knew technology could do better.\n\nOur online configurator lets you design your deck step by step. Choose your material — treated pine, Balau hardwood, Garapa, or composite. Set your dimensions. See your layout with board-by-board precision. Get an instant quote that includes every board, joist, bearer, screw, and spacer.\n\nWe don''t estimate. We calculate. Our board layout engine optimises cuts to minimise waste (typically under 5%), recommends the right board width to avoid ugly ripped edges, and generates a complete build plan you can follow or hand to your contractor.\n\nFor homeowners in the Western Cape, we offer full professional installation — from foundation to final stain. For DIY builders and contractors anywhere in South Africa, we supply cut-to-spec materials with nationwide delivery and detailed build plans.\n\nThe Deck Lab is part of the Nortier Group, bringing decades of home improvement experience and craftsmanship into the digital age."},
+    "process": [
+      {"step": "1", "title": {"en": "Configure"}, "description": {"en": "Use our guided wizard to choose your deck type, material, dimensions, board direction, colour, and extras."}},
+      {"step": "2", "title": {"en": "Quote"}, "description": {"en": "See your price update in real time. Get an exact bill of materials — boards, joists, bearers, fixings, stain."}},
+      {"step": "3", "title": {"en": "Order"}, "description": {"en": "Pay securely online. Choose supply-only (shipped nationally) or full installation (Western Cape)."}},
+      {"step": "4", "title": {"en": "Build"}, "description": {"en": "Receive your materials with a 7-page build plan, or sit back while our team handles everything."}}
+    ],
+    "values": [
+      {"title": {"en": "Exact, Not Estimated"}, "description": {"en": "Our configurator calculates every board, joist, and screw. No vague m² estimates — you see exactly what you''re getting."}},
+      {"title": {"en": "Waste Optimised"}, "description": {"en": "Our board layout engine reuses offcuts intelligently. Typical waste is under 5%, saving you money and materials."}},
+      {"title": {"en": "Instant Pricing"}, "description": {"en": "No waiting for callbacks or site visits. Configure your deck and see your price update in real time."}},
+      {"title": {"en": "Supply or Install"}, "description": {"en": "Full installation in the Western Cape, or supply-only with nationwide delivery. Your choice."}},
+      {"title": {"en": "Free Build Plans"}, "description": {"en": "Every order includes a detailed 7-page build plan with board layout, substructure, cut list, and installation notes."}},
+      {"title": {"en": "Part of Nortier Group"}, "description": {"en": "Backed by decades of home improvement experience. Quality craftsmanship meets modern technology."}}
+    ],
+    "service_area": {"en": "We install decks throughout the Western Cape — Paarl, Stellenbosch, Franschhoek, Somerset West, Cape Town, and surrounding areas. Materials can be delivered anywhere in South Africa."}
+  }'::jsonb)
+on conflict (section_key) do update set content = excluded.content;
+
+-- ─── Services Detail ─────────────────────────────────────────
+insert into public.site_content (section_key, content) values
+  ('services_detail', '{
+    "heading": {"en": "Deck Types"},
+    "intro": {"en": "Whether you''re building on flat ground, a slope, around a pool, or on a balcony — we''ve got a solution for every space."},
+    "items": [
+      {
+        "icon": "🏡",
+        "title": {"en": "Ground-Level Decks"},
+        "description": {"en": "The most popular option for flat gardens, patios, and outdoor living areas. Built directly on or close to ground level with a low-profile substructure.\n\nIdeal for entertainment areas, braai spaces, or extending your indoor living outdoors. Quick to build and cost-effective."},
+        "features": ["Flat gardens", "Patios", "Entertainment areas", "Pool surrounds", "Cost-effective"]
+      },
+      {
+        "icon": "📐",
+        "title": {"en": "Raised Decks"},
+        "description": {"en": "Perfect for sloped gardens, elevated terraces, or when you need to match an indoor floor level. Built on posts and bearers with a full structural substructure.\n\nRaised decks create usable outdoor space on otherwise difficult terrain and can include integrated steps, railings, and storage underneath."},
+        "features": ["Sloped gardens", "Elevated terraces", "Multi-level", "Under-deck storage", "Integrated steps"]
+      },
+      {
+        "icon": "🏊",
+        "title": {"en": "Pool Decks"},
+        "description": {"en": "Designed specifically for wet environments. Non-slip profiles, proper drainage, and moisture-resistant materials ensure safety and durability around your pool.\n\nWe recommend grooved board profiles and composite or treated hardwood for maximum longevity in pool environments."},
+        "features": ["Non-slip profiles", "Drainage design", "Moisture resistant", "Composite or hardwood", "Chemical resistant"]
+      },
+      {
+        "icon": "🏢",
+        "title": {"en": "Balcony & Rooftop Decks"},
+        "description": {"en": "Overlay decking for concrete balconies, rooftops, and flat roofs. Built on adjustable pedestals — no drilling into the existing surface required.\n\nPedestal systems allow for drainage underneath and can compensate for uneven surfaces. Lightweight composite boards are often ideal for these applications."},
+        "features": ["Pedestal system", "No drilling", "Drainage underneath", "Level correction", "Lightweight options"]
+      }
+    ]
+  }'::jsonb)
+on conflict (section_key) do update set content = excluded.content;
 
 -- ─── FAQs ────────────────────────────────────────────────────
+delete from public.faqs;
 insert into public.faqs (question, answer, display_order, is_active) values
-  ('{"en": "What decking materials do you offer?", "af": "Watter dekmateriaal bied julle aan?"}'::jsonb,
-   '{"en": "We stock a range of premium hardwoods, treated pine, and composite decking. Each material is available in multiple profiles and finishes. Use our configurator to compare options side by side.", "af": "Ons hou ''n reeks premium houthout, behandelde denne, en saamgestelde dekke aan. Elke materiaal is beskikbaar in verskeie profiele en afwerkings. Gebruik ons konfigurator om opsies langs mekaar te vergelyk."}'::jsonb,
+  -- Materials
+  ('{"en": "What decking materials do you offer?"}'::jsonb,
+   '{"en": "We offer four material categories: Treated Pine (CCA) — affordable and versatile, Balau Hardwood — dense and naturally durable, Garapa Hardwood — golden tones with excellent longevity, and Composite (WPC) — low maintenance with no staining required. Each is available in multiple profiles and dimensions."}'::jsonb,
    1, true),
-  ('{"en": "Can I order materials without installation?", "af": "Kan ek materiale sonder installasie bestel?"}'::jsonb,
-   '{"en": "Absolutely. Our configurator generates a complete bill of materials that you can order for nationwide delivery. We include free build plans with every order so you can DIY with confidence.", "af": "Absoluut. Ons konfigurator genereer ''n volledige materiaalstaat wat jy kan bestel vir landwye aflewering. Ons sluit gratis bouplanne by elke bestelling in sodat jy met vertroue self kan bou."}'::jsonb,
+
+  ('{"en": "What''s the difference between pine, hardwood, and composite?"}'::jsonb,
+   '{"en": "Treated pine is the most affordable option — it''s versatile and takes stain well, but needs regular maintenance (re-staining every 1-2 years). Hardwood (Balau/Garapa) is naturally durable and weather-resistant, with a beautiful grain, but costs more. Composite is the most expensive upfront but requires virtually zero maintenance — no staining, sealing, or sanding. Our configurator lets you compare prices for all materials side by side."}'::jsonb,
    2, true),
-  ('{"en": "Where do you install?", "af": "Waar installeer julle?"}'::jsonb,
-   '{"en": "Our installation team operates throughout the Western Cape. For areas outside our service radius, we offer delivery with detailed build plans.", "af": "Ons installasiespan werk regoor die Wes-Kaap. Vir gebiede buite ons diensradius bied ons aflewering met gedetailleerde bouplanne."}'::jsonb,
+
+  ('{"en": "How long will my deck last?"}'::jsonb,
+   '{"en": "With proper maintenance: Treated Pine 15-20 years, Hardwood (Balau/Garapa) 25-40 years, Composite 25+ years. Lifespan depends on exposure, maintenance, and installation quality. We provide maintenance guides with every build plan."}'::jsonb,
    3, true),
-  ('{"en": "How accurate are the online quotes?", "af": "Hoe akkuraat is die aanlyn kwotasies?"}'::jsonb,
-   '{"en": "Very accurate. The configurator calculates exact quantities for boards, substructure, fixings, and edge trims based on your dimensions. Final pricing may only vary if site conditions require additional substructure work.", "af": "Baie akkuraat. Die konfigurator bereken presiese hoeveelhede vir planke, substruktuur, hegstukke, en randafwerkings gebaseer op jou afmetings. Finale pryse kan slegs wissel as terreintoestande addisionele substruktuurwerk vereis."}'::jsonb,
+
+  -- Pricing
+  ('{"en": "How is pricing calculated?"}'::jsonb,
+   '{"en": "Our configurator calculates exact quantities based on your dimensions — every board, joist, bearer, screw, and spacer. Pricing factors include material type, deck area, board direction (diagonal uses ~10% more material), extras (steps, railings), and installation if selected. The price you see is the price you pay."}'::jsonb,
    4, true),
-  ('{"en": "Do you offer free site visits?", "af": "Bied julle gratis terreinbesoeke aan?"}'::jsonb,
-   '{"en": "Yes. For installation projects in the Western Cape, we offer a free site visit to assess the area, confirm measurements, and discuss your design preferences.", "af": "Ja. Vir installasieprojekte in die Wes-Kaap bied ons ''n gratis terreinbesoek aan om die area te assesseer, afmetings te bevestig, en jou ontwerpvoorkeure te bespreek."}'::jsonb,
-   5, true)
-on conflict do nothing;
+
+  ('{"en": "Why does diagonal board direction cost more?"}'::jsonb,
+   '{"en": "Diagonal boards require approximately 10% more material due to angled cuts at the edges, and herringbone/chevron patterns use about 15% more. Our configurator accounts for this automatically and shows you the exact difference in price."}'::jsonb,
+   5, true),
+
+  -- Installation
+  ('{"en": "Do you install outside the Western Cape?"}'::jsonb,
+   '{"en": "Currently, our installation team operates throughout the Western Cape — Paarl, Stellenbosch, Franschhoek, Somerset West, Cape Town, and surrounding areas. For other regions, we offer supply-only with nationwide delivery and a detailed 7-page build plan so you or your contractor can install with confidence."}'::jsonb,
+   6, true),
+
+  ('{"en": "How long does installation take?"}'::jsonb,
+   '{"en": "A typical ground-level deck (15-25m²) takes 2-3 days. Raised decks and more complex designs may take 4-5 days. We''ll confirm the timeline after the free site visit. Installation includes all materials, labour, and cleanup."}'::jsonb,
+   7, true),
+
+  ('{"en": "Can I order materials without installation?"}'::jsonb,
+   '{"en": "Absolutely. Our supply-only option delivers cut-to-spec materials anywhere in South Africa. Every order includes a free 7-page build plan with board layout, substructure diagram, cut list, screw pattern, and installation notes — everything you or your contractor needs to build."}'::jsonb,
+   8, true),
+
+  -- Maintenance
+  ('{"en": "How do I maintain my deck?"}'::jsonb,
+   '{"en": "For timber decks: clean with a deck-specific cleaner annually, and re-stain every 1-2 years (pine) or apply oil annually (hardwood). Avoid pressure washing at high pressure as it can damage the wood grain. Composite decks only need occasional washing with soapy water. We include a maintenance guide with every build plan."}'::jsonb,
+   9, true),
+
+  -- Delivery
+  ('{"en": "How long does delivery take?"}'::jsonb,
+   '{"en": "Materials are typically delivered within 5-10 business days, depending on your location and product availability. Western Cape deliveries are usually faster. You''ll receive tracking information once your order ships."}'::jsonb,
+   10, true),
+
+  ('{"en": "Do you offer free site visits?"}'::jsonb,
+   '{"en": "Yes, for installation projects in the Western Cape we offer a free site visit to assess the area, confirm measurements, check for any site-specific requirements, and discuss your design preferences. Book via our contact page or configurator."}'::jsonb,
+   11, true),
+
+  ('{"en": "How accurate are the online quotes?"}'::jsonb,
+   '{"en": "Very accurate. The configurator calculates exact quantities for boards, substructure, fixings, and trims based on your dimensions. Final pricing may only vary if a site visit reveals additional substructure requirements (e.g., significant slope or poor soil conditions)."}'::jsonb,
+   12, true);
+
+-- ─── Legacy Key-Value Content ────────────────────────────────
+insert into public.site_content (section_key, content) values
+  ('hero_heading',       '{"en": "Design Your Deck. Built to Last."}'::jsonb),
+  ('hero_subheading',    '{"en": "Custom decking — configured, quoted, and installed. Design your dream deck online or order materials for your DIY project."}'::jsonb),
+  ('hero_cta_primary',   '{"en": "Design Your Deck"}'::jsonb),
+  ('hero_cta_secondary', '{"en": "Browse Materials"}'::jsonb),
+  ('cta_heading',        '{"en": "Ready? Design your deck in under 5 minutes."}'::jsonb),
+  ('cta_text',           '{"en": "Our configurator calculates everything — materials, substructure, fixings, and labour. Get an instant quote or book a free site visit."}'::jsonb)
+on conflict (section_key) do update set content = excluded.content;
+
+-- ============================================================
+-- CONFIGURATOR SEED DATA
+-- ============================================================
+
+-- ─── Material Types ────────────────────────────────────────
+insert into public.material_types (id, name, slug, description, durability_rating, maintenance_level, lifespan_years_min, lifespan_years_max, is_composite, display_order, is_active) values
+  ('mt-pine',      '{"en":"Treated Pine (CCA)","af":"Behandelde Den"}'::jsonb,       'treated-pine',  '{"en":"Affordable, versatile, and stainable. The most popular choice for residential decks.","af":"Bekostigbaar, veelsydig en kleurbaar."}'::jsonb, 3, 'medium', 15, 20, false, 1, true),
+  ('mt-balau',     '{"en":"Balau Hardwood","af":"Balau Hardhout"}'::jsonb,            'balau',         '{"en":"Dense, durable, and naturally beautiful. Rich grain with excellent weather resistance.","af":"Dig, duursaam en natuurlik mooi."}'::jsonb, 5, 'low', 25, 40, false, 2, true),
+  ('mt-garapa',    '{"en":"Garapa Hardwood","af":"Garapa Hardhout"}'::jsonb,          'garapa',        '{"en":"Golden tones that age beautifully. Excellent durability with a premium finish.","af":"Goue tone wat mooi verouder."}'::jsonb, 4, 'low', 25, 35, false, 3, true),
+  ('mt-composite', '{"en":"Composite (WPC)","af":"Saamgestelde (WPC)"}'::jsonb,      'composite',     '{"en":"Low maintenance, consistent colour, and eco-friendly. No staining or sealing required.","af":"Lae onderhoud, konsekwente kleur en ekovriendelik."}'::jsonb, 5, 'none', 25, 50, true, 4, true)
+on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, durability_rating=excluded.durability_rating, maintenance_level=excluded.maintenance_level, lifespan_years_min=excluded.lifespan_years_min, lifespan_years_max=excluded.lifespan_years_max, is_composite=excluded.is_composite, display_order=excluded.display_order;
+
+-- ─── Deck Types ────────────────────────────────────────────
+insert into public.deck_types (id, name, slug, description, image_url, complexity_multiplier, labour_complexity_multiplier, applicable_extras, display_order, is_active) values
+  ('dt-ground',   '{"en":"Ground-Level Deck","af":"Grondvlak Dek"}'::jsonb,   'ground-level', '{"en":"Built directly on or close to ground level. Ideal for patios and entertainment areas."}'::jsonb, null, 1.0, 1.0, '{}', 1, true),
+  ('dt-raised',   '{"en":"Raised Deck","af":"Verhoogde Dek"}'::jsonb,         'raised',       '{"en":"Built on posts and bearers for sloped gardens or elevated terraces."}'::jsonb, null, 1.25, 1.3, '{}', 2, true),
+  ('dt-pool',     '{"en":"Pool Deck","af":"Swembad Dek"}'::jsonb,             'pool',         '{"en":"Designed for wet environments with non-slip profiles and drainage."}'::jsonb, null, 1.15, 1.2, '{}', 3, true),
+  ('dt-balcony',  '{"en":"Balcony / Rooftop","af":"Balkon / Dakdek"}'::jsonb, 'balcony',      '{"en":"Overlay decking on pedestals — no drilling into existing surfaces."}'::jsonb, null, 1.3, 1.35, '{}', 4, true)
+on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, complexity_multiplier=excluded.complexity_multiplier, labour_complexity_multiplier=excluded.labour_complexity_multiplier, display_order=excluded.display_order;
+
+-- ─── Board Directions ──────────────────────────────────────
+insert into public.board_directions (id, name, slug, description, image_url, material_multiplier, labour_multiplier, display_order, is_active) values
+  ('bd-straight',    '{"en":"Straight","af":"Reguit"}'::jsonb,           'straight',    '{"en":"Boards run parallel to the longest edge. Most efficient use of materials."}'::jsonb, null, 1.0,  1.0,  1, true),
+  ('bd-diagonal',    '{"en":"Diagonal (45°)","af":"Diagonaal (45°)"}'::jsonb, 'diagonal', '{"en":"Boards at 45° angle. Uses ~10% more material due to angled cuts."}'::jsonb, null, 1.10, 1.10, 2, true),
+  ('bd-herringbone', '{"en":"Herringbone","af":"Visgraat"}'::jsonb,      'herringbone', '{"en":"Classic V-pattern. Uses ~15% more material and takes longer to install."}'::jsonb, null, 1.15, 1.25, 3, true),
+  ('bd-chevron',     '{"en":"Chevron","af":"Chevron"}'::jsonb,           'chevron',     '{"en":"Mitre-cut V-pattern for a clean point. Premium look with higher material use."}'::jsonb, null, 1.15, 1.30, 4, true)
+on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, material_multiplier=excluded.material_multiplier, labour_multiplier=excluded.labour_multiplier, display_order=excluded.display_order;
+
+-- ─── Board Profiles ────────────────────────────────────────
+insert into public.board_profiles (id, name, slug, description, image_url, price_modifier_percent, display_order, is_active) values
+  ('bp-smooth',  '{"en":"Smooth (Planed)","af":"Glad (Geskaafd)"}'::jsonb, 'smooth',  '{"en":"Clean, contemporary finish. Best for barefoot comfort."}'::jsonb, null, 0,  1, true),
+  ('bp-grooved', '{"en":"Grooved (Anti-slip)","af":"Gegroef (Anti-glip)"}'::jsonb, 'grooved', '{"en":"Channels for grip and drainage. Recommended for pool and wet areas."}'::jsonb, null, 5,  2, true),
+  ('bp-brushed', '{"en":"Brushed (Textured)","af":"Geborstel (Tekstuur)"}'::jsonb, 'brushed', '{"en":"Wire-brushed texture for a natural, rustic look with good grip."}'::jsonb, null, 8, 3, true)
+on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, price_modifier_percent=excluded.price_modifier_percent, display_order=excluded.display_order;
+
+-- ─── Finish Options (per material) ─────────────────────────
+insert into public.finish_options (id, material_type_id, name, slug, hex_colour, price_modifier_cents, display_order, is_active) values
+  -- Pine finishes
+  ('fo-pine-natural',   'mt-pine', '{"en":"Natural (Unfinished)","af":"Natuurlik"}'::jsonb,     'natural',       null,     0,      1, true),
+  ('fo-pine-clear',     'mt-pine', '{"en":"Clear Seal","af":"Deursigtige Seël"}'::jsonb,        'clear-seal',    null,     4500,   2, true),
+  ('fo-pine-honey',     'mt-pine', '{"en":"Honey Oak Stain","af":"Heuningeik Beis"}'::jsonb,    'honey-oak',     '#C4963A', 5500,  3, true),
+  ('fo-pine-walnut',    'mt-pine', '{"en":"Dark Walnut Stain","af":"Donker Okkerneut"}'::jsonb, 'dark-walnut',   '#5C3A1E', 5500,  4, true),
+  ('fo-pine-charcoal',  'mt-pine', '{"en":"Charcoal Stain","af":"Houtskool Beis"}'::jsonb,     'charcoal',      '#3A3A3A', 5500,  5, true),
+  -- Balau finishes
+  ('fo-balau-natural',  'mt-balau', '{"en":"Natural (Oil)","af":"Natuurlik (Olie)"}'::jsonb,    'natural-oil',   '#8B6B3D', 3500,  1, true),
+  ('fo-balau-teak',     'mt-balau', '{"en":"Teak Oil","af":"Teak Olie"}'::jsonb,                'teak-oil',      '#A67C52', 4500,  2, true),
+  -- Garapa finishes
+  ('fo-garapa-natural', 'mt-garapa', '{"en":"Natural (Oil)","af":"Natuurlik (Olie)"}'::jsonb,   'garapa-natural', '#C4A04A', 3500, 1, true),
+  ('fo-garapa-golden',  'mt-garapa', '{"en":"Golden Oil","af":"Goue Olie"}'::jsonb,             'golden-oil',    '#D4B04A', 4500,  2, true),
+  -- Composite finishes (colour is built in)
+  ('fo-comp-teak',      'mt-composite', '{"en":"Teak","af":"Teak"}'::jsonb,                     'comp-teak',     '#A67C52', 0,     1, true),
+  ('fo-comp-grey',      'mt-composite', '{"en":"Stone Grey","af":"Klipgrys"}'::jsonb,           'comp-grey',     '#8A8A82', 0,     2, true),
+  ('fo-comp-charcoal',  'mt-composite', '{"en":"Charcoal","af":"Houtskool"}'::jsonb,            'comp-charcoal', '#4A4A48', 0,     3, true),
+  ('fo-comp-walnut',    'mt-composite', '{"en":"Walnut","af":"Okkerneut"}'::jsonb,              'comp-walnut',   '#6B4E37', 0,     4, true)
+on conflict (id) do update set name=excluded.name, slug=excluded.slug, hex_colour=excluded.hex_colour, price_modifier_cents=excluded.price_modifier_cents, display_order=excluded.display_order;
+
+-- ─── Configurator Rates (per material × rate type) ─────────
+-- Prices in cents per m²
+insert into public.configurator_rates (id, material_type_id, rate_type, supplier_cost_cents, customer_price_cents, unit, is_active) values
+  -- Pine rates
+  ('cr-pine-boards',  'mt-pine', 'boards_per_m2',       45000,  63000,  'per_m2', true),
+  ('cr-pine-sub',     'mt-pine', 'substructure_per_m2', 18000,  25200,  'per_m2', true),
+  ('cr-pine-fix',     'mt-pine', 'fixings_per_m2',       4500,   6300,  'per_m2', true),
+  ('cr-pine-labour',  'mt-pine', 'labour_per_m2',       25000,  35000,  'per_m2', true),
+  ('cr-pine-stain',   'mt-pine', 'staining_per_m2',      3500,   5000,  'per_m2', true),
+  -- Balau rates
+  ('cr-balau-boards', 'mt-balau', 'boards_per_m2',       85000, 119000, 'per_m2', true),
+  ('cr-balau-sub',    'mt-balau', 'substructure_per_m2',  22000,  30800, 'per_m2', true),
+  ('cr-balau-fix',    'mt-balau', 'fixings_per_m2',        5500,   7700, 'per_m2', true),
+  ('cr-balau-labour', 'mt-balau', 'labour_per_m2',        32000,  44800, 'per_m2', true),
+  ('cr-balau-stain',  'mt-balau', 'staining_per_m2',       3000,   4200, 'per_m2', true),
+  -- Garapa rates
+  ('cr-garapa-boards','mt-garapa', 'boards_per_m2',       78000, 109200, 'per_m2', true),
+  ('cr-garapa-sub',   'mt-garapa', 'substructure_per_m2',  22000,  30800, 'per_m2', true),
+  ('cr-garapa-fix',   'mt-garapa', 'fixings_per_m2',        5500,   7700, 'per_m2', true),
+  ('cr-garapa-labour','mt-garapa', 'labour_per_m2',        30000,  42000, 'per_m2', true),
+  ('cr-garapa-stain', 'mt-garapa', 'staining_per_m2',       3000,   4200, 'per_m2', true),
+  -- Composite rates
+  ('cr-comp-boards',  'mt-composite', 'boards_per_m2',      95000, 133000, 'per_m2', true),
+  ('cr-comp-sub',     'mt-composite', 'substructure_per_m2', 20000,  28000, 'per_m2', true),
+  ('cr-comp-fix',     'mt-composite', 'fixings_per_m2',       6000,   8400, 'per_m2', true),
+  ('cr-comp-labour',  'mt-composite', 'labour_per_m2',       28000,  39200, 'per_m2', true)
+on conflict (id) do update set supplier_cost_cents=excluded.supplier_cost_cents, customer_price_cents=excluded.customer_price_cents;
+
+-- ─── Configurator Extras ───────────────────────────────────
+insert into public.configurator_extras (id, name, slug, description, icon, pricing_model, display_order, is_active) values
+  ('ce-steps',    '{"en":"Steps","af":"Trappe"}'::jsonb,                  'steps',     '{"en":"Add timber steps to your deck."}'::jsonb,                     'stairs',     'per_step_metre',    1, true),
+  ('ce-railing',  '{"en":"Railing","af":"Reling"}'::jsonb,               'railing',   '{"en":"Timber or stainless steel balustrade along edges."}'::jsonb,   'fence',      'per_linear_metre',  2, true),
+  ('ce-fascia',   '{"en":"Fascia Board","af":"Fassiabord"}'::jsonb,      'fascia',    '{"en":"Trim boards to cover exposed substructure."}'::jsonb,          'layers',     'per_linear_metre',  3, true),
+  ('ce-lighting', '{"en":"LED Deck Lights","af":"LED Dekligte"}'::jsonb, 'lighting',  '{"en":"Recessed LED lights in deck boards or steps."}'::jsonb,        'lightbulb',  'per_unit',          4, true),
+  ('ce-skirting', '{"en":"Skirting","af":"Plint"}'::jsonb,               'skirting',  '{"en":"Enclose the space under a raised deck."}'::jsonb,              'panel-left', 'per_linear_metre',  5, true),
+  ('ce-pergola',  '{"en":"Pergola Frame","af":"Pergolatrame"}'::jsonb,   'pergola',   '{"en":"Timber pergola structure over your deck."}'::jsonb,            'tent',       'per_m2',            6, true)
+on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, pricing_model=excluded.pricing_model, display_order=excluded.display_order;
+
+-- ─── Extras Pricing (per extra, optionally per material) ───
+insert into public.extras_pricing (id, extra_id, material_type_id, variant_label, supplier_cost_cents, customer_price_cents, display_order, is_active) values
+  -- Steps: per step-metre (width of step × number of steps)
+  ('ep-steps-pine',    'ce-steps',   'mt-pine',      'Pine',      85000,  119000, 1, true),
+  ('ep-steps-balau',   'ce-steps',   'mt-balau',     'Balau',    145000,  203000, 2, true),
+  ('ep-steps-garapa',  'ce-steps',   'mt-garapa',    'Garapa',   135000,  189000, 3, true),
+  ('ep-steps-comp',    'ce-steps',   'mt-composite', 'Composite',120000,  168000, 4, true),
+  -- Railing: per linear metre
+  ('ep-rail-timber',   'ce-railing',  null,  'Timber',           65000,   91000, 1, true),
+  ('ep-rail-steel',    'ce-railing',  null,  'Stainless Steel', 125000,  175000, 2, true),
+  ('ep-rail-glass',    'ce-railing',  null,  'Glass Panel',     185000,  259000, 3, true),
+  -- Fascia: per linear metre
+  ('ep-fascia-pine',   'ce-fascia',  'mt-pine',      'Pine',      12000,   16800, 1, true),
+  ('ep-fascia-balau',  'ce-fascia',  'mt-balau',     'Balau',     22000,   30800, 2, true),
+  ('ep-fascia-garapa', 'ce-fascia',  'mt-garapa',    'Garapa',    20000,   28000, 3, true),
+  ('ep-fascia-comp',   'ce-fascia',  'mt-composite', 'Composite', 18000,   25200, 4, true),
+  -- LED lights: per unit
+  ('ep-light-recessed','ce-lighting', null, 'Recessed (warm white)', 15000, 21000, 1, true),
+  ('ep-light-step',    'ce-lighting', null, 'Step light (warm white)', 18000, 25200, 2, true),
+  -- Skirting: per linear metre
+  ('ep-skirt-pine',    'ce-skirting', 'mt-pine',      'Pine',      18000,  25200, 1, true),
+  ('ep-skirt-comp',    'ce-skirting', 'mt-composite', 'Composite', 25000,  35000, 2, true),
+  -- Pergola: per m²
+  ('ep-pergola-pine',  'ce-pergola',  'mt-pine',  'Pine',         95000, 133000, 1, true),
+  ('ep-pergola-balau', 'ce-pergola',  'mt-balau', 'Balau',       155000, 217000, 2, true)
+on conflict (id) do update set supplier_cost_cents=excluded.supplier_cost_cents, customer_price_cents=excluded.customer_price_cents, display_order=excluded.display_order;
 
 -- ─── Admin User Note ─────────────────────────────────────────
 -- To create an admin user:

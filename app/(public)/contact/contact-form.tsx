@@ -87,6 +87,25 @@ export function ContactForm() {
       </div>
 
       <div className="space-y-2">
+        <Label htmlFor="service">Enquiry Type</Label>
+        <select
+          id="service"
+          name="service"
+          disabled={isPending}
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <option value="">Select a topic (optional)</option>
+          <option value="Deck Installation">Deck Installation</option>
+          <option value="Materials Order">Materials Order</option>
+          <option value="Free Site Visit">Free Site Visit</option>
+          <option value="Quote Request">Quote Request</option>
+          <option value="Material Advice">Material Advice</option>
+          <option value="Maintenance & Repairs">Maintenance & Repairs</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="message">Message *</Label>
         <Textarea
           id="message"
