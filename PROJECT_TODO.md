@@ -2,7 +2,7 @@
 
 > Last updated: 2026-02-26
 
-## Status: ~45% Complete (Foundation + Configurator UI done, shop/admin/canvas pending)
+## Status: ~65% Complete (Foundation + Configurator + Canvas + Shop done)
 
 Build specs: `project_brief/build plan/BUILD_INDEX.md`
 
@@ -18,9 +18,9 @@ Build specs: `project_brief/build plan/BUILD_INDEX.md`
 - [x] Build 06: Quotes & Leads Schema (migration 029)
 - [x] Build 07: RLS Policies (migration 030)
 
-### Phase 2: Configurator Wizard (Builds 08–17) — PARTIAL
+### Phase 2: Configurator Wizard (Builds 08–17) — MOSTLY DONE
 
-- [ ] Build 08: Seed Data — materials, products, rates, variants
+- [x] Build 08: Seed Data — 15 products, 56 variants, 9 board dims, 4 kits, bulk pricing
 - [x] Build 09: Pricing Engine — configurator rate-based calculation
 - [x] Build 10: Configurator Step 1 — Deck Type (ground, raised, pool, balcony)
 - [x] Build 11: Configurator Step 2 — Material Choice (pine, hardwood, composite)
@@ -31,21 +31,21 @@ Build specs: `project_brief/build plan/BUILD_INDEX.md`
 - [ ] Build 16: Quote Save & Lead Capture
 - [ ] Build 17: Admin Configurator Rates UI
 
-### Phase 3: Designer Canvas (Builds 18–22) — NOT STARTED
+### Phase 3: Designer Canvas (Builds 18–22) — MOSTLY DONE
 
-- [ ] Build 18: Grid-Snap Canvas — interactive deck shape drawing
-- [ ] Build 19: Board Layout Engine — smart board placement algorithm
-- [ ] Build 20: Cutoff Optimisation — intelligent offcut reuse
+- [x] Build 18: Grid-Snap Canvas — interactive deck shape drawing (3 modes: quick/designer/consultation)
+- [x] Build 19: Board Layout Engine — scanline board placement, joists, bearers, fixings
+- [x] Build 20: Cutoff Optimisation — greedy longest-first offcut reuse algorithm
 - [ ] Build 21: 3D Preview (optional stretch goal)
 - [ ] Build 22: Build Plan PDF — professional installation document
 
-### Phase 4: Shop & E-Commerce (Builds 23–29) — SCAFFOLDED
+### Phase 4: Shop & E-Commerce (Builds 23–29) — PARTIAL
 
 - [x] Shop page structure (browse, detail, cart, checkout pages exist)
-- [ ] Build 23: Materials Catalogue — product data population
-- [ ] Build 24: Shop Browse — category filters, search, sorting
-- [ ] Build 25: Product Detail — variants, pricing, add-to-cart
-- [ ] Build 26: Kits & Bundles — pre-configured deck packages
+- [x] Build 23: Materials Catalogue — product data population (via seed)
+- [x] Build 24: Shop Browse — category sidebar, material filters, search, sorting, pagination
+- [x] Build 25: Product Detail — variant selector, bulk pricing, specs, related products
+- [x] Build 26: Kits & Bundles — 4 pre-configured deck packages with component lists
 - [ ] Build 27: Unified Cart — configurator + shop items together
 - [ ] Build 28: Cart Upsells — accessories, maintenance products
 - [ ] Build 29: Checkout & Paystack — payment integration
@@ -71,10 +71,9 @@ Build specs: `project_brief/build plan/BUILD_INDEX.md`
 
 ### Critical Path (Next Steps)
 
-1. **Build 08** — Seed data (materials, products, rates) → unlocks shop
-2. **Builds 18–20** — Designer Canvas → highest risk, core differentiator
-3. **Builds 24–26** — Shop browse + product detail + kits
-4. **Build 27** — Unified cart (configurator + shop)
-5. **Build 29** — Checkout + Paystack
-6. **Build 31** — Build Plan PDF
-7. **Build 38** — Final polish & launch
+1. **Build 16** — Quote Save & Lead Capture
+2. **Build 27** — Unified cart (configurator + shop)
+3. **Build 29** — Checkout + Paystack
+4. **Build 22** — Build Plan PDF
+5. **Builds 30–34** — Admin dashboard
+6. **Builds 35–38** — Content, SEO, polish & launch
