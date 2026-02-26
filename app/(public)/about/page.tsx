@@ -50,8 +50,8 @@ export default async function AboutPage() {
         <section className="mx-auto mt-16 max-w-3xl">
           <h2 className="text-2xl font-bold">Our Story</h2>
           <div className="mt-6 space-y-4 leading-relaxed text-muted-foreground">
-            {content.body.en.split("\n\n").map((paragraph, i) => (
-              <p key={i}>{paragraph}</p>
+            {content.body.en.split("\n\n").map((paragraph) => (
+              <p key={paragraph.substring(0, 30)}>{paragraph}</p>
             ))}
           </div>
         </section>
@@ -69,8 +69,8 @@ export default async function AboutPage() {
             From your first click to enjoying your new deck.
           </p>
           <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {content.process.map((item, i) => (
-              <div key={i} className="text-center">
+            {content.process.map((item) => (
+              <div key={item.step} className="text-center">
                 <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                   {item.step}
                 </div>
@@ -93,8 +93,8 @@ export default async function AboutPage() {
             Why Choose The Deck Lab
           </h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2">
-            {content.values.map((value, i) => (
-              <div key={i} className="rounded-xl border bg-card p-6">
+            {content.values.map((value) => (
+              <div key={value.title.en} className="rounded-xl border bg-card p-6">
                 <h3 className="font-semibold">{value.title.en}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {value.description.en}

@@ -6,6 +6,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   type ReactNode,
 } from "react";
 import type { LocalizedString } from "@/types/cms";
@@ -29,7 +30,7 @@ const LocaleContext = createContext<LocaleContextType>({
 });
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
+  const [locale, setLocale] = useState<Locale>(() => {
     if (globalThis.localStorage !== undefined) {
       const stored = globalThis.localStorage.getItem("yoros-lang");
       if (stored === "en" || stored === "af") return stored;
@@ -41,8 +42,8 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = locale;
   }, [locale]);
 
-  const setLocale = useCallback((next: Locale) => {
-    setLocaleState(next);
+  const changeLocale = useCallback((next: Locale) => {
+    setLocale(next);
     localStorage.setItem("yoros-lang", next);
     document.documentElement.lang = next;
   }, []);
@@ -56,8 +57,13 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     [locale]
   );
 
+  const ctx = useMemo(
+    () => ({ locale, setLocale: changeLocale, t }),
+    [locale, changeLocale, t]
+  );
+
   return (
-    <LocaleContext.Provider value={{ locale, setLocale, t }}>
+    <LocaleContext.Provider value={ctx}>
       {children}
     </LocaleContext.Provider>
   );

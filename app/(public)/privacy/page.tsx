@@ -28,8 +28,8 @@ export default async function PrivacyPage() {
 
       {content?.body?.en ? (
         <div className="prose prose-neutral dark:prose-invert mt-6 max-w-none">
-          {content.body.en.split("\n\n").map((p, i) => (
-            <p key={i}>{p}</p>
+          {content.body.en.split("\n\n").map((p) => (
+            <p key={`privacy-${p.substring(0, 30)}`}>{p}</p>
           ))}
         </div>
       ) : (

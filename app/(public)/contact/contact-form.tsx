@@ -121,8 +121,8 @@ export function ContactForm() {
         By submitting this form you agree to our{" "}
         <a href="/privacy" className="underline hover:text-foreground">
           Privacy Policy
-        </a>
-        . We will never share your information with third parties.
+        </a>{". "}
+        We will never share your information with third parties.
       </p>
 
       <Button type="submit" disabled={isPending} className="w-full sm:w-auto">

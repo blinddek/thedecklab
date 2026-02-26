@@ -211,7 +211,7 @@ export default async function HomePage() {
             )}
             <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
               {howItWorks.items.map((item, i) => (
-                <div key={i} className="text-center">
+                <div key={item.step ?? item.title?.en ?? i} className="text-center">
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
                     {item.step ?? i + 1}
                   </div>
@@ -247,9 +247,9 @@ export default async function HomePage() {
               </p>
             )}
             <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-              {materials.items.map((item, i) => (
+              {materials.items.map((item) => (
                 <div
-                  key={i}
+                  key={item.title?.en ?? item.from_price}
                   className="overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md"
                 >
                   {item.image ? (
@@ -306,9 +306,9 @@ export default async function HomePage() {
               </p>
             )}
             <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {services.items.map((item, i) => (
+              {services.items.map((item) => (
                 <div
-                  key={i}
+                  key={item.title?.en ?? item.icon}
                   className="rounded-xl border bg-card p-6 transition-shadow hover:shadow-md"
                 >
                   {item.icon && (
