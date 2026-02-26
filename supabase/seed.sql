@@ -28,11 +28,12 @@ on conflict (section_key) do update set content = excluded.content;
 delete from public.nav_links;
 insert into public.nav_links (label, href, display_order, is_active) values
   ('{"en": "Home", "af": "Tuis"}'::jsonb, '/', 1, true),
-  ('{"en": "Shop", "af": "Winkel"}'::jsonb, '/shop', 2, true),
-  ('{"en": "Gallery", "af": "Galery"}'::jsonb, '/portfolio', 3, true),
-  ('{"en": "About", "af": "Oor Ons"}'::jsonb, '/about', 4, true),
-  ('{"en": "Contact", "af": "Kontak"}'::jsonb, '/contact', 5, true),
-  ('{"en": "FAQ", "af": "Vrae"}'::jsonb, '/faq', 6, true);
+  ('{"en": "Design Your Deck", "af": "Ontwerp Jou Dek"}'::jsonb, '/configure', 2, true),
+  ('{"en": "Shop", "af": "Winkel"}'::jsonb, '/shop', 3, true),
+  ('{"en": "Gallery", "af": "Galery"}'::jsonb, '/portfolio', 4, true),
+  ('{"en": "About", "af": "Oor Ons"}'::jsonb, '/about', 5, true),
+  ('{"en": "Contact", "af": "Kontak"}'::jsonb, '/contact', 6, true),
+  ('{"en": "FAQ", "af": "Vrae"}'::jsonb, '/faq', 7, true);
 
 -- ─── Footer Sections ─────────────────────────────────────────
 delete from public.footer_sections;
