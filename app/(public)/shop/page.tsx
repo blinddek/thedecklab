@@ -1,113 +1,109 @@
-import Link from "next/link";
 import { generatePageMetadata } from "@/lib/seo/metadata";
-import { getActiveProducts, getProductCategories } from "@/lib/shop/queries";
+import {
+  getActiveProductsWithVariants,
+  getProductCategoriesHierarchical,
+} from "@/lib/shop/queries";
+import { getMaterials } from "@/lib/deck/queries";
 import { ProductCard } from "@/components/shop/product-card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { CategorySidebar } from "@/components/shop/category-sidebar";
+import { ShopFilters } from "@/components/shop/shop-filters";
+import { Pagination } from "@/components/shop/pagination";
 
 export async function generateMetadata() {
   return generatePageMetadata("shop");
 }
 
 interface ShopPageProps {
-  searchParams: Promise<{ category?: string; search?: string; sort?: string }>;
+  readonly searchParams: Promise<{
+    category?: string;
+    search?: string;
+    sort?: string;
+    material?: string;
+    page?: string;
+  }>;
 }
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams;
-  const categorySlug = params.category;
+  const categorySlug = params.category ?? null;
   const search = params.search;
-  const sort = (params.sort as "newest" | "price_asc" | "price_desc") || "newest";
+  const sort = (params.sort as "newest" | "price_asc" | "price_desc" | "name_asc") || "newest";
+  const materialId = params.material ?? null;
+  const page = Math.max(1, Number(params.page) || 1);
 
-  const [products, categories] = await Promise.all([
-    getActiveProducts({ categorySlug, search, sort }),
-    getProductCategories(),
+  const [{ products, total }, categories, materials] = await Promise.all([
+    getActiveProductsWithVariants({
+      categorySlug: categorySlug ?? undefined,
+      materialTypeId: materialId ?? undefined,
+      search,
+      sort,
+      page,
+    }),
+    getProductCategoriesHierarchical(),
+    getMaterials(),
   ]);
+
+  const perPage = 12;
+  const totalPages = Math.ceil(total / perPage);
+
+  // Build a flat record of current search params for link building
+  const currentParams: Record<string, string> = {};
+  if (categorySlug) currentParams.category = categorySlug;
+  if (search) currentParams.search = search;
+  if (sort !== "newest") currentParams.sort = sort;
+  if (materialId) currentParams.material = materialId;
+  if (page > 1) currentParams.page = String(page);
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
       <h1 className="text-3xl font-bold text-foreground md:text-4xl">Shop</h1>
       <p className="mt-2 text-lg text-muted-foreground">
-        Browse our products
+        Browse our decking products and accessories
       </p>
 
-      {/* Filters */}
-      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        {/* Category filter */}
-        <div className="flex flex-wrap gap-2">
-          <Link href="/shop">
-            <Badge
-              variant={categorySlug ? "outline" : "default"}
-              className="cursor-pointer"
-            >
-              All
-            </Badge>
-          </Link>
-          {categories.map((cat) => (
-            <Link key={cat.id} href={`/shop?category=${cat.slug}`}>
-              <Badge
-                variant={categorySlug === cat.slug ? "default" : "outline"}
-                className="cursor-pointer"
-              >
-                {cat.name.en}
-              </Badge>
-            </Link>
-          ))}
-        </div>
+      <div className="mt-8 grid gap-8 lg:grid-cols-[240px_1fr]">
+        {/* Sidebar */}
+        <aside className="hidden lg:block">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Categories
+          </h2>
+          <CategorySidebar
+            categories={categories}
+            activeCategorySlug={categorySlug}
+          />
+        </aside>
 
-        {/* Search + Sort */}
-        <div className="flex gap-2">
-          <form action="/shop" method="get" className="flex gap-2">
-            {categorySlug && (
-              <input type="hidden" name="category" value={categorySlug} />
-            )}
-            <Input
-              name="search"
-              placeholder="Search products..."
-              defaultValue={search ?? ""}
-              className="w-48"
-            />
-          </form>
-          <div className="flex gap-1">
-            {(
-              [
-                ["newest", "Newest"],
-                ["price_asc", "Price ↑"],
-                ["price_desc", "Price ↓"],
-              ] as const
-            ).map(([value, label]) => (
-              <Link
-                key={value}
-                href={`/shop?${new URLSearchParams({
-                  ...(categorySlug ? { category: categorySlug } : {}),
-                  ...(search ? { search } : {}),
-                  sort: value,
-                })}`}
-              >
-                <Badge
-                  variant={sort === value ? "default" : "outline"}
-                  className="cursor-pointer"
-                >
-                  {label}
-                </Badge>
-              </Link>
-            ))}
-          </div>
+        {/* Main content */}
+        <div>
+          {/* Filters */}
+          <ShopFilters
+            materials={materials}
+            activeMaterialId={materialId}
+            sort={sort}
+            searchParams={currentParams}
+          />
+
+          {/* Product grid */}
+          {products.length === 0 ? (
+            <p className="mt-12 text-center text-muted-foreground">
+              No products found. Try adjusting your filters or check back soon!
+            </p>
+          ) : (
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            searchParams={currentParams}
+          />
         </div>
       </div>
-
-      {/* Product grid */}
-      {products.length === 0 ? (
-        <p className="mt-12 text-center text-muted-foreground">
-          No products found. Check back soon!
-        </p>
-      ) : (
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      )}
     </div>
   );
 }

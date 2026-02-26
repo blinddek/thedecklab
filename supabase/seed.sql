@@ -432,6 +432,325 @@ insert into public.extras_pricing (id, extra_id, material_type_id, variant_label
   ('ep-pergola-balau', 'ce-pergola',  'mt-balau', 'Balau',       155000, 217000, 2, true)
 on conflict (id) do update set supplier_cost_cents=excluded.supplier_cost_cents, customer_price_cents=excluded.customer_price_cents, display_order=excluded.display_order;
 
+-- ═══════════════════════════════════════════════════════════════
+-- BUILD 08 — PRODUCT CATALOGUE SEED DATA
+-- Products, Variants, Board Dimensions, Kits, Bulk Pricing
+-- ═══════════════════════════════════════════════════════════════
+
+-- ─── Product Categories (hierarchical) ──────────────────────
+delete from public.product_categories;
+insert into public.product_categories (id, name, slug, parent_id, material_type_id, display_order, is_active) values
+  -- Top-level categories
+  ('pc-boards',       '{"en":"Deck Boards","af":"Dekplanke"}'::jsonb,       'deck-boards',    null, null, 1, true),
+  ('pc-substructure', '{"en":"Substructure","af":"Substruktuur"}'::jsonb,    'substructure',   null, null, 2, true),
+  ('pc-fixings',      '{"en":"Fixings","af":"Bevestigings"}'::jsonb,        'fixings',        null, null, 3, true),
+  ('pc-finishing',    '{"en":"Finishing","af":"Afwerking"}'::jsonb,          'finishing',      null, null, 4, true),
+  ('pc-kits',         '{"en":"Deck Kits","af":"Dekstelle"}'::jsonb,         'deck-kits',      null, null, 5, true),
+  -- Board subcategories per material
+  ('pc-boards-pine',      '{"en":"Pine Boards","af":"Denplanke"}'::jsonb,             'pine-boards',      'pc-boards', 'mt-pine',      1, true),
+  ('pc-boards-balau',     '{"en":"Balau Boards","af":"Balau-planke"}'::jsonb,         'balau-boards',     'pc-boards', 'mt-balau',     2, true),
+  ('pc-boards-garapa',    '{"en":"Garapa Boards","af":"Garapa-planke"}'::jsonb,       'garapa-boards',    'pc-boards', 'mt-garapa',    3, true),
+  ('pc-boards-composite', '{"en":"Composite Boards","af":"Saamgestelde Planke"}'::jsonb, 'composite-boards', 'pc-boards', 'mt-composite', 4, true),
+  -- Substructure subcategories
+  ('pc-sub-joists',   '{"en":"Joists","af":"Balke"}'::jsonb,   'joists',  'pc-substructure', 'mt-pine', 1, true),
+  ('pc-sub-bearers',  '{"en":"Bearers","af":"Draers"}'::jsonb, 'bearers', 'pc-substructure', 'mt-pine', 2, true);
+
+-- ─── Products ───────────────────────────────────────────────
+delete from public.products where id in (
+  'p-pine-22x108','p-pine-32x114','p-balau-19x90','p-garapa-19x90','p-garapa-19x140',
+  'p-comp-22x140','p-joist-38x114','p-joist-38x152','p-bearer-76x228',
+  'p-fix-ss-screws','p-fix-galv-screws','p-fix-spacers','p-fix-joist-tape',
+  'p-fin-stain','p-fin-cleaner'
+);
+insert into public.products (id, name, slug, description, price_cents, images, category_id, stock_quantity, is_active, sku, material_type_id, dimensions, weight_kg) values
+  -- ── Deck Boards ──
+  ('p-pine-22x108',
+   '{"en":"Pine CCA 22×108mm Deck Board","af":"Den CCA 22×108mm Dekplank"}'::jsonb,
+   'pine-22x108',
+   '{"en":"CCA H3 treated pine deck board. Budget-friendly, ideal for ground-level residential decks. FSC certified.","af":"CCA H3 behandelde den dekplank. Bekostigbaar, ideaal vir grondvlak residensiële dekke. FSC gesertifiseer."}'::jsonb,
+   4500, '[]'::jsonb, 'pc-boards-pine', 200, true,
+   'DKB-PINE-22108', 'mt-pine', '{"width_mm":108,"thickness_mm":22}'::jsonb, 1.8),
+
+  ('p-pine-32x114',
+   '{"en":"Pine CCA 32×114mm Deck Board","af":"Den CCA 32×114mm Dekplank"}'::jsonb,
+   'pine-32x114',
+   '{"en":"Heavy-duty CCA treated pine board. Thicker profile for wider joist spacing and longer spans.","af":"Swaargewig CCA behandelde denplank. Dikker profiel vir wyer balkafstand en langer spanne."}'::jsonb,
+   7500, '[]'::jsonb, 'pc-boards-pine', 150, true,
+   'DKB-PINE-32114', 'mt-pine', '{"width_mm":114,"thickness_mm":32}'::jsonb, 3.2),
+
+  ('p-balau-19x90',
+   '{"en":"Balau 19×90mm Deck Board","af":"Balau 19×90mm Dekplank"}'::jsonb,
+   'balau-19x90',
+   '{"en":"Premium African hardwood with exceptional durability (Class 1). Naturally resistant to rot and insects. Beautiful grain.","af":"Premium Afrika-harthout met uitsonderlike duursaamheid (Klas 1). Natuurlik bestand teen vrot en insekte. Pragtige nerf."}'::jsonb,
+   8000, '[]'::jsonb, 'pc-boards-balau', 100, true,
+   'DKB-BALAU-1990', 'mt-balau', '{"width_mm":90,"thickness_mm":19}'::jsonb, 1.5),
+
+  ('p-garapa-19x90',
+   '{"en":"Garapa 19×90mm Deck Board","af":"Garapa 19×90mm Dekplank"}'::jsonb,
+   'garapa-19x90',
+   '{"en":"Golden Brazilian hardwood with Class 2 durability. Lighter colour that weathers to silver-grey. Excellent value.","af":"Goue Brasiliaanse harthout met Klas 2 duursaamheid. Ligter kleur wat verweer na silwergrys. Uitstekende waarde."}'::jsonb,
+   7500, '[]'::jsonb, 'pc-boards-garapa', 120, true,
+   'DKB-GARAPA-1990', 'mt-garapa', '{"width_mm":90,"thickness_mm":19}'::jsonb, 1.4),
+
+  ('p-garapa-19x140',
+   '{"en":"Garapa 19×140mm Wide Deck Board","af":"Garapa 19×140mm Breë Dekplank"}'::jsonb,
+   'garapa-19x140',
+   '{"en":"Wide-format Garapa board for fewer joints and a contemporary look. Same durability, bigger visual impact.","af":"Breëformaat Garapa-plank vir minder nate en ''n kontemporêre voorkoms. Dieselfde duursaamheid, groter visuele impak."}'::jsonb,
+   11000, '[]'::jsonb, 'pc-boards-garapa', 80, true,
+   'DKB-GARAPA-19140', 'mt-garapa', '{"width_mm":140,"thickness_mm":19}'::jsonb, 2.1),
+
+  ('p-comp-22x140',
+   '{"en":"Composite WPC 22×140mm Deck Board","af":"Saamgestelde WPC 22×140mm Dekplank"}'::jsonb,
+   'composite-22x140',
+   '{"en":"Wood-plastic composite board. Zero maintenance, splinter-free, UV stable. Available in 4 colours. 25-year warranty.","af":"Hout-plastiek saamgestelde plank. Geen onderhoud, splintervry, UV-stabiel. Beskikbaar in 4 kleure. 25-jaar waarborg."}'::jsonb,
+   25000, '[]'::jsonb, 'pc-boards-composite', 200, true,
+   'DKB-COMP-22140', 'mt-composite', '{"width_mm":140,"thickness_mm":22}'::jsonb, 3.5),
+
+  -- ── Substructure ──
+  ('p-joist-38x114',
+   '{"en":"Pine CCA 38×114mm Joist","af":"Den CCA 38×114mm Balk"}'::jsonb,
+   'joist-38x114',
+   '{"en":"Standard treated pine joist for residential decking. Supports spans up to 1.8m at 450mm centres.","af":"Standaard behandelde denbalk vir residensiële dekke. Ondersteun spanne tot 1.8m teen 450mm senters."}'::jsonb,
+   8500, '[]'::jsonb, 'pc-sub-joists', 150, true,
+   'SUB-JOIST-38114', 'mt-pine', '{"width_mm":114,"thickness_mm":38}'::jsonb, 4.2),
+
+  ('p-joist-38x152',
+   '{"en":"Pine CCA 38×152mm Heavy Joist","af":"Den CCA 38×152mm Swaar Balk"}'::jsonb,
+   'joist-38x152',
+   '{"en":"Heavy-duty joist for raised decks and longer spans. Required for balcony and rooftop installations.","af":"Swaargewig balk vir verhoogde dekke en langer spanne. Vereis vir balkon- en dakinstallasies."}'::jsonb,
+   13000, '[]'::jsonb, 'pc-sub-joists', 100, true,
+   'SUB-JOIST-38152', 'mt-pine', '{"width_mm":152,"thickness_mm":38}'::jsonb, 5.6),
+
+  ('p-bearer-76x228',
+   '{"en":"Pine CCA 76×228mm Bearer","af":"Den CCA 76×228mm Draer"}'::jsonb,
+   'bearer-76x228',
+   '{"en":"Foundation bearer for raised deck structures. Supports joists over concrete piers or stumps.","af":"Fondamentdraer vir verhoogde dekstrukture. Ondersteun balke oor betonpilare of stompe."}'::jsonb,
+   32000, '[]'::jsonb, 'pc-sub-bearers', 60, true,
+   'SUB-BEARER-76228', 'mt-pine', '{"width_mm":228,"thickness_mm":76}'::jsonb, 12.5),
+
+  -- ── Fixings ──
+  ('p-fix-ss-screws',
+   '{"en":"Stainless Steel Deck Screws (200pc)","af":"Vlekvrystaal Dekskroewe (200st)"}'::jsonb,
+   'stainless-deck-screws-200',
+   '{"en":"Grade 316 stainless steel 50mm countersunk deck screws. Corrosion-proof for coastal and pool areas. Box of 200.","af":"Graad 316 vlekvrystaal 50mm versinkde dekskroewe. Korrosiebestand vir kus- en swembadgebiede. Boks van 200."}'::jsonb,
+   25000, '[]'::jsonb, 'pc-fixings', 300, true,
+   'FIX-SS-50-200', null, null, 1.2),
+
+  ('p-fix-galv-screws',
+   '{"en":"Galvanised Deck Screws (200pc)","af":"Gegalvaniseerde Dekskroewe (200st)"}'::jsonb,
+   'galvanised-deck-screws-200',
+   '{"en":"Hot-dip galvanised 50mm countersunk screws. Cost-effective for covered and inland applications. Box of 200.","af":"Warmgedompelde gegalvaniseerde 50mm versinkde skroewe. Koste-effektief vir bedekte en binnelandse toepassings. Boks van 200."}'::jsonb,
+   15000, '[]'::jsonb, 'pc-fixings', 500, true,
+   'FIX-GALV-50-200', null, null, 1.1),
+
+  ('p-fix-spacers',
+   '{"en":"Board Spacers (100pc)","af":"Plankafstandhouers (100st)"}'::jsonb,
+   'board-spacers-100',
+   '{"en":"5mm polypropylene deck board spacers. Ensures consistent gaps for drainage and expansion. Pack of 100.","af":"5mm polipropileen dekplank-afstandhouers. Verseker konsekwente gapings vir dreinering en uitsetting. Pak van 100."}'::jsonb,
+   9500, '[]'::jsonb, 'pc-fixings', 400, true,
+   'FIX-SPACERS-100', null, null, 0.3),
+
+  ('p-fix-joist-tape',
+   '{"en":"Joist Protection Tape (10m)","af":"Balkbeskermingsband (10m)"}'::jsonb,
+   'joist-tape-10m',
+   '{"en":"Self-adhesive butyl rubber tape to protect joist tops from moisture. Extends substructure lifespan by 50%. Roll of 10m.","af":"Selfklewende butielrubberband om balkkruine teen vog te beskerm. Verleng substruktuurleeftyd met 50%. Rol van 10m."}'::jsonb,
+   18000, '[]'::jsonb, 'pc-fixings', 200, true,
+   'FIX-TAPE-10M', null, null, 0.5),
+
+  -- ── Finishing ──
+  ('p-fin-stain',
+   '{"en":"Deck Stain & Sealer","af":"Dekbeis & Seëlmiddel"}'::jsonb,
+   'deck-stain',
+   '{"en":"UV-protective oil-based deck stain. Penetrates deeply for long-lasting colour and water resistance. Available in 4 colours.","af":"UV-beskermende oliebasis dekbeis. Dring diep in vir langdurige kleur en waterbestandheid. Beskikbaar in 4 kleure."}'::jsonb,
+   12000, '[]'::jsonb, 'pc-finishing', 200, true,
+   'FIN-STAIN', null, null, 1.0),
+
+  ('p-fin-cleaner',
+   '{"en":"Deck Cleaner & Restorer","af":"Dekreiniger & Hersteller"}'::jsonb,
+   'deck-cleaner',
+   '{"en":"Oxygen-based deck cleaner that removes grey weathering, mildew and dirt. Safe for all wood types. Covers ~20m² per litre.","af":"Suurstofgebaseerde dekreiniger wat grys verwering, skimmel en vuil verwyder. Veilig vir alle houttipes. Dek ~20m² per liter."}'::jsonb,
+   8500, '[]'::jsonb, 'pc-finishing', 150, true,
+   'FIN-CLEANER', null, null, 1.0);
+
+-- ─── Product Variants ───────────────────────────────────────
+delete from public.product_variants;
+insert into public.product_variants (id, product_id, name, sku, length_mm, colour, price_cents, supplier_cost_cents, stock_quantity, display_order, is_active) values
+  -- Pine 22×108mm (4 lengths)
+  ('pv-pine22-2400', 'p-pine-22x108', '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'DKB-PINE-22108-2400', 2400, null, 4500,  3200, 200, 1, true),
+  ('pv-pine22-3000', 'p-pine-22x108', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'DKB-PINE-22108-3000', 3000, null, 5500,  3900, 180, 2, true),
+  ('pv-pine22-3600', 'p-pine-22x108', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'DKB-PINE-22108-3600', 3600, null, 6500,  4600, 160, 3, true),
+  ('pv-pine22-4800', 'p-pine-22x108', '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'DKB-PINE-22108-4800', 4800, null, 8500,  6100, 120, 4, true),
+  -- Pine 32×114mm (4 lengths)
+  ('pv-pine32-2400', 'p-pine-32x114', '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'DKB-PINE-32114-2400', 2400, null, 7500,  5400, 150, 1, true),
+  ('pv-pine32-3000', 'p-pine-32x114', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'DKB-PINE-32114-3000', 3000, null, 9000,  6400, 120, 2, true),
+  ('pv-pine32-3600', 'p-pine-32x114', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'DKB-PINE-32114-3600', 3600, null, 11000, 7900, 100, 3, true),
+  ('pv-pine32-4800', 'p-pine-32x114', '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'DKB-PINE-32114-4800', 4800, null, 14500, 10400, 80, 4, true),
+  -- Balau 19×90mm (5 lengths)
+  ('pv-balau-0900', 'p-balau-19x90', '{"en":"0.9m Length","af":"0.9m Lengte"}'::jsonb, 'DKB-BALAU-1990-0900', 900,  null, 8000,   5700, 100, 1, true),
+  ('pv-balau-1200', 'p-balau-19x90', '{"en":"1.2m Length","af":"1.2m Lengte"}'::jsonb, 'DKB-BALAU-1990-1200', 1200, null, 10500,  7500, 100, 2, true),
+  ('pv-balau-1500', 'p-balau-19x90', '{"en":"1.5m Length","af":"1.5m Lengte"}'::jsonb, 'DKB-BALAU-1990-1500', 1500, null, 13000,  9300, 80,  3, true),
+  ('pv-balau-1800', 'p-balau-19x90', '{"en":"1.8m Length","af":"1.8m Lengte"}'::jsonb, 'DKB-BALAU-1990-1800', 1800, null, 18000, 12900, 60,  4, true),
+  ('pv-balau-2100', 'p-balau-19x90', '{"en":"2.1m Length","af":"2.1m Lengte"}'::jsonb, 'DKB-BALAU-1990-2100', 2100, null, 21000, 15000, 40,  5, true),
+  -- Garapa 19×90mm (5 lengths)
+  ('pv-garapa90-0900', 'p-garapa-19x90', '{"en":"0.9m Length","af":"0.9m Lengte"}'::jsonb, 'DKB-GARAPA-1990-0900', 900,  null, 7500,   5400, 120, 1, true),
+  ('pv-garapa90-1200', 'p-garapa-19x90', '{"en":"1.2m Length","af":"1.2m Lengte"}'::jsonb, 'DKB-GARAPA-1990-1200', 1200, null, 10000,  7100, 100, 2, true),
+  ('pv-garapa90-1500', 'p-garapa-19x90', '{"en":"1.5m Length","af":"1.5m Lengte"}'::jsonb, 'DKB-GARAPA-1990-1500', 1500, null, 12500,  8900, 80,  3, true),
+  ('pv-garapa90-1800', 'p-garapa-19x90', '{"en":"1.8m Length","af":"1.8m Lengte"}'::jsonb, 'DKB-GARAPA-1990-1800', 1800, null, 16500, 11800, 60,  4, true),
+  ('pv-garapa90-2100', 'p-garapa-19x90', '{"en":"2.1m Length","af":"2.1m Lengte"}'::jsonb, 'DKB-GARAPA-1990-2100', 2100, null, 19500, 13900, 40,  5, true),
+  -- Garapa 19×140mm (5 lengths)
+  ('pv-garapa140-0900', 'p-garapa-19x140', '{"en":"0.9m Length","af":"0.9m Lengte"}'::jsonb, 'DKB-GARAPA-19140-0900', 900,  null, 11000,  7900, 80,  1, true),
+  ('pv-garapa140-1200', 'p-garapa-19x140', '{"en":"1.2m Length","af":"1.2m Lengte"}'::jsonb, 'DKB-GARAPA-19140-1200', 1200, null, 14500, 10400, 80,  2, true),
+  ('pv-garapa140-1500', 'p-garapa-19x140', '{"en":"1.5m Length","af":"1.5m Lengte"}'::jsonb, 'DKB-GARAPA-19140-1500', 1500, null, 18000, 12900, 60,  3, true),
+  ('pv-garapa140-1800', 'p-garapa-19x140', '{"en":"1.8m Length","af":"1.8m Lengte"}'::jsonb, 'DKB-GARAPA-19140-1800', 1800, null, 24000, 17100, 40,  4, true),
+  ('pv-garapa140-2100', 'p-garapa-19x140', '{"en":"2.1m Length","af":"2.1m Lengte"}'::jsonb, 'DKB-GARAPA-19140-2100', 2100, null, 28000, 20000, 30,  5, true),
+  -- Composite 22×140mm (3 lengths × 4 colours = 12 variants)
+  ('pv-comp-2200-teak',     'p-comp-22x140', '{"en":"2.2m — Teak","af":"2.2m — Teak"}'::jsonb,           'DKB-COMP-22140-2200-TK', 2200, 'Teak',       25000, 17900, 200, 1,  true),
+  ('pv-comp-2200-grey',     'p-comp-22x140', '{"en":"2.2m — Stone Grey","af":"2.2m — Klipgrys"}'::jsonb,  'DKB-COMP-22140-2200-GR', 2200, 'Stone Grey', 25000, 17900, 200, 2,  true),
+  ('pv-comp-2200-charcoal', 'p-comp-22x140', '{"en":"2.2m — Charcoal","af":"2.2m — Houtskool"}'::jsonb,  'DKB-COMP-22140-2200-CH', 2200, 'Charcoal',   25000, 17900, 200, 3,  true),
+  ('pv-comp-2200-walnut',   'p-comp-22x140', '{"en":"2.2m — Walnut","af":"2.2m — Okkerneut"}'::jsonb,    'DKB-COMP-22140-2200-WA', 2200, 'Walnut',     25000, 17900, 150, 4,  true),
+  ('pv-comp-3600-teak',     'p-comp-22x140', '{"en":"3.6m — Teak","af":"3.6m — Teak"}'::jsonb,           'DKB-COMP-22140-3600-TK', 3600, 'Teak',       35000, 25000, 150, 5,  true),
+  ('pv-comp-3600-grey',     'p-comp-22x140', '{"en":"3.6m — Stone Grey","af":"3.6m — Klipgrys"}'::jsonb,  'DKB-COMP-22140-3600-GR', 3600, 'Stone Grey', 35000, 25000, 150, 6,  true),
+  ('pv-comp-3600-charcoal', 'p-comp-22x140', '{"en":"3.6m — Charcoal","af":"3.6m — Houtskool"}'::jsonb,  'DKB-COMP-22140-3600-CH', 3600, 'Charcoal',   35000, 25000, 150, 7,  true),
+  ('pv-comp-3600-walnut',   'p-comp-22x140', '{"en":"3.6m — Walnut","af":"3.6m — Okkerneut"}'::jsonb,    'DKB-COMP-22140-3600-WA', 3600, 'Walnut',     35000, 25000, 100, 8,  true),
+  ('pv-comp-5400-teak',     'p-comp-22x140', '{"en":"5.4m — Teak","af":"5.4m — Teak"}'::jsonb,           'DKB-COMP-22140-5400-TK', 5400, 'Teak',       50000, 35700, 80,  9,  true),
+  ('pv-comp-5400-grey',     'p-comp-22x140', '{"en":"5.4m — Stone Grey","af":"5.4m — Klipgrys"}'::jsonb,  'DKB-COMP-22140-5400-GR', 5400, 'Stone Grey', 50000, 35700, 80,  10, true),
+  ('pv-comp-5400-charcoal', 'p-comp-22x140', '{"en":"5.4m — Charcoal","af":"5.4m — Houtskool"}'::jsonb,  'DKB-COMP-22140-5400-CH', 5400, 'Charcoal',   50000, 35700, 80,  11, true),
+  ('pv-comp-5400-walnut',   'p-comp-22x140', '{"en":"5.4m — Walnut","af":"5.4m — Okkerneut"}'::jsonb,    'DKB-COMP-22140-5400-WA', 5400, 'Walnut',     50000, 35700, 60,  12, true),
+  -- Joists 38×114mm (4 lengths)
+  ('pv-joist114-2400', 'p-joist-38x114', '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'SUB-JOIST-38114-2400', 2400, null, 8500,  6100, 150, 1, true),
+  ('pv-joist114-3000', 'p-joist-38x114', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'SUB-JOIST-38114-3000', 3000, null, 10500, 7500, 120, 2, true),
+  ('pv-joist114-3600', 'p-joist-38x114', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'SUB-JOIST-38114-3600', 3600, null, 12500, 8900, 100, 3, true),
+  ('pv-joist114-4800', 'p-joist-38x114', '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'SUB-JOIST-38114-4800', 4800, null, 16500, 11800, 80, 4, true),
+  -- Joists 38×152mm (3 lengths)
+  ('pv-joist152-3000', 'p-joist-38x152', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'SUB-JOIST-38152-3000', 3000, null, 13000, 9300, 100, 1, true),
+  ('pv-joist152-3600', 'p-joist-38x152', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'SUB-JOIST-38152-3600', 3600, null, 15500, 11100, 80,  2, true),
+  ('pv-joist152-4800', 'p-joist-38x152', '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'SUB-JOIST-38152-4800', 4800, null, 21000, 15000, 60,  3, true),
+  -- Bearer 76×228mm (3 lengths)
+  ('pv-bearer-2400', 'p-bearer-76x228', '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'SUB-BEARER-76228-2400', 2400, null, 32000, 22900, 60, 1, true),
+  ('pv-bearer-3000', 'p-bearer-76x228', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'SUB-BEARER-76228-3000', 3000, null, 39500, 28200, 40, 2, true),
+  ('pv-bearer-3600', 'p-bearer-76x228', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'SUB-BEARER-76228-3600', 3600, null, 47500, 33900, 30, 3, true),
+  -- Fixings (single variant each)
+  ('pv-ss-screws',   'p-fix-ss-screws',   '{"en":"Box of 200","af":"Boks van 200"}'::jsonb, 'FIX-SS-50-200-V1',   null, null, 25000, 17900, 300, 1, true),
+  ('pv-galv-screws', 'p-fix-galv-screws', '{"en":"Box of 200","af":"Boks van 200"}'::jsonb, 'FIX-GALV-50-200-V1', null, null, 15000, 10700, 500, 1, true),
+  ('pv-spacers',     'p-fix-spacers',     '{"en":"Pack of 100","af":"Pak van 100"}'::jsonb,  'FIX-SPACERS-100-V1', null, null, 9500,  6800,  400, 1, true),
+  ('pv-joist-tape',  'p-fix-joist-tape',  '{"en":"10m Roll","af":"10m Rol"}'::jsonb,         'FIX-TAPE-10M-V1',   null, null, 18000, 12900, 200, 1, true),
+  -- Stain (4 colours × 2 sizes = 8 variants)
+  ('pv-stain-clear-1',    'p-fin-stain', '{"en":"Clear Seal — 1L","af":"Deursigtige Seël — 1L"}'::jsonb,  'FIN-STAIN-CLEAR-1L',    null, 'Clear Seal',  12000, 8600,  200, 1, true),
+  ('pv-stain-clear-5',    'p-fin-stain', '{"en":"Clear Seal — 5L","af":"Deursigtige Seël — 5L"}'::jsonb,  'FIN-STAIN-CLEAR-5L',    null, 'Clear Seal',  45000, 32100, 80,  2, true),
+  ('pv-stain-honey-1',    'p-fin-stain', '{"en":"Honey Oak — 1L","af":"Heuningeik — 1L"}'::jsonb,         'FIN-STAIN-HONEY-1L',    null, 'Honey Oak',   12000, 8600,  200, 3, true),
+  ('pv-stain-honey-5',    'p-fin-stain', '{"en":"Honey Oak — 5L","af":"Heuningeik — 5L"}'::jsonb,         'FIN-STAIN-HONEY-5L',    null, 'Honey Oak',   45000, 32100, 80,  4, true),
+  ('pv-stain-walnut-1',   'p-fin-stain', '{"en":"Dark Walnut — 1L","af":"Donker Okkerneut — 1L"}'::jsonb, 'FIN-STAIN-WALNUT-1L',   null, 'Dark Walnut', 12000, 8600,  200, 5, true),
+  ('pv-stain-walnut-5',   'p-fin-stain', '{"en":"Dark Walnut — 5L","af":"Donker Okkerneut — 5L"}'::jsonb, 'FIN-STAIN-WALNUT-5L',   null, 'Dark Walnut', 45000, 32100, 80,  6, true),
+  ('pv-stain-charcoal-1', 'p-fin-stain', '{"en":"Charcoal — 1L","af":"Houtskool — 1L"}'::jsonb,           'FIN-STAIN-CHARCOAL-1L', null, 'Charcoal',    12000, 8600,  200, 7, true),
+  ('pv-stain-charcoal-5', 'p-fin-stain', '{"en":"Charcoal — 5L","af":"Houtskool — 5L"}'::jsonb,           'FIN-STAIN-CHARCOAL-5L', null, 'Charcoal',    45000, 32100, 80,  8, true),
+  -- Cleaner (2 sizes)
+  ('pv-cleaner-1', 'p-fin-cleaner', '{"en":"1L Bottle","af":"1L Bottel"}'::jsonb,    'FIN-CLEANER-1L', null, null, 8500,  6100, 150, 1, true),
+  ('pv-cleaner-5', 'p-fin-cleaner', '{"en":"5L Container","af":"5L Houer"}'::jsonb, 'FIN-CLEANER-5L', null, null, 32000, 22900, 60, 2, true);
+
+-- ─── Board Dimensions (for layout engine) ───────────────────
+insert into public.board_dimensions (id, material_type_id, board_type, width_mm, thickness_mm, available_lengths_mm, price_per_metre_cents, display_order, is_active) values
+  ('bdim-pine-22x108',   'mt-pine',      'deck_board', 108, 22, '{2400,3000,3600,4800}',      1875,  1, true),
+  ('bdim-pine-32x114',   'mt-pine',      'deck_board', 114, 32, '{2400,3000,3600,4800}',      3125,  2, true),
+  ('bdim-balau-19x90',   'mt-balau',     'deck_board', 90,  19, '{900,1200,1500,1800,2100}',  10000, 1, true),
+  ('bdim-garapa-19x90',  'mt-garapa',    'deck_board', 90,  19, '{900,1200,1500,1800,2100}',  8333,  1, true),
+  ('bdim-garapa-19x140', 'mt-garapa',    'deck_board', 140, 19, '{900,1200,1500,1800,2100}',  12222, 2, true),
+  ('bdim-comp-22x140',   'mt-composite', 'deck_board', 140, 22, '{2200,3600,5400}',           9722,  1, true),
+  ('bdim-joist-38x114',  'mt-pine',      'joist',      114, 38, '{2400,3000,3600,4800}',      3542,  1, true),
+  ('bdim-joist-38x152',  'mt-pine',      'joist',      152, 38, '{3000,3600,4800}',           4333,  2, true),
+  ('bdim-bearer-76x228', 'mt-pine',      'bearer',     228, 76, '{2400,3000,3600}',           13333, 1, true)
+on conflict (id) do update set
+  material_type_id=excluded.material_type_id, board_type=excluded.board_type,
+  width_mm=excluded.width_mm, thickness_mm=excluded.thickness_mm,
+  available_lengths_mm=excluded.available_lengths_mm, price_per_metre_cents=excluded.price_per_metre_cents;
+
+-- ─── Bulk Pricing (quantity discounts) ──────────────────────
+delete from public.bulk_pricing;
+insert into public.bulk_pricing (product_id, variant_id, min_quantity, price_cents) values
+  -- Pine 22×108 popular lengths
+  (null, 'pv-pine22-2400', 20, 4200), (null, 'pv-pine22-2400', 50, 3900), (null, 'pv-pine22-2400', 100, 3600),
+  (null, 'pv-pine22-3600', 20, 6000), (null, 'pv-pine22-3600', 50, 5700), (null, 'pv-pine22-3600', 100, 5200),
+  (null, 'pv-pine22-4800', 20, 7900), (null, 'pv-pine22-4800', 50, 7400), (null, 'pv-pine22-4800', 100, 6800),
+  -- Composite 3.6m (popular)
+  (null, 'pv-comp-3600-teak', 20, 32500), (null, 'pv-comp-3600-teak', 50, 30000),
+  -- Screws bulk
+  (null, 'pv-ss-screws', 5, 23800), (null, 'pv-ss-screws', 10, 22500),
+  (null, 'pv-galv-screws', 5, 14300), (null, 'pv-galv-screws', 10, 13500),
+  -- Joists 38×114 3.6m
+  (null, 'pv-joist114-3600', 10, 11500), (null, 'pv-joist114-3600', 25, 10500);
+
+-- ─── Kits / Bundles ─────────────────────────────────────────
+delete from public.kits;
+insert into public.kits (id, name, slug, description, image_url, price_cents, supplier_cost_cents, material_type_id, area_m2, display_order, is_active) values
+  ('kit-pine-starter',
+   '{"en":"Pine Starter Deck Kit — 10m²","af":"Den Beginnersdekstel — 10m²"}'::jsonb,
+   'pine-starter-10',
+   '{"en":"Everything you need for a 10m² ground-level pine deck. Includes boards, joists, fixings and finishing. Just add labour!","af":"Alles wat jy nodig het vir ''n 10m² grondvlak dendek. Sluit planke, balke, bevestigings en afwerking in. Voeg net arbeid by!"}'::jsonb,
+   null, 850000, 607000, 'mt-pine', 10.00, 1, true),
+  ('kit-balau-premium',
+   '{"en":"Balau Premium Deck Kit — 10m²","af":"Balau Premium Dekstel — 10m²"}'::jsonb,
+   'balau-premium-10',
+   '{"en":"Premium Balau hardwood deck kit for 10m². Includes boards, substructure, stainless fixings and teak oil. Built to last 30+ years.","af":"Premium Balau-harthout dekstel vir 10m². Sluit planke, substruktuur, vlekvrystaal bevestigings en teak-olie in. Gebou om 30+ jaar te hou."}'::jsonb,
+   null, 1650000, 1179000, 'mt-balau', 10.00, 2, true),
+  ('kit-comp-easy',
+   '{"en":"Composite Easy Deck Kit — 10m²","af":"Saamgestelde Maklike Dekstel — 10m²"}'::jsonb,
+   'composite-easy-10',
+   '{"en":"Zero-maintenance composite deck kit for 10m². Includes boards, joists, hidden clips and edge trim. 25-year warranty.","af":"Geen-onderhoud saamgestelde dekstel vir 10m². Sluit planke, balke, versteekte knippies en randafwerking in. 25-jaar waarborg."}'::jsonb,
+   null, 1450000, 1036000, 'mt-composite', 10.00, 3, true),
+  ('kit-pine-diy-15',
+   '{"en":"Pine DIY Deck Kit — 15m²","af":"Den DIY Dekstel — 15m²"}'::jsonb,
+   'pine-diy-15',
+   '{"en":"Large pine deck kit for the serious DIYer. Covers 15m² with heavy-duty 32mm boards, joists, bearers and all fixings.","af":"Groot dendekstel vir die ernstige DIY-er. Dek 15m² met swaargewig 32mm-planke, balke, draers en alle bevestigings."}'::jsonb,
+   null, 1550000, 1107000, 'mt-pine', 15.00, 4, true);
+
+-- ─── Kit Components ─────────────────────────────────────────
+delete from public.kit_components;
+insert into public.kit_components (kit_id, product_id, variant_id, quantity, display_order) values
+  -- Pine Starter 10m²
+  ('kit-pine-starter', 'p-pine-22x108',   'pv-pine22-3600',    28, 1),
+  ('kit-pine-starter', 'p-joist-38x114',  'pv-joist114-3600',  14, 2),
+  ('kit-pine-starter', 'p-fix-ss-screws', 'pv-ss-screws',       3, 3),
+  ('kit-pine-starter', 'p-fix-spacers',   'pv-spacers',         1, 4),
+  ('kit-pine-starter', 'p-fix-joist-tape','pv-joist-tape',       2, 5),
+  ('kit-pine-starter', 'p-fin-stain',     'pv-stain-clear-5',   1, 6),
+  -- Balau Premium 10m²
+  ('kit-balau-premium', 'p-balau-19x90',   'pv-balau-1800',     56, 1),
+  ('kit-balau-premium', 'p-joist-38x152',  'pv-joist152-3600',  10, 2),
+  ('kit-balau-premium', 'p-fix-ss-screws', 'pv-ss-screws',       4, 3),
+  ('kit-balau-premium', 'p-fix-spacers',   'pv-spacers',         1, 4),
+  ('kit-balau-premium', 'p-fix-joist-tape','pv-joist-tape',       2, 5),
+  -- Composite Easy 10m²
+  ('kit-comp-easy', 'p-comp-22x140',   'pv-comp-3600-teak',  20, 1),
+  ('kit-comp-easy', 'p-joist-38x114',  'pv-joist114-3600',   14, 2),
+  ('kit-comp-easy', 'p-fix-ss-screws', 'pv-ss-screws',        3, 3),
+  ('kit-comp-easy', 'p-fix-spacers',   'pv-spacers',          1, 4),
+  -- Pine DIY 15m²
+  ('kit-pine-diy-15', 'p-pine-32x114',   'pv-pine32-4800',   32, 1),
+  ('kit-pine-diy-15', 'p-joist-38x152',  'pv-joist152-4800',  12, 2),
+  ('kit-pine-diy-15', 'p-bearer-76x228', 'pv-bearer-3000',     4, 3),
+  ('kit-pine-diy-15', 'p-fix-ss-screws', 'pv-ss-screws',       5, 4),
+  ('kit-pine-diy-15', 'p-fix-spacers',   'pv-spacers',         2, 5),
+  ('kit-pine-diy-15', 'p-fix-joist-tape','pv-joist-tape',       3, 6),
+  ('kit-pine-diy-15', 'p-fin-stain',     'pv-stain-honey-5',   2, 7);
+
+-- ─── Product Relations (cross-sell) ─────────────────────────
+delete from public.product_relations;
+insert into public.product_relations (product_id, related_product_id, relation_type, display_order) values
+  ('p-pine-22x108',  'p-fix-ss-screws', 'frequently_bought_together', 1),
+  ('p-pine-22x108',  'p-fix-spacers',   'frequently_bought_together', 2),
+  ('p-pine-22x108',  'p-fin-stain',     'frequently_bought_together', 3),
+  ('p-pine-32x114',  'p-fix-ss-screws', 'frequently_bought_together', 1),
+  ('p-pine-32x114',  'p-fin-stain',     'frequently_bought_together', 2),
+  ('p-balau-19x90',  'p-fix-ss-screws', 'frequently_bought_together', 1),
+  ('p-balau-19x90',  'p-fix-spacers',   'frequently_bought_together', 2),
+  ('p-garapa-19x90', 'p-fix-ss-screws', 'frequently_bought_together', 1),
+  ('p-garapa-19x90', 'p-fin-stain',     'frequently_bought_together', 2),
+  ('p-comp-22x140',  'p-fix-ss-screws', 'frequently_bought_together', 1),
+  ('p-fix-ss-screws',   'p-fix-spacers',    'frequently_bought_together', 1),
+  ('p-fix-ss-screws',   'p-fix-joist-tape', 'frequently_bought_together', 2),
+  ('p-fix-galv-screws', 'p-fix-spacers',    'frequently_bought_together', 1),
+  ('p-fin-stain',   'p-fin-cleaner', 'frequently_bought_together', 1),
+  ('p-fin-cleaner', 'p-fin-stain',   'frequently_bought_together', 1);
+
 -- ─── Admin User Note ─────────────────────────────────────────
 -- To create an admin user:
 -- 1. Sign up via the Supabase Auth dashboard or the app's register page

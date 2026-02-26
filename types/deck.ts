@@ -233,6 +233,133 @@ export interface SavedQuote {
 
 export type ConsultationStatus = "new" | "contacted" | "scheduled" | "visited" | "quoted" | "completed" | "cancelled";
 
+// ─── Canvas / Designer ──────────────────────────────────────
+
+export type ShapeType = "rect" | "l-shape";
+
+export interface DeckShape {
+  id: string;
+  type: ShapeType;
+  x: number; // mm from origin
+  y: number; // mm from origin
+  width: number; // mm
+  height: number; // mm
+  /** L-shape cutout (only when type === 'l-shape') */
+  cutout?: {
+    corner: "top-left" | "top-right" | "bottom-left" | "bottom-right";
+    width: number; // mm
+    height: number; // mm
+  };
+}
+
+export interface DeckDesign {
+  shapes: DeckShape[];
+  total_area_m2: number;
+  perimeter_m: number;
+  board_direction: number; // degrees (0 = lengthwise)
+  polygon: [number, number][]; // merged outline for board engine
+}
+
+export type DesignMode = "quick" | "designer" | "consultation";
+
+// ─── Board Layout Engine ────────────────────────────────────
+
+export interface BoardPiece {
+  id: string;
+  x: number;
+  y: number;
+  length_mm: number;
+  width_mm: number;
+  thickness_mm: number;
+  stock_length_mm: number;
+  cut_length_mm: number;
+  rotation: number; // degrees
+  source: "new" | "offcut";
+  offcut_source_id?: string;
+}
+
+export interface JoistPiece {
+  id: string;
+  x: number;
+  y: number;
+  length_mm: number;
+  width_mm: number;
+  thickness_mm: number;
+  stock_length_mm: number;
+}
+
+export interface BearerPiece {
+  id: string;
+  x: number;
+  y: number;
+  length_mm: number;
+  width_mm: number;
+  thickness_mm: number;
+  stock_length_mm: number;
+}
+
+export interface StockSummary {
+  stock_length_mm: number;
+  quantity: number;
+  colour?: string;
+}
+
+export interface BillOfMaterials {
+  boards: StockSummary[];
+  joists: StockSummary[];
+  bearers: StockSummary[];
+  screws_count: number;
+  total_boards: number;
+  total_joists: number;
+  total_bearers: number;
+}
+
+export interface BoardLayoutResult {
+  boards: BoardPiece[];
+  joists: JoistPiece[];
+  bearers: BearerPiece[];
+  bom: BillOfMaterials;
+}
+
+// ─── Cutoff Optimizer ───────────────────────────────────────
+
+export interface CutoffMetrics {
+  boards_used: number;
+  boards_saved: number;
+  waste_percent: number;
+  savings_estimate_cents: number;
+  offcuts: { length_mm: number; count: number }[];
+}
+
+// ─── Board Dimensions ───────────────────────────────────────
+
+export interface BoardDimension {
+  id: string;
+  material_type_id: string;
+  board_type: "deck_board" | "joist" | "bearer";
+  width_mm: number;
+  thickness_mm: number;
+  available_lengths_mm: number[];
+  price_per_metre_cents: number | null;
+  display_order: number;
+  is_active: boolean;
+}
+
+// ─── Kit Components ─────────────────────────────────────────
+
+export interface KitComponentWithProduct {
+  id: string;
+  kit_id: string;
+  product_id: string | null;
+  variant_id: string | null;
+  quantity: number;
+  display_order: number;
+  product?: import("@/types").Product;
+  variant?: ProductVariant;
+}
+
+// ─── Consultation ───────────────────────────────────────────
+
 export interface ConsultationRequest {
   id: string;
   customer_name: string;

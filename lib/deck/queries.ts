@@ -8,6 +8,7 @@ import type {
   ConfiguratorExtra,
   ExtraPricing,
   ConfiguratorRate,
+  BoardDimension,
 } from "@/types/deck";
 
 export async function getMaterials(): Promise<MaterialType[]> {
@@ -107,4 +108,16 @@ export async function getRatesForMaterial(materialTypeId: string): Promise<Confi
     .eq("material_type_id", materialTypeId)
     .eq("is_active", true);
   return (data as ConfiguratorRate[]) ?? [];
+}
+
+export async function getBoardDimensions(materialTypeId?: string): Promise<BoardDimension[]> {
+  const supabase = await createClient();
+  let query = supabase
+    .from("board_dimensions")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order");
+  if (materialTypeId) query = query.eq("material_type_id", materialTypeId);
+  const { data } = await query;
+  return (data as BoardDimension[]) ?? [];
 }

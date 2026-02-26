@@ -3,13 +3,18 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/shop/format";
 import type { Product } from "@/types";
+import type { ProductWithVariants } from "@/lib/shop/queries";
 
-interface ProductCardProps {
-  product: Product;
+function isProductWithVariants(p: Product | ProductWithVariants): p is ProductWithVariants {
+  return "variants_count" in p;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product }: Readonly<{ product: Product | ProductWithVariants }>) {
   const image = product.images?.[0];
+  const hasVariants = isProductWithVariants(product) && product.variants_count > 0;
+  const displayPrice = hasVariants
+    ? product.starting_price_cents
+    : product.price_cents;
 
   return (
     <Link
@@ -40,8 +45,14 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.name.en}
         </h3>
         <p className="mt-1 text-lg font-bold text-foreground">
-          {formatPrice(product.price_cents)}
+          {hasVariants ? `From ${formatPrice(displayPrice)}` : formatPrice(displayPrice)}
         </p>
+        {hasVariants && (
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            {product.variants_count} option
+            {product.variants_count === 1 ? "" : "s"}
+          </p>
+        )}
         {product.stock_quantity > 0 && product.stock_quantity <= 5 && (
           <p className="mt-1 text-xs text-orange-600">
             Only {product.stock_quantity} left

@@ -12,6 +12,8 @@ import {
 
 export interface CartItem {
   product_id: string;
+  variant_id?: string;
+  variant_name?: string;
   name: string;
   price_cents: number;
   quantity: number;
@@ -19,11 +21,15 @@ export interface CartItem {
   slug: string;
 }
 
+function cartKey(item: { product_id: string; variant_id?: string }): string {
+  return item.product_id + (item.variant_id ?? "");
+}
+
 interface CartContextValue {
   items: CartItem[];
   addItem: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  removeItem: (productId: string, variantId?: string) => void;
+  updateQuantity: (productId: string, quantity: number, variantId?: string) => void;
   clearCart: () => void;
   totalItems: number;
   subtotalCents: number;
@@ -55,10 +61,11 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
   const addItem = useCallback(
     (item: Omit<CartItem, "quantity">, quantity = 1) => {
       setItems((prev) => {
-        const existing = prev.find((i) => i.product_id === item.product_id);
+        const key = cartKey(item);
+        const existing = prev.find((i) => cartKey(i) === key);
         if (existing) {
           return prev.map((i) =>
-            i.product_id === item.product_id
+            cartKey(i) === key
               ? { ...i, quantity: i.quantity + quantity }
               : i
           );
@@ -69,19 +76,21 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
     []
   );
 
-  const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((i) => i.product_id !== productId));
+  const removeItem = useCallback((productId: string, variantId?: string) => {
+    const key = productId + (variantId ?? "");
+    setItems((prev) => prev.filter((i) => cartKey(i) !== key));
   }, []);
 
   const updateQuantity = useCallback(
-    (productId: string, quantity: number) => {
+    (productId: string, quantity: number, variantId?: string) => {
       if (quantity <= 0) {
-        removeItem(productId);
+        removeItem(productId, variantId);
         return;
       }
+      const key = productId + (variantId ?? "");
       setItems((prev) =>
         prev.map((i) =>
-          i.product_id === productId ? { ...i, quantity } : i
+          cartKey(i) === key ? { ...i, quantity } : i
         )
       );
     },

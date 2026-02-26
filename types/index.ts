@@ -171,8 +171,19 @@ export interface ProductCategory {
   name: LocalizedString;
   slug: string;
   image: string | null;
+  parent_id: string | null;
+  material_type_id: string | null;
+  display_order: number;
   is_active: boolean;
   deleted_at: string | null;
+}
+
+export interface BulkPricing {
+  id: string;
+  product_id: string | null;
+  variant_id: string | null;
+  min_quantity: number;
+  price_cents: number;
 }
 
 export interface Order {

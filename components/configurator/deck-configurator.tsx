@@ -11,7 +11,8 @@ import { StepDimensions } from "./step-dimensions";
 import { StepStyle } from "./step-style";
 import { StepExtras } from "./step-extras";
 import { StepQuote } from "./step-quote";
-import type { DeckQuote } from "@/types/deck";
+import type { DeckQuote, DeckDesign, DesignMode } from "@/types/deck";
+import { createDesignFromDimensions } from "./deck-canvas";
 
 /* ─── Types for configurator state ─────────────────────────── */
 
@@ -95,6 +96,10 @@ export function DeckConfigurator() {
   const [loading, setLoading] = useState(true);
   const [quote, setQuote] = useState<DeckQuote | null>(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
+  const [design, setDesign] = useState<DeckDesign>(() =>
+    createDesignFromDimensions(INITIAL_STATE.length_m, INITIAL_STATE.width_m)
+  );
+  const [designMode, setDesignMode] = useState<DesignMode>("quick");
 
   // Fetch base options on mount
   useEffect(() => {
@@ -143,6 +148,26 @@ export function DeckConfigurator() {
     []
   );
 
+  // When the design changes (from canvas), sync area back to DeckState for pricing
+  const handleDesignChange = useCallback(
+    (newDesign: DeckDesign) => {
+      setDesign(newDesign);
+      if (designMode === "quick" && newDesign.shapes.length === 1) {
+        // In quick mode, keep length/width in sync from the single rect
+        const shape = newDesign.shapes[0];
+        const lengthM = shape.width / 1000;
+        const widthM = shape.height / 1000;
+        setState((s) => ({ ...s, length_m: lengthM, width_m: widthM }));
+      } else if (designMode === "designer") {
+        // In designer mode, derive effective length/width from total area
+        // Use a square approximation for the pricing engine
+        const side = Math.sqrt(newDesign.total_area_m2);
+        setState((s) => ({ ...s, length_m: side, width_m: side }));
+      }
+    },
+    [designMode]
+  );
+
   // Calculate quote
   const calculateQuote = useCallback(async () => {
     setQuoteLoading(true);
@@ -176,8 +201,11 @@ export function DeckConfigurator() {
         return !!state.deck_type_id;
       case 1:
         return !!state.material_type_id;
-      case 2:
-        return state.length_m >= 1 && state.width_m >= 1;
+      case 2: {
+        if (designMode === "consultation") return true;
+        const area = design.total_area_m2;
+        return area >= 1 && area <= 200 && design.shapes.length > 0;
+      }
       case 3:
         return !!state.board_direction_id && !!state.board_profile_id;
       case 4:
@@ -258,6 +286,10 @@ export function DeckConfigurator() {
               width={state.width_m}
               onChangeLength={(v) => update({ length_m: v })}
               onChangeWidth={(v) => update({ width_m: v })}
+              design={design}
+              onDesignChange={handleDesignChange}
+              mode={designMode}
+              onModeChange={setDesignMode}
             />
           )}
           {step === 3 && (
