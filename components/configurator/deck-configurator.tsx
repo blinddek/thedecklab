@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -11,7 +11,7 @@ import { StepDimensions } from "./step-dimensions";
 import { StepStyle } from "./step-style";
 import { StepExtras } from "./step-extras";
 import { StepQuote } from "./step-quote";
-import type { DeckQuote, DeckDesign, DesignMode } from "@/types/deck";
+import type { DeckQuote, DeckDesign, DesignMode, BoardLayoutResult, CutoffMetrics } from "@/types/deck";
 import { createDesignFromDimensions } from "./deck-canvas";
 
 /* ─── Types for configurator state ─────────────────────────── */
@@ -100,6 +100,10 @@ export function DeckConfigurator() {
     createDesignFromDimensions(INITIAL_STATE.length_m, INITIAL_STATE.width_m)
   );
   const [designMode, setDesignMode] = useState<DesignMode>("quick");
+  const [boardLayout, setBoardLayout] = useState<BoardLayoutResult | null>(null);
+  const [cutoffMetrics, setCutoffMetrics] = useState<CutoffMetrics | null>(null);
+  const [layoutLoading, setLayoutLoading] = useState(false);
+  const layoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Fetch base options on mount
   useEffect(() => {
@@ -168,7 +172,53 @@ export function DeckConfigurator() {
     [designMode]
   );
 
-  // Calculate quote
+  // Debounced board layout fetch — fires when design/material changes in designer mode
+  useEffect(() => {
+    if (layoutTimerRef.current) clearTimeout(layoutTimerRef.current);
+
+    // Only compute layout when in designer mode with shapes and a material selected
+    if (designMode !== "designer" || design.shapes.length === 0 || !state.material_type_id) {
+      setBoardLayout(null);
+      setCutoffMetrics(null);
+      setLayoutLoading(false);
+      return;
+    }
+
+    setLayoutLoading(true);
+
+    layoutTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch("/api/deck/layout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            polygon: design.polygon,
+            material_type_id: state.material_type_id,
+            board_direction_deg: design.board_direction,
+          }),
+        });
+        const data = await res.json();
+        if (data.error) {
+          setBoardLayout(null);
+          setCutoffMetrics(null);
+        } else {
+          setBoardLayout(data.layout);
+          setCutoffMetrics(data.cutoffMetrics);
+        }
+      } catch {
+        setBoardLayout(null);
+        setCutoffMetrics(null);
+      } finally {
+        setLayoutLoading(false);
+      }
+    }, 500);
+
+    return () => {
+      if (layoutTimerRef.current) clearTimeout(layoutTimerRef.current);
+    };
+  }, [design, state.material_type_id, designMode]);
+
+  // Calculate quote — include BOM when available for exact pricing
   const calculateQuote = useCallback(async () => {
     setQuoteLoading(true);
     try {
@@ -178,6 +228,7 @@ export function DeckConfigurator() {
         body: JSON.stringify({
           ...state,
           finish_option_id: state.finish_option_id || undefined,
+          bom: boardLayout?.bom ?? undefined,
         }),
       });
       const data = await res.json();
@@ -188,7 +239,7 @@ export function DeckConfigurator() {
     } finally {
       setQuoteLoading(false);
     }
-  }, [state]);
+  }, [state, boardLayout]);
 
   // Trigger quote when reaching step 5
   useEffect(() => {
@@ -290,6 +341,9 @@ export function DeckConfigurator() {
               onDesignChange={handleDesignChange}
               mode={designMode}
               onModeChange={setDesignMode}
+              boardLayout={boardLayout}
+              cutoffMetrics={cutoffMetrics}
+              layoutLoading={layoutLoading}
             />
           )}
           {step === 3 && (
@@ -324,6 +378,9 @@ export function DeckConfigurator() {
               state={state}
               options={options}
               onRecalculate={calculateQuote}
+              design={design}
+              boardLayout={boardLayout}
+              cutoffMetrics={cutoffMetrics}
             />
           )}
         </CardContent>

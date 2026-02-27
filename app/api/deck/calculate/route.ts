@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
       finish_option_id,
       include_installation,
       extras,
+      bom,
     } = body;
 
     if (!deck_type_id || !material_type_id || !length_m || !width_m || !board_direction_id || !board_profile_id) {
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
       finish_option_id: finish_option_id || undefined,
       include_installation: include_installation ?? false,
       extras: extras ?? [],
+      bom: bom ?? undefined,
     });
 
     return NextResponse.json(quote);

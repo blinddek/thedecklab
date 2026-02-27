@@ -52,10 +52,60 @@ export async function calculateDeckPrice(config: DeckConfig): Promise<DeckQuote>
 
   const profileMod = 1 + (Number(profile?.price_modifier_percent ?? 0) / 100);
 
-  // 6. Calculate base costs
-  const materialsCents = Math.ceil(area * (rateMap.boards_per_m2 ?? 0) * materialDirMult * profileMod);
-  const substructureCents = Math.ceil(area * (rateMap.substructure_per_m2 ?? 0) * complexityMult);
-  const fixingsCents = Math.ceil(area * (rateMap.fixings_per_m2 ?? 0));
+  // 6. Calculate base costs — BOM-based (Mode B) or area-based (Mode A)
+  let materialsCents: number;
+  let substructureCents: number;
+  let fixingsCents: number;
+
+  if (config.bom) {
+    // Mode B: exact pricing from board layout engine
+    const { data: dims } = await supabase
+      .from("board_dimensions")
+      .select("board_type, price_per_metre_cents, available_lengths_mm")
+      .eq("material_type_id", config.material_type_id)
+      .eq("is_active", true);
+
+    const dimMap: Record<string, { price: number; lengths: number[] }> = {};
+    for (const d of dims ?? []) {
+      dimMap[d.board_type] = {
+        price: d.price_per_metre_cents ?? 0,
+        lengths: d.available_lengths_mm ?? [],
+      };
+    }
+
+    // Boards: sum(stock_length × price_per_metre) for each stock entry
+    const boardPrice = dimMap["deck_board"]?.price ?? 0;
+    materialsCents = Math.ceil(
+      config.bom.boards.reduce(
+        (sum, s) => sum + s.quantity * (s.stock_length_mm / 1000) * boardPrice,
+        0
+      ) * materialDirMult * profileMod
+    );
+
+    // Substructure: joists + bearers
+    const joistPrice = dimMap["joist"]?.price ?? 0;
+    const bearerPrice = dimMap["bearer"]?.price ?? 0;
+    const joistCost = config.bom.joists.reduce(
+      (sum, s) => sum + s.quantity * (s.stock_length_mm / 1000) * joistPrice,
+      0
+    );
+    const bearerCost = config.bom.bearers.reduce(
+      (sum, s) => sum + s.quantity * (s.stock_length_mm / 1000) * bearerPrice,
+      0
+    );
+    substructureCents = Math.ceil((joistCost + bearerCost) * complexityMult);
+
+    // Fixings: screws-based pricing (screws_count × price per screw, approx)
+    const fixingsRate = rateMap.fixings_per_m2 ?? 0;
+    fixingsCents = fixingsRate > 0
+      ? Math.ceil(area * fixingsRate)
+      : Math.ceil(config.bom.screws_count * 0.5); // fallback: ~R0.005/screw
+  } else {
+    // Mode A: area-based rates (original)
+    materialsCents = Math.ceil(area * (rateMap.boards_per_m2 ?? 0) * materialDirMult * profileMod);
+    substructureCents = Math.ceil(area * (rateMap.substructure_per_m2 ?? 0) * complexityMult);
+    fixingsCents = Math.ceil(area * (rateMap.fixings_per_m2 ?? 0));
+  }
 
   // 7. Staining (if finish selected and it has staining rate)
   let stainingCents = 0;

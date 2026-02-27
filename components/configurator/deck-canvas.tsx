@@ -20,7 +20,7 @@ import {
   shapeToPolygon,
   snapToGrid,
 } from "@/lib/canvas/geometry";
-import type { DeckDesign, DeckShape, DesignMode } from "@/types/deck";
+import type { DeckDesign, DeckShape, DesignMode, BoardLayoutResult } from "@/types/deck";
 import {
   Square,
   MousePointer2,
@@ -351,12 +351,78 @@ function drawAreaLabel(
   ctx.restore();
 }
 
+/* ─── Board Overlay ────────────────────────────────────── */
+
+const BOARD_FILL = "hsla(30, 70%, 55%, 0.25)";
+const BOARD_STROKE = "hsla(30, 70%, 45%, 0.6)";
+const OFFCUT_FILL = "hsla(140, 60%, 45%, 0.25)";
+const OFFCUT_STROKE = "hsla(140, 60%, 35%, 0.6)";
+const JOIST_STROKE = "hsla(220, 50%, 55%, 0.5)";
+const BEARER_STROKE = "hsla(0, 0%, 40%, 0.6)";
+
+function drawBoardOverlay(
+  ctx: CanvasRenderingContext2D,
+  layout: BoardLayoutResult,
+  zoom: number
+) {
+  // Draw bearers first (bottom layer)
+  ctx.save();
+  ctx.strokeStyle = BEARER_STROKE;
+  ctx.lineWidth = 4 / zoom;
+  for (const bearer of layout.bearers) {
+    ctx.beginPath();
+    ctx.moveTo(bearer.x, bearer.y);
+    ctx.lineTo(bearer.x + bearer.length_mm, bearer.y);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Draw joists (middle layer)
+  ctx.save();
+  ctx.strokeStyle = JOIST_STROKE;
+  ctx.lineWidth = 2 / zoom;
+  ctx.setLineDash([8 / zoom, 4 / zoom]);
+  for (const joist of layout.joists) {
+    ctx.beginPath();
+    ctx.moveTo(joist.x, joist.y);
+    ctx.lineTo(joist.x, joist.y + joist.length_mm);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // Draw boards (top layer)
+  for (const board of layout.boards) {
+    const isOffcut = board.source === "offcut";
+    ctx.save();
+
+    if (board.rotation !== 0) {
+      ctx.translate(board.x, board.y);
+      ctx.rotate((board.rotation * Math.PI) / 180);
+      ctx.fillStyle = isOffcut ? OFFCUT_FILL : BOARD_FILL;
+      ctx.strokeStyle = isOffcut ? OFFCUT_STROKE : BOARD_STROKE;
+      ctx.lineWidth = 1 / zoom;
+      ctx.fillRect(0, 0, board.length_mm, board.width_mm);
+      ctx.strokeRect(0, 0, board.length_mm, board.width_mm);
+    } else {
+      ctx.fillStyle = isOffcut ? OFFCUT_FILL : BOARD_FILL;
+      ctx.strokeStyle = isOffcut ? OFFCUT_STROKE : BOARD_STROKE;
+      ctx.lineWidth = 1 / zoom;
+      ctx.fillRect(board.x, board.y, board.length_mm, board.width_mm);
+      ctx.strokeRect(board.x, board.y, board.length_mm, board.width_mm);
+    }
+
+    ctx.restore();
+  }
+}
+
 /* ─── Props ─────────────────────────────────────────────── */
 
 interface DeckCanvasProps {
   design: DeckDesign;
   onDesignChange: (design: DeckDesign) => void;
   mode: DesignMode;
+  boardLayout?: BoardLayoutResult | null;
 }
 
 /* ─── Quick Mode Canvas (simple preview) ─────────────── */
@@ -459,9 +525,11 @@ interface HistoryState {
 function DesignerCanvas({
   design,
   onDesignChange,
+  boardLayout,
 }: {
   design: DeckDesign;
   onDesignChange: (d: DeckDesign) => void;
+  boardLayout?: BoardLayoutResult | null;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -955,6 +1023,15 @@ function DesignerCanvas({
 
     renderCanvas(ctx, design, zoom, pan.x, pan.y, selectedId, w, h, hoveredId);
 
+    // Draw board layout overlay (boards, joists, bearers)
+    if (boardLayout) {
+      ctx.save();
+      ctx.translate(pan.x, pan.y);
+      ctx.scale(zoom, zoom);
+      drawBoardOverlay(ctx, boardLayout, zoom);
+      ctx.restore();
+    }
+
     // Draw preview rect when drawing
     if (drawPreviewRef.current && dragRef.current?.type === "draw") {
       const { x, y, w: rw, h: rh } = drawPreviewRef.current;
@@ -972,7 +1049,7 @@ function DesignerCanvas({
     }
 
     setContainerSize({ w, h });
-  }, [design, zoom, pan, selectedId, hoveredId]);
+  }, [design, zoom, pan, selectedId, hoveredId, boardLayout]);
 
   useEffect(() => {
     animFrameRef.current = requestAnimationFrame(render);
@@ -1390,13 +1467,13 @@ function ConsultationView() {
 
 /* ─── Main DeckCanvas Component ─────────────────────────── */
 
-export function DeckCanvas({ design, onDesignChange, mode }: DeckCanvasProps) {
+export function DeckCanvas({ design, onDesignChange, mode, boardLayout }: DeckCanvasProps) {
   if (mode === "consultation") {
     return <ConsultationView />;
   }
 
   if (mode === "designer") {
-    return <DesignerCanvas design={design} onDesignChange={onDesignChange} />;
+    return <DesignerCanvas design={design} onDesignChange={onDesignChange} boardLayout={boardLayout} />;
   }
 
   // Quick mode

@@ -1,11 +1,11 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw, FileDown } from "lucide-react";
 import { saveQuote } from "@/lib/deck/actions";
 import { toast } from "sonner";
-import type { DeckQuote } from "@/types/deck";
+import type { DeckQuote, DeckDesign, BoardLayoutResult, CutoffMetrics } from "@/types/deck";
 import type { ConfigOptions, DeckState } from "./deck-configurator";
 
 interface Props {
@@ -14,6 +14,9 @@ interface Props {
   state: DeckState;
   options: ConfigOptions;
   onRecalculate: () => void;
+  design: DeckDesign;
+  boardLayout: BoardLayoutResult | null;
+  cutoffMetrics: CutoffMetrics | null;
 }
 
 function formatRand(cents: number): string {
@@ -27,8 +30,35 @@ function findName(items: { id: string; name: { en: string } }[], id: string): st
   return items.find((i) => i.id === id)?.name.en ?? "—";
 }
 
-export function StepQuote({ quote, loading, state, options, onRecalculate }: Props) {
+export function StepQuote({
+  quote, loading, state, options, onRecalculate,
+  design, boardLayout, cutoffMetrics,
+}: Props) {
   const [formState, formAction, isPending] = useActionState(saveQuote, null);
+  const [pdfGenerating, setPdfGenerating] = useState(false);
+
+  const handleDownloadBuildPlan = async () => {
+    if (!quote || !boardLayout || !cutoffMetrics) return;
+    setPdfGenerating(true);
+    try {
+      const { generateBuildPlanPdf } = await import("@/lib/pdf/build-plan");
+      const blob = await generateBuildPlanPdf({
+        state, options, quote, design,
+        layout: boardLayout, cutoffMetrics,
+        date: new Date().toLocaleDateString("en-ZA"),
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `deck-build-plan-${new Date().toISOString().split("T")[0]}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error("Failed to generate build plan. Please try again.");
+    } finally {
+      setPdfGenerating(false);
+    }
+  };
 
   useEffect(() => {
     if (formState?.success) {
@@ -164,6 +194,32 @@ export function StepQuote({ quote, loading, state, options, onRecalculate }: Pro
         including VAT
         {state.include_installation ? " and installation" : ""}.
       </p>
+
+      {/* Build Plan PDF */}
+      {boardLayout && cutoffMetrics && (
+        <div className="rounded-lg border bg-muted/30 p-4">
+          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Build Plan
+          </h3>
+          <p className="mb-3 text-sm text-muted-foreground">
+            Download a detailed 7-page PDF with board layout diagrams, cut list,
+            shopping list, and installation notes for your deck.
+          </p>
+          <Button onClick={handleDownloadBuildPlan} disabled={pdfGenerating} className="w-full">
+            {pdfGenerating ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Generating PDF...
+              </>
+            ) : (
+              <>
+                <FileDown className="size-4" />
+                Download Build Plan PDF
+              </>
+            )}
+          </Button>
+        </div>
+      )}
 
       {/* Save Quote form */}
       <div className="rounded-lg border bg-muted/30 p-4">

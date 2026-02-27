@@ -153,6 +153,8 @@ export interface DeckConfig {
   finish_option_id?: string;
   include_installation: boolean;
   extras: DeckExtraInput[];
+  /** When provided (from board layout engine), enables exact BOM-based pricing */
+  bom?: BillOfMaterials;
 }
 
 export interface DeckExtraInput {
@@ -343,6 +345,13 @@ export interface BoardDimension {
   price_per_metre_cents: number | null;
   display_order: number;
   is_active: boolean;
+}
+
+// ─── Layout API ─────────────────────────────────────────────
+
+export interface LayoutApiResponse {
+  layout: BoardLayoutResult;
+  cutoffMetrics: CutoffMetrics;
 }
 
 // ─── Kit Components ─────────────────────────────────────────

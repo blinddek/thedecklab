@@ -29,6 +29,8 @@ import {
   Scale,
   Tag,
   Users,
+  Ruler,
+  Calculator,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminSignOutButton } from "@/components/auth/admin-sign-out-button";
@@ -108,6 +110,15 @@ function buildSidebarNav(): NavGroup[] {
     manageItems.push({ href: "/admin/clients/import", label: "Client Import", icon: Users });
   }
   groups.push({ title: "Manage", items: manageItems });
+
+  // Deck Lab
+  groups.push({
+    title: "Deck Lab",
+    items: [
+      { href: "/admin/configurator", label: "Configurator", icon: Ruler },
+      { href: "/admin/pricing", label: "Markup & Pricing", icon: Calculator },
+    ],
+  });
 
   // Site
   const siteItems: NavItem[] = [
