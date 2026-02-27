@@ -2,7 +2,7 @@
 
 > Last updated: 2026-02-26
 
-## Status: ~65% Complete (Foundation + Configurator + Canvas + Shop done)
+## Status: ~75% Complete (Foundation + Configurator + Canvas + Shop + Content + SEO done)
 
 Build specs: `project_brief/build plan/BUILD_INDEX.md`
 
@@ -28,7 +28,7 @@ Build specs: `project_brief/build plan/BUILD_INDEX.md`
 - [x] Build 13: Configurator Step 4 — Board Direction & Profile
 - [x] Build 14: Configurator Step 5 — Style & Extras (finish, railings, steps, seating)
 - [x] Build 15: Configurator Step 6 — Quote Summary with cost breakdown
-- [ ] Build 16: Quote Save & Lead Capture
+- [x] Build 16: Quote Save & Lead Capture — save quote form + server actions
 - [ ] Build 17: Admin Configurator Rates UI
 
 ### Phase 3: Designer Canvas (Builds 18–22) — MOSTLY DONE
@@ -58,22 +58,21 @@ Build specs: `project_brief/build plan/BUILD_INDEX.md`
 - [ ] Build 33: Admin Quotes & Leads dashboard
 - [ ] Build 34: Admin Price Import (CSV/XLS)
 
-### Phase 6: Public Pages & Launch (Builds 35–38) — PARTIAL
+### Phase 6: Public Pages & Launch (Builds 35–38) — MOSTLY DONE
 
-- [x] Homepage — Deck Lab branding
+- [x] Homepage — Deck Lab branding + homepage sections seed data
 - [x] About page
 - [x] Services page
 - [x] Contact page
-- [ ] Build 35: FAQ page content
-- [ ] Build 36: Legal pages (Terms, Privacy)
-- [ ] Build 37: SEO, Sitemap, Structured Data
+- [x] Build 35: FAQ page — 10 bilingual FAQs seeded
+- [x] Build 36: Legal pages — Terms & Privacy bilingual content seeded
+- [x] Build 37: SEO — sitemap, robots, page_seo for all pages, structured data
 - [ ] Build 38: Final Polish & Launch Prep
 
 ### Critical Path (Next Steps)
 
-1. **Build 16** — Quote Save & Lead Capture
-2. **Build 27** — Unified cart (configurator + shop)
-3. **Build 29** — Checkout + Paystack
-4. **Build 22** — Build Plan PDF
-5. **Builds 30–34** — Admin dashboard
-6. **Builds 35–38** — Content, SEO, polish & launch
+1. **Build 27** — Unified cart (configurator + shop)
+2. **Build 29** — Checkout + Paystack
+3. **Build 22** — Build Plan PDF
+4. **Builds 30–34** — Admin dashboard
+5. **Build 38** — Final polish & launch

@@ -751,6 +751,284 @@ insert into public.product_relations (product_id, related_product_id, relation_t
   ('p-fin-stain',   'p-fin-cleaner', 'frequently_bought_together', 1),
   ('p-fin-cleaner', 'p-fin-stain',   'frequently_bought_together', 1);
 
+-- ═══════════════════════════════════════════════════════════════
+-- BUILD 35 — FAQ SEED DATA (10 bilingual deck-related FAQs)
+-- ═══════════════════════════════════════════════════════════════
+
+INSERT INTO public.faqs (id, question, answer, display_order, is_active) VALUES
+  (
+    'faq-01-how-long',
+    '{"en":"How long does a deck installation take?","af":"Hoe lank neem ''n dekinstallasie?"}',
+    '{"en":"A standard ground-level deck (10–20 m²) typically takes 3–5 working days. Raised decks, pool surrounds, and complex shapes may take 5–10 days. We''ll give you a firm timeline in your quote.","af":"''n Standaard grondvlak-dek (10–20 m²) neem gewoonlik 3–5 werksdae. Verhoogde dekke, swembadsorronde en komplekse vorms kan 5–10 dae neem. Ons sal jou ''n vaste tydlyn in jou kwotasie gee."}',
+    1, true
+  ),
+  (
+    'faq-02-pine-vs-hardwood',
+    '{"en":"What is the difference between pine and hardwood decking?","af":"Wat is die verskil tussen denne- en hardehoutvloere?"}',
+    '{"en":"Pine (CCA-treated) is the most affordable option and works well for ground-level decks. It needs staining every 1–2 years. Hardwoods like balau and garapa are naturally durable, resist rot and insects, and age to a beautiful silver-grey if left untreated. They cost more upfront but last 25+ years with minimal maintenance.","af":"Denne (CCA-behandeld) is die bekostigste opsie en werk goed vir grondvlakdekke. Dit moet elke 1–2 jaar gebeis word. Hardehoute soos balau en garapa is natuurlik duursaam, bestand teen verrotting en insekte, en verouder tot ''n pragtige silwergrys as dit onbehandeld gelaat word. Hulle kos meer aanvanklik, maar hou 25+ jaar met minimale onderhoud."}',
+    2, true
+  ),
+  (
+    'faq-03-composite',
+    '{"en":"Is composite decking worth it?","af":"Is saamgestelde dekmateriaal die moeite werd?"}',
+    '{"en":"Composite boards never need staining, won''t splinter, and resist fading. They''re ideal for pool areas and low-maintenance homes. The upfront cost is higher than pine but lower than premium hardwood, and you save on yearly maintenance costs.","af":"Saamgestelde planke hoef nooit gebeis te word nie, sal nie splinter nie en is bestand teen verbleking. Hulle is ideaal vir swembadgebiede en lae-onderhoud huise. Die aanvanklike koste is hoër as denne, maar laer as premie hardehout, en jy spaar op jaarlikse onderhoudskoste."}',
+    3, true
+  ),
+  (
+    'faq-04-cost',
+    '{"en":"How much does a deck cost per square metre?","af":"Hoeveel kos ''n dek per vierkante meter?"}',
+    '{"en":"Prices vary by material and complexity. As a rough guide: pine decks start from R850/m² (supply only) or R1,500/m² (installed). Hardwood runs R1,800–R2,500/m² installed. Composite sits between R1,600–R2,200/m² installed. Use our online configurator for an instant, accurate quote.","af":"Pryse wissel na gelang van materiaal en kompleksiteit. As ''n rowwe riglyn: dennedekke begin vanaf R850/m² (slegs voorsiening) of R1 500/m² (geïnstalleer). Hardehout is R1 800–R2 500/m² geïnstalleer. Saamgesteld is tussen R1 600–R2 200/m² geïnstalleer. Gebruik ons aanlyn konfigurator vir ''n vinnige, akkurate kwotasie."}',
+    4, true
+  ),
+  (
+    'faq-05-maintenance',
+    '{"en":"How do I maintain my deck?","af":"Hoe onderhou ek my dek?"}',
+    '{"en":"For pine: clean annually with a deck wash, sand lightly, and apply a quality deck stain every 12–18 months. For hardwood: clean annually; staining is optional (it keeps the original colour, or let it silver naturally). For composite: just hose it down — no staining needed.","af":"Vir denne: was jaarliks met ''n dekwas, skuur liggies, en smeer ''n kwaliteit dekbeis elke 12–18 maande. Vir hardehout: was jaarliks; beis is opsioneel (dit hou die oorspronklike kleur, of laat dit natuurlik versilwer). Vir saamgesteld: spuit dit net af — geen beis nodig nie."}',
+    5, true
+  ),
+  (
+    'faq-06-diy',
+    '{"en":"Can I install the deck myself?","af":"Kan ek die dek self installeer?"}',
+    '{"en":"Absolutely! We offer a supply-only option with all the materials, fixings, and a detailed build plan. Our DIY kits include pre-cut boards and step-by-step instructions. If you get stuck, you can always book a consultation or upgrade to full installation.","af":"Absoluut! Ons bied ''n slegs-voorsiening opsie met al die materiale, hegstukke en ''n gedetailleerde bouplan. Ons DIY-stelle sluit voorafgesnyde planke en stap-vir-stap instruksies in. As jy vashaak, kan jy altyd ''n konsultasie bespreek of opgradeer na volledige installasie."}',
+    6, true
+  ),
+  (
+    'faq-07-warranty',
+    '{"en":"Do you offer a warranty?","af":"Bied julle ''n waarborg?"}',
+    '{"en":"Yes. All installed decks carry a 2-year workmanship warranty. Material warranties depend on the supplier: CCA pine has a 20-year treatment guarantee, balau and garapa carry natural durability guarantees, and composite boards typically have a 10–25 year manufacturer warranty.","af":"Ja. Alle geïnstalleerde dekke het ''n 2-jaar vakmanskap waarborg. Materiaalwaarborge hang af van die verskaffer: CCA-denne het ''n 20-jaar behandelingswaarborg, balau en garapa het natuurlike duursaamheidswaarborge, en saamgestelde planke het gewoonlik ''n 10–25 jaar vervaardigerwaarborg."}',
+    7, true
+  ),
+  (
+    'faq-08-service-area',
+    '{"en":"Where do you operate?","af":"Waar bedryf julle?"}',
+    '{"en":"We install decks throughout the Western Cape — Cape Town, Stellenbosch, Paarl, Somerset West, Hermanus, and surrounding areas. For supply-only orders, we deliver nationwide via courier.","af":"Ons installeer dekke regdeur die Wes-Kaap — Kaapstad, Stellenbosch, Paarl, Somerset-Wes, Hermanus en omliggende gebiede. Vir slegs-voorsiening bestellings lewer ons landwyd via koerier."}',
+    8, true
+  ),
+  (
+    'faq-09-raised-deck',
+    '{"en":"Can you build a raised or multi-level deck?","af":"Kan julle ''n verhoogde of multi-vlak dek bou?"}',
+    '{"en":"Yes — raised decks, split-level designs, and multi-tier configurations are our speciality. These require additional substructure (bearers and posts) and may need council approval if over 500 mm above ground. We handle the engineering and can advise on regulations.","af":"Ja — verhoogde dekke, verdeelde-vlak ontwerpe en multi-vlak konfigurasies is ons spesialiteit. Hierdie vereis addisionele substruktuur (draers en pale) en mag raadsgoedkeuring nodig hê as dit meer as 500 mm bo die grond is. Ons hanteer die ingenieurswese en kan adviseer oor regulasies."}',
+    9, true
+  ),
+  (
+    'faq-10-quote-process',
+    '{"en":"How does the quoting process work?","af":"Hoe werk die kwotasieproses?"}',
+    '{"en":"Use our online deck configurator to get an instant estimate. You can save your quote and we''ll email you a detailed PDF. For complex projects, book a free on-site consultation — we''ll measure up, discuss options, and provide a fixed-price quote within 48 hours.","af":"Gebruik ons aanlyn dek-konfigurator om ''n onmiddellike beraming te kry. Jy kan jou kwotasie stoor en ons sal jou ''n gedetailleerde PDF e-pos. Vir komplekse projekte, bespreek ''n gratis terreinbesoek — ons sal opmeet, opsies bespreek, en ''n vasteprys-kwotasie binne 48 uur verskaf."}',
+    10, true
+  )
+ON CONFLICT (id) DO UPDATE SET question = EXCLUDED.question, answer = EXCLUDED.answer, display_order = EXCLUDED.display_order;
+
+-- ═══════════════════════════════════════════════════════════════
+-- SITE SETTINGS, NAV LINKS, FOOTER SECTIONS
+-- ═══════════════════════════════════════════════════════════════
+
+-- Site settings (stored in site_content with section_key='site_settings')
+INSERT INTO public.site_content (id, section_key, content) VALUES
+  (
+    'sc-site-settings',
+    'site_settings',
+    '{
+      "logo_text": "The Deck Lab",
+      "company_name": "The Deck Lab",
+      "company_tagline": {"en":"Custom decking — designed, supplied & installed","af":"Pasgemaakte dekke — ontwerp, voorsien & geïnstalleer"},
+      "phone_number": "+27 21 000 0000",
+      "whatsapp_number": "+27 82 000 0000",
+      "email": "info@thedecklab.co.za",
+      "address": "Cape Town, Western Cape, South Africa",
+      "business_hours": "Mon–Fri 07:30–17:00, Sat 08:00–13:00",
+      "cta_label": {"en":"Get a Quote","af":"Kry ''n Kwotasie"},
+      "cta_url": "/configurator",
+      "social_links": [
+        {"platform":"facebook","url":"https://facebook.com/thedecklab"},
+        {"platform":"instagram","url":"https://instagram.com/thedecklab"}
+      ]
+    }'
+  )
+ON CONFLICT (id) DO UPDATE SET content = EXCLUDED.content;
+
+-- Navigation links
+INSERT INTO public.nav_links (id, label, href, display_order, is_active) VALUES
+  ('nav-home',        '{"en":"Home","af":"Tuis"}',          '/',              1, true),
+  ('nav-configurator','{"en":"Design Your Deck","af":"Ontwerp Jou Dek"}', '/configurator', 2, true),
+  ('nav-shop',        '{"en":"Shop","af":"Winkel"}',        '/shop',          3, true),
+  ('nav-services',    '{"en":"Services","af":"Dienste"}',   '/services',      4, true),
+  ('nav-about',       '{"en":"About","af":"Oor Ons"}',      '/about',         5, true),
+  ('nav-contact',     '{"en":"Contact","af":"Kontak"}',     '/contact',       6, true)
+ON CONFLICT (id) DO UPDATE SET label = EXCLUDED.label, href = EXCLUDED.href, display_order = EXCLUDED.display_order;
+
+-- Footer sections
+INSERT INTO public.footer_sections (id, title, links, display_order, is_active) VALUES
+  (
+    'fs-navigate',
+    '{"en":"Navigate","af":"Navigeer"}',
+    '[
+      {"label":{"en":"Home","af":"Tuis"},"href":"/"},
+      {"label":{"en":"Design Your Deck","af":"Ontwerp Jou Dek"},"href":"/configurator"},
+      {"label":{"en":"Shop Materials","af":"Koop Materiale"},"href":"/shop"},
+      {"label":{"en":"Deck Kits","af":"Dekstelle"},"href":"/shop/kits"}
+    ]',
+    1, true
+  ),
+  (
+    'fs-company',
+    '{"en":"Company","af":"Maatskappy"}',
+    '[
+      {"label":{"en":"About Us","af":"Oor Ons"},"href":"/about"},
+      {"label":{"en":"Services","af":"Dienste"},"href":"/services"},
+      {"label":{"en":"Gallery","af":"Galery"},"href":"/gallery"},
+      {"label":{"en":"FAQ","af":"Vrae"},"href":"/faq"}
+    ]',
+    2, true
+  ),
+  (
+    'fs-support',
+    '{"en":"Support","af":"Ondersteuning"}',
+    '[
+      {"label":{"en":"Contact Us","af":"Kontak Ons"},"href":"/contact"},
+      {"label":{"en":"Terms & Conditions","af":"Bepalings & Voorwaardes"},"href":"/terms"},
+      {"label":{"en":"Privacy Policy","af":"Privaatheidsbeleid"},"href":"/privacy"}
+    ]',
+    3, true
+  )
+ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, links = EXCLUDED.links, display_order = EXCLUDED.display_order;
+
+-- ═══════════════════════════════════════════════════════════════
+-- HOMEPAGE SECTIONS
+-- ═══════════════════════════════════════════════════════════════
+
+INSERT INTO public.homepage_sections (id, section_key, content, display_order, is_active) VALUES
+  (
+    'hs-hero',
+    'hero',
+    '{
+      "heading": {"en":"Your Deck, Your Way","af":"Jou Dek, Jou Manier"},
+      "subheading": {"en":"Design online, choose your materials, and get an instant quote — or let us handle everything from design to installation.","af":"Ontwerp aanlyn, kies jou materiale en kry ''n onmiddellike kwotasie — of laat ons alles hanteer van ontwerp tot installasie."},
+      "cta_primary": {"label":{"en":"Design Your Deck","af":"Ontwerp Jou Dek"},"href":"/configurator"},
+      "cta_secondary": {"label":{"en":"Browse Materials","af":"Blaai deur Materiale"},"href":"/shop"},
+      "background_image": "/images/hero-deck.jpg"
+    }',
+    1, true
+  ),
+  (
+    'hs-trust-stats',
+    'trust_stats',
+    '{
+      "items": [
+        {"icon":"Ruler","value":"500+","label":{"en":"Decks Built","af":"Dekke Gebou"}},
+        {"icon":"Star","value":"4.9","label":{"en":"Google Rating","af":"Google-gradering"}},
+        {"icon":"MapPin","value":"Western Cape","label":{"en":"Service Area","af":"Diensgebied"}},
+        {"icon":"ShieldCheck","value":"2 Year","label":{"en":"Warranty","af":"Waarborg"}}
+      ]
+    }',
+    2, true
+  ),
+  (
+    'hs-how-it-works',
+    'how_it_works',
+    '{
+      "heading": {"en":"How It Works","af":"Hoe Dit Werk"},
+      "steps": [
+        {"icon":"PenTool","title":{"en":"Design","af":"Ontwerp"},"description":{"en":"Use our online configurator to choose your deck type, materials, and dimensions.","af":"Gebruik ons aanlyn konfigurator om jou dektipe, materiale en afmetings te kies."}},
+        {"icon":"Calculator","title":{"en":"Quote","af":"Kwotasie"},"description":{"en":"Get an instant price breakdown — materials, labour, and delivery included.","af":"Kry ''n onmiddellike prysuiteensetting — materiale, arbeid en aflewering ingesluit."}},
+        {"icon":"ShoppingCart","title":{"en":"Order","af":"Bestel"},"description":{"en":"Order a supply-only kit or book full installation with a 50% deposit.","af":"Bestel ''n slegs-voorsiening stel of bespreek volledige installasie met ''n 50% deposito."}},
+        {"icon":"Hammer","title":{"en":"Build","af":"Bou"},"description":{"en":"We deliver and install your deck — on time, on budget, built to last.","af":"Ons lewer en installeer jou dek — betyds, binne begroting, gebou om te hou."}}
+      ]
+    }',
+    3, true
+  ),
+  (
+    'hs-materials',
+    'materials',
+    '{
+      "heading": {"en":"Premium Materials","af":"Premium Materiale"},
+      "subheading": {"en":"We source the finest decking timber and composite boards in South Africa.","af":"Ons verkry die beste dekhout en saamgestelde planke in Suid-Afrika."},
+      "items": [
+        {"title":{"en":"CCA Pine","af":"CCA Denne"},"description":{"en":"Affordable, pressure-treated, ideal for ground-level decks.","af":"Bekostigbaar, drukbehandeld, ideaal vir grondvlakdekke."},"image":"/images/pine.jpg"},
+        {"title":{"en":"Balau Hardwood","af":"Balau Hardehout"},"description":{"en":"Dense, naturally durable, rich brown tones. 25+ year lifespan.","af":"Dig, natuurlik duursaam, ryk bruin tone. 25+ jaar lewensduur."},"image":"/images/balau.jpg"},
+        {"title":{"en":"Garapa","af":"Garapa"},"description":{"en":"Golden-yellow hardwood with excellent dimensional stability.","af":"Goue-geel hardehout met uitstekende dimensionele stabiliteit."},"image":"/images/garapa.jpg"},
+        {"title":{"en":"Composite","af":"Saamgesteld"},"description":{"en":"Zero maintenance, splinter-free, eco-friendly. Perfect for pools.","af":"Geen onderhoud, splintergevry, ekovriendelik. Perfek vir swembaddens."},"image":"/images/composite.jpg"}
+      ]
+    }',
+    4, true
+  ),
+  (
+    'hs-cta',
+    'cta_banner',
+    '{
+      "heading": {"en":"Ready to Build Your Dream Deck?","af":"Gereed om Jou Droomdek te Bou?"},
+      "subheading": {"en":"Get a free instant quote in under 2 minutes.","af":"Kry ''n gratis onmiddellike kwotasie in minder as 2 minute."},
+      "cta": {"label":{"en":"Start Designing","af":"Begin Ontwerp"},"href":"/configurator"}
+    }',
+    5, true
+  )
+ON CONFLICT (id) DO UPDATE SET content = EXCLUDED.content, display_order = EXCLUDED.display_order;
+
+-- ═══════════════════════════════════════════════════════════════
+-- PAGE SEO METADATA
+-- ═══════════════════════════════════════════════════════════════
+
+INSERT INTO public.page_seo (id, page_key, title, description) VALUES
+  ('seo-home',        'home',         '{"en":"Custom Decking — Design, Supply & Install | The Deck Lab","af":"Pasgemaakte Dekke — Ontwerp, Voorsien & Installeer | The Deck Lab"}',
+    '{"en":"Design your perfect deck online, get an instant quote, and order premium materials or full installation. Serving the Western Cape.","af":"Ontwerp jou perfekte dek aanlyn, kry ''n onmiddellike kwotasie, en bestel premium materiale of volledige installasie. Bedien die Wes-Kaap."}'),
+  ('seo-about',       'about',        '{"en":"About The Deck Lab — Our Story","af":"Oor The Deck Lab — Ons Storie"}',
+    '{"en":"Learn about our team of decking specialists, our craftsmanship philosophy, and why Cape Town homeowners trust The Deck Lab.","af":"Leer oor ons span dekvloerspesialiste, ons vakmanskap-filosofie, en waarom Kaapstadse huiseienaars The Deck Lab vertrou."}'),
+  ('seo-services',    'services',     '{"en":"Decking Services — Design, Supply & Installation","af":"Dekdienste — Ontwerp, Voorsiening & Installasie"}',
+    '{"en":"From design consultations to full turnkey installation, we offer complete decking services across the Western Cape.","af":"Van ontwerpkonsultasies tot volledige sleutelklaar installasie, ons bied volledige dekdienste regdeur die Wes-Kaap."}'),
+  ('seo-contact',     'contact',      '{"en":"Contact The Deck Lab — Get in Touch","af":"Kontak The Deck Lab — Kom in Aanraking"}',
+    '{"en":"Get in touch for a free consultation, quote, or any decking questions. We''re based in Cape Town and serve the Western Cape.","af":"Kom in aanraking vir ''n gratis konsultasie, kwotasie, of enige dekvrae. Ons is gebaseer in Kaapstad en bedien die Wes-Kaap."}'),
+  ('seo-faq',         'faq',          '{"en":"Frequently Asked Questions — Decking FAQ","af":"Gereelde Vrae — Dek Vrae"}',
+    '{"en":"Answers to common questions about deck materials, costs, installation, maintenance, and our services.","af":"Antwoorde op algemene vrae oor dekmateriaal, koste, installasie, onderhoud en ons dienste."}'),
+  ('seo-terms',       'terms',        '{"en":"Terms & Conditions | The Deck Lab","af":"Bepalings & Voorwaardes | The Deck Lab"}',
+    '{"en":"Read our terms and conditions for deck installations, material supply, and online orders.","af":"Lees ons bepalings en voorwaardes vir dekinstallasies, materiaalvoorsiening en aanlyn bestellings."}'),
+  ('seo-privacy',     'privacy',      '{"en":"Privacy Policy | The Deck Lab","af":"Privaatheidsbeleid | The Deck Lab"}',
+    '{"en":"How we collect, use, and protect your personal information in compliance with POPIA.","af":"Hoe ons jou persoonlike inligting versamel, gebruik en beskerm in ooreenstemming met POPIA."}'),
+  ('seo-shop',        'shop',         '{"en":"Shop Decking Materials — Boards, Fixings & Kits","af":"Koop Dekmateriaal — Planke, Hegstukke & Stelle"}',
+    '{"en":"Browse and order premium decking boards, fixings, stains, and complete DIY kits. Nationwide delivery available.","af":"Blaai en bestel premium dekplanke, hegstukke, beitse en volledige DIY-stelle. Landwye aflewering beskikbaar."}'),
+  ('seo-configurator', 'configurator', '{"en":"Deck Configurator — Design & Price Your Deck Online","af":"Dek Konfigurator — Ontwerp & Prys Jou Dek Aanlyn"}',
+    '{"en":"Choose your deck type, material, dimensions, and extras — get an instant price in under 2 minutes.","af":"Kies jou dektipe, materiaal, afmetings en ekstras — kry ''n onmiddellike prys in minder as 2 minute."}')
+ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description;
+
+-- ═══════════════════════════════════════════════════════════════
+-- LEGAL CONTENT (Terms & Privacy)
+-- ═══════════════════════════════════════════════════════════════
+
+INSERT INTO public.site_content (id, section_key, content) VALUES
+  (
+    'sc-terms',
+    'terms',
+    '{
+      "title": {"en":"Terms & Conditions","af":"Bepalings & Voorwaardes"},
+      "last_updated": "2026-02-27",
+      "sections": [
+        {"heading":{"en":"1. Introduction","af":"1. Inleiding"},"body":{"en":"These terms govern your use of The Deck Lab website and all orders placed through it. By using our site or placing an order, you agree to be bound by these terms.","af":"Hierdie bepalings beheer jou gebruik van The Deck Lab webwerf en alle bestellings wat daardeur geplaas word. Deur ons webwerf te gebruik of ''n bestelling te plaas, stem jy in om deur hierdie bepalings gebind te word."}},
+        {"heading":{"en":"2. Quotations & Pricing","af":"2. Kwotasies & Pryse"},"body":{"en":"All quotes are valid for 14 days from the date of issue. Prices include VAT at 15% unless otherwise stated. Material prices may fluctuate due to supplier pricing changes — we will notify you of any changes before proceeding.","af":"Alle kwotasies is geldig vir 14 dae vanaf die datum van uitreiking. Pryse sluit BTW teen 15% in tensy anders vermeld. Materiaalpryse kan wissel weens veranderinge in verskafferspryse — ons sal jou van enige veranderinge in kennis stel voordat ons voortgaan."}},
+        {"heading":{"en":"3. Orders & Payment","af":"3. Bestellings & Betaling"},"body":{"en":"A 50% deposit is required to confirm installation orders. The balance is due on completion. Supply-only orders require full payment before dispatch. We accept EFT, credit card (via Paystack), and SnapScan.","af":"''n 50% deposito word vereis om installasie-bestellings te bevestig. Die balans is verskuldig by voltooiing. Slegs-voorsiening bestellings vereis volle betaling voor versending. Ons aanvaar EFT, kredietkaart (via Paystack) en SnapScan."}},
+        {"heading":{"en":"4. Delivery","af":"4. Aflewering"},"body":{"en":"Delivery within the Cape Town metro is free for orders over R5,000. Regional and national deliveries are quoted separately. Delivery times are estimates and not guaranteed — we''ll keep you updated on any delays.","af":"Aflewering binne die Kaapstadse metro is gratis vir bestellings bo R5 000. Streeks- en nasionale aflewerings word apart gekwoteer. Afleweringstye is beramings en nie gewaarborg nie — ons sal jou op hoogte hou van enige vertragings."}},
+        {"heading":{"en":"5. Installation Warranty","af":"5. Installasiewaarborg"},"body":{"en":"All installations carry a 2-year workmanship warranty. This covers structural defects, loose boards, and substructure issues. Normal wear, weathering, and damage from misuse are excluded. Material warranties are provided by the respective manufacturers.","af":"Alle installasies het ''n 2-jaar vakmanskap-waarborg. Dit dek strukturele defekte, los planke en substruktuurprobleme. Normale slytasie, verwering en skade weens misbruik word uitgesluit. Materiaalwaarborge word deur die onderskeie vervaardigers verskaf."}},
+        {"heading":{"en":"6. Cancellations & Refunds","af":"6. Kansellasies & Terugbetalings"},"body":{"en":"Cancellations made more than 7 days before the scheduled start date receive a full deposit refund. Cancellations within 7 days may forfeit up to 50% of the deposit to cover materials already ordered. Custom-cut materials are non-refundable.","af":"Kansellasies wat meer as 7 dae voor die geskeduleerde begindatum gemaak word, ontvang ''n volle deposito-terugbetaling. Kansellasies binne 7 dae kan tot 50% van die deposito verbeur om materiale wat reeds bestel is, te dek. Pasgesnyde materiale is nie terugbetaalbaar nie."}},
+        {"heading":{"en":"7. Governing Law","af":"7. Geldende Reg"},"body":{"en":"These terms are governed by the laws of the Republic of South Africa. Any disputes will be subject to the jurisdiction of the Western Cape High Court.","af":"Hierdie bepalings word beheer deur die wette van die Republiek van Suid-Afrika. Enige geskille sal onderhewig wees aan die jurisdiksie van die Wes-Kaapse Hoë Hof."}}
+      ]
+    }'
+  ),
+  (
+    'sc-privacy',
+    'privacy',
+    '{
+      "title": {"en":"Privacy Policy","af":"Privaatheidsbeleid"},
+      "last_updated": "2026-02-27",
+      "sections": [
+        {"heading":{"en":"1. Introduction","af":"1. Inleiding"},"body":{"en":"The Deck Lab (\"we\", \"us\", \"our\") is committed to protecting your personal information in accordance with the Protection of Personal Information Act (POPIA). This policy explains how we collect, use, store, and share your data.","af":"The Deck Lab (\"ons\") is verbind tot die beskerming van jou persoonlike inligting in ooreenstemming met die Wet op Beskerming van Persoonlike Inligting (POPIA). Hierdie beleid verduidelik hoe ons jou data versamel, gebruik, stoor en deel."}},
+        {"heading":{"en":"2. Information We Collect","af":"2. Inligting Wat Ons Versamel"},"body":{"en":"We collect: (a) information you provide — name, email, phone number, delivery address when placing orders or requesting quotes; (b) usage data — pages visited, configurator interactions, anonymised analytics; (c) payment data — processed securely by Paystack, we never store card details.","af":"Ons versamel: (a) inligting wat jy verskaf — naam, e-pos, telefoonnommer, afleweringsadres wanneer jy bestellings plaas of kwotasies versoek; (b) gebruiksdata — bladsye besoek, konfigurator-interaksies, geanonimiseerde ontledings; (c) betaaldata — veilig verwerk deur Paystack, ons stoor nooit kaartbesonderhede nie."}},
+        {"heading":{"en":"3. How We Use Your Information","af":"3. Hoe Ons Jou Inligting Gebruik"},"body":{"en":"We use your information to: process orders and deliver products; provide quotations and follow-up communications; improve our website and services; send marketing communications (only with your consent); comply with legal obligations.","af":"Ons gebruik jou inligting om: bestellings te verwerk en produkte af te lewer; kwotasies en opvolgkommunikasie te verskaf; ons webwerf en dienste te verbeter; bemarkingskommunikasie te stuur (slegs met jou toestemming); aan wetlike verpligtinge te voldoen."}},
+        {"heading":{"en":"4. Data Sharing","af":"4. Data-deling"},"body":{"en":"We may share your data with: payment processors (Paystack); courier services for deliveries; email service providers (Resend) for transactional emails. We never sell your personal information to third parties.","af":"Ons mag jou data deel met: betaalverwerkers (Paystack); koerierdienste vir aflewerings; e-posdiensverskaffers (Resend) vir transaksionele e-posse. Ons verkoop nooit jou persoonlike inligting aan derde partye nie."}},
+        {"heading":{"en":"5. Data Retention","af":"5. Data-bewaring"},"body":{"en":"We retain your personal data for as long as necessary to fulfil the purposes for which it was collected, or as required by law. Order records are kept for 5 years for tax compliance. You may request deletion of your data at any time.","af":"Ons bewaar jou persoonlike data so lank as wat nodig is om die doeleindes waarvoor dit versamel is te vervul, of soos deur die wet vereis. Bestelrekords word vir 5 jaar gehou vir belastingvoldoening. Jy kan te eniger tyd die skrapping van jou data versoek."}},
+        {"heading":{"en":"6. Your Rights","af":"6. Jou Regte"},"body":{"en":"Under POPIA, you have the right to: access your personal information; correct inaccurate data; request deletion of your data; object to processing for marketing purposes; lodge a complaint with the Information Regulator. Contact us at privacy@thedecklab.co.za to exercise these rights.","af":"Kragtens POPIA het jy die reg om: toegang tot jou persoonlike inligting te kry; onakkurate data reg te stel; skrapping van jou data te versoek; beswaar te maak teen verwerking vir bemarkingsdoeleindes; ''n klagte by die Inligtingsreguleerder in te dien. Kontak ons by privacy@thedecklab.co.za om hierdie regte uit te oefen."}},
+        {"heading":{"en":"7. Cookies","af":"7. Koekies"},"body":{"en":"Our website uses essential cookies for functionality and analytics cookies (Google Analytics) to understand usage patterns. You can manage cookie preferences through your browser settings or our cookie consent banner.","af":"Ons webwerf gebruik noodsaaklike koekies vir funksionaliteit en ontledingskoekies (Google Analytics) om gebruikspatrone te verstaan. Jy kan koekievoorkeure bestuur deur jou blaaierinstellings of ons koekietoestemming-vaandel."}}
+      ]
+    }'
+  )
+ON CONFLICT (id) DO UPDATE SET content = EXCLUDED.content;
+
 -- ─── Admin User Note ─────────────────────────────────────────
 -- To create an admin user:
 -- 1. Sign up via the Supabase Auth dashboard or the app's register page

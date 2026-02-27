@@ -348,8 +348,8 @@ export function DeckConfigurator() {
             <ChevronRight className="size-4" />
           </Button>
         ) : (
-          <Button disabled>
-            Request Quote (Coming Soon)
+          <Button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+            Save Quote ↑
           </Button>
         )}
       </div>

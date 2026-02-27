@@ -1,7 +1,10 @@
 "use client";
 
+import { useActionState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCw } from "lucide-react";
+import { saveQuote } from "@/lib/deck/actions";
+import { toast } from "sonner";
 import type { DeckQuote } from "@/types/deck";
 import type { ConfigOptions, DeckState } from "./deck-configurator";
 
@@ -25,6 +28,15 @@ function findName(items: { id: string; name: { en: string } }[], id: string): st
 }
 
 export function StepQuote({ quote, loading, state, options, onRecalculate }: Props) {
+  const [formState, formAction, isPending] = useActionState(saveQuote, null);
+
+  useEffect(() => {
+    if (formState?.success) {
+      toast.success("Quote saved! Check your email for a copy.");
+    } else if (formState && !formState.success && formState.error) {
+      toast.error(formState.error);
+    }
+  }, [formState]);
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
@@ -152,6 +164,81 @@ export function StepQuote({ quote, loading, state, options, onRecalculate }: Pro
         including VAT
         {state.include_installation ? " and installation" : ""}.
       </p>
+
+      {/* Save Quote form */}
+      <div className="rounded-lg border bg-muted/30 p-4">
+        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          Save Your Quote
+        </h3>
+        <form action={formAction} className="space-y-3">
+          <input type="hidden" name="config_snapshot" value={JSON.stringify({ state, quote })} />
+          <input type="hidden" name="total_cents" value={quote.total_cents} />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label htmlFor="sq-name" className="mb-1 block text-sm font-medium">
+                Name <span className="text-destructive">*</span>
+              </label>
+              <input
+                id="sq-name"
+                name="name"
+                type="text"
+                required
+                placeholder="Your full name"
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div>
+              <label htmlFor="sq-email" className="mb-1 block text-sm font-medium">
+                Email <span className="text-destructive">*</span>
+              </label>
+              <input
+                id="sq-email"
+                name="email"
+                type="email"
+                required
+                placeholder="you@example.com"
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="sq-phone" className="mb-1 block text-sm font-medium">
+              Phone <span className="text-muted-foreground text-xs">(optional)</span>
+            </label>
+            <input
+              id="sq-phone"
+              name="phone"
+              type="tel"
+              placeholder="082 000 0000"
+              className="w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label htmlFor="sq-notes" className="mb-1 block text-sm font-medium">
+              Notes <span className="text-muted-foreground text-xs">(optional)</span>
+            </label>
+            <textarea
+              id="sq-notes"
+              name="notes"
+              rows={2}
+              placeholder="Any additional details or questions..."
+              className="w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <Button type="submit" className="w-full" disabled={isPending || formState?.success}>
+            {isPending ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Saving...
+              </>
+            ) : formState?.success ? (
+              "Quote Saved!"
+            ) : (
+              "Save My Quote"
+            )}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
