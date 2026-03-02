@@ -49,7 +49,7 @@ CREATE TABLE consultation_requests (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON consultation_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON consultation_requests FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 3. SAMPLE REQUESTS (Material swatches/offcuts)
@@ -69,7 +69,7 @@ CREATE TABLE sample_requests (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON sample_requests FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON sample_requests FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 4. PRICE IMPORTS (Audit trail)

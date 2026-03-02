@@ -279,6 +279,14 @@ export function DeckConfigurator() {
     );
   }
 
+  // Derive material info for 3D preview
+  const selectedMaterial = options.materials.find((m) => m.id === state.material_type_id);
+  const materialSlug = selectedMaterial?.slug ?? "";
+  const selectedFinish = (options.finish_options ?? []).find(
+    (f) => f.id === state.finish_option_id
+  );
+  const finishHex = (selectedFinish as { hex_colour?: string } | undefined)?.hex_colour ?? null;
+
   const progress = ((step + 1) / STEP_LABELS.length) * 100;
 
   return (
@@ -344,6 +352,8 @@ export function DeckConfigurator() {
               boardLayout={boardLayout}
               cutoffMetrics={cutoffMetrics}
               layoutLoading={layoutLoading}
+              materialSlug={materialSlug}
+              finishHex={finishHex}
             />
           )}
           {step === 3 && (

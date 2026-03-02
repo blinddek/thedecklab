@@ -20,6 +20,7 @@ import {
   Mail,
   UserCog,
   Image,
+  Layers,
   MapPin,
   MessageSquare,
   Activity,
@@ -61,6 +62,7 @@ function buildSidebarNav(): NavGroup[] {
 
   // Content
   const contentItems: NavItem[] = [
+    { href: "/admin/pages", label: "Pages", icon: Layers },
     { href: "/admin/homepage", label: "Homepage", icon: Home },
   ];
   if (isEnabled("blog")) {
@@ -84,6 +86,9 @@ function buildSidebarNav(): NavGroup[] {
   if (isEnabled("serviceAreaPages")) {
     contentItems.push({ href: "/admin/areas", label: "Service Areas", icon: MapPin });
   }
+  if (isEnabled("legalDocs")) {
+    contentItems.push({ href: "/admin/legal", label: "Legal Docs", icon: Scale });
+  }
   groups.push({ title: "Content", items: contentItems });
 
   // Manage
@@ -99,9 +104,6 @@ function buildSidebarNav(): NavGroup[] {
   }
   if (isEnabled("whatsapp")) {
     manageItems.push({ href: "/admin/whatsapp", label: "WhatsApp", icon: MessageCircleIcon });
-  }
-  if (isEnabled("legalDocs")) {
-    manageItems.push({ href: "/admin/legal", label: "Legal Docs", icon: Scale });
   }
   if (isEnabled("coupons") || isEnabled("gifts") || isEnabled("hybridPackages")) {
     manageItems.push({ href: "/admin/commerce", label: "Commerce", icon: Tag });

@@ -22,7 +22,7 @@ CREATE TABLE deck_types (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON deck_types FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON deck_types FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 2. CONFIGURATOR RATES
@@ -45,7 +45,7 @@ CREATE TABLE configurator_rates (
 );
 
 CREATE INDEX idx_configurator_rates_material ON configurator_rates(material_type_id);
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON configurator_rates FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON configurator_rates FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 3. BOARD DIRECTIONS
@@ -65,7 +65,7 @@ CREATE TABLE board_directions (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON board_directions FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON board_directions FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 4. BOARD PROFILES
@@ -84,7 +84,7 @@ CREATE TABLE board_profiles (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON board_profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON board_profiles FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 5. FINISH OPTIONS
@@ -105,7 +105,7 @@ CREATE TABLE finish_options (
 );
 
 CREATE INDEX idx_finish_options_material ON finish_options(material_type_id);
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON finish_options FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON finish_options FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 6. CONFIGURATOR EXTRAS
@@ -125,7 +125,7 @@ CREATE TABLE configurator_extras (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON configurator_extras FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON configurator_extras FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 7. EXTRAS PRICING
@@ -146,7 +146,7 @@ CREATE TABLE extras_pricing (
 
 CREATE INDEX idx_extras_pricing_extra ON extras_pricing(extra_id);
 CREATE INDEX idx_extras_pricing_material ON extras_pricing(material_type_id);
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON extras_pricing FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON extras_pricing FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 8. MARKUP CONFIG (same cascade pattern as Blindly)
@@ -164,7 +164,7 @@ CREATE TABLE markup_config (
   UNIQUE(scope_type, scope_id)
 );
 
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON markup_config FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON markup_config FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- Seed global default
 INSERT INTO markup_config (scope_type, scope_id, markup_percent) VALUES
@@ -190,10 +190,42 @@ CREATE TABLE board_dimensions (
 );
 
 CREATE INDEX idx_board_dimensions_material ON board_dimensions(material_type_id);
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON board_dimensions FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON board_dimensions FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
--- 10. PRICING SETTINGS
+-- 10. SITE SETTINGS (key/value config store)
+-- ---------------------
+CREATE TABLE IF NOT EXISTS site_settings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  key TEXT UNIQUE NOT NULL,
+  value TEXT NOT NULL DEFAULT '',
+  value_type TEXT NOT NULL DEFAULT 'text'
+    CHECK (value_type IN ('text', 'number', 'boolean', 'json')),
+  category TEXT NOT NULL DEFAULT 'general',
+  label TEXT,
+  description TEXT,
+  is_public BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON site_settings FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
+
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "site_settings: public read public"
+  ON site_settings FOR SELECT
+  TO anon, authenticated
+  USING (is_public = true);
+
+CREATE POLICY "site_settings: admin full access"
+  ON site_settings FOR ALL
+  TO authenticated
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
+-- ---------------------
+-- 11. PRICING SETTINGS
 -- ---------------------
 INSERT INTO site_settings (key, value, value_type, category, label, description, is_public) VALUES
   ('global_markup_percent', '40', 'number', 'pricing', 'Default Markup %', 'Fallback markup on supplier prices', false),

@@ -67,7 +67,7 @@ CREATE INDEX idx_decklab_orders_email ON decklab_orders(customer_email);
 CREATE INDEX idx_decklab_orders_number ON decklab_orders(order_number);
 CREATE INDEX idx_decklab_orders_created ON decklab_orders(created_at DESC);
 
-CREATE TRIGGER set_updated_at BEFORE UPDATE ON decklab_orders FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+CREATE TRIGGER set_updated_at BEFORE UPDATE ON decklab_orders FOR EACH ROW EXECUTE FUNCTION handle_updated_at();
 
 -- ---------------------
 -- 2. CONFIGURATOR ITEMS

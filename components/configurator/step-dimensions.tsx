@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Loader2 } from "lucide-react";
+import { Loader2, Box, Grid2X2 } from "lucide-react";
 import { DeckCanvas, createDesignFromDimensions } from "./deck-canvas";
+import { Deck3DPreview } from "./deck-3d-loader";
 import type { DeckDesign, DesignMode, BoardLayoutResult, CutoffMetrics } from "@/types/deck";
 
 const LAYOUT_QUIPS = [
@@ -35,6 +37,8 @@ interface Props {
   readonly boardLayout?: BoardLayoutResult | null;
   readonly cutoffMetrics?: CutoffMetrics | null;
   readonly layoutLoading?: boolean;
+  readonly materialSlug?: string;
+  readonly finishHex?: string | null;
 }
 
 export function StepDimensions({
@@ -49,9 +53,17 @@ export function StepDimensions({
   boardLayout,
   cutoffMetrics,
   layoutLoading,
+  materialSlug = "",
+  finishHex = null,
 }: Props) {
+  const [viewMode, setViewMode] = useState<"2d" | "3d">("2d");
   const area = design.total_area_m2;
   const valid = area >= 1 && area <= 200;
+
+  // Reset to 2D when board layout disappears
+  useEffect(() => {
+    if (!boardLayout) setViewMode("2d");
+  }, [boardLayout]);
 
   // In quick mode, when length/width change, rebuild the design
   const handleLengthChange = useCallback(
@@ -161,12 +173,46 @@ export function StepDimensions({
         {/* Designer mode */}
         <TabsContent value="designer">
           <div className="space-y-4 pt-4">
-            <DeckCanvas
-              design={design}
-              onDesignChange={onDesignChange}
-              mode="designer"
-              boardLayout={boardLayout}
-            />
+            {/* 2D/3D toggle — only visible when board layout exists */}
+            {boardLayout && (
+              <div className="flex items-center justify-end gap-1">
+                <Button
+                  variant={viewMode === "2d" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("2d")}
+                  className="gap-1.5"
+                >
+                  <Grid2X2 className="size-3.5" />
+                  2D Plan
+                </Button>
+                <Button
+                  variant={viewMode === "3d" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setViewMode("3d")}
+                  className="gap-1.5"
+                >
+                  <Box className="size-3.5" />
+                  3D Preview
+                </Button>
+              </div>
+            )}
+
+            {/* Canvas / 3D view */}
+            {viewMode === "3d" && boardLayout ? (
+              <Deck3DPreview
+                boardLayout={boardLayout}
+                design={design}
+                materialSlug={materialSlug}
+                finishHex={finishHex}
+              />
+            ) : (
+              <DeckCanvas
+                design={design}
+                onDesignChange={onDesignChange}
+                mode="designer"
+                boardLayout={boardLayout}
+              />
+            )}
 
             {/* Area summary */}
             <div className="rounded-lg border bg-muted/30 p-4">

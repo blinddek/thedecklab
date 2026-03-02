@@ -316,121 +316,121 @@ on conflict (section_key) do update set content = excluded.content;
 -- ============================================================
 
 -- ─── Material Types ────────────────────────────────────────
-insert into public.material_types (id, name, slug, description, durability_rating, maintenance_level, lifespan_years_min, lifespan_years_max, is_composite, display_order, is_active) values
-  ('mt-pine',      '{"en":"Treated Pine (CCA)","af":"Behandelde Den"}'::jsonb,       'treated-pine',  '{"en":"Affordable, versatile, and stainable. The most popular choice for residential decks.","af":"Bekostigbaar, veelsydig en kleurbaar."}'::jsonb, 3, 'medium', 15, 20, false, 1, true),
-  ('mt-balau',     '{"en":"Balau Hardwood","af":"Balau Hardhout"}'::jsonb,            'balau',         '{"en":"Dense, durable, and naturally beautiful. Rich grain with excellent weather resistance.","af":"Dig, duursaam en natuurlik mooi."}'::jsonb, 5, 'low', 25, 40, false, 2, true),
-  ('mt-garapa',    '{"en":"Garapa Hardwood","af":"Garapa Hardhout"}'::jsonb,          'garapa',        '{"en":"Golden tones that age beautifully. Excellent durability with a premium finish.","af":"Goue tone wat mooi verouder."}'::jsonb, 4, 'low', 25, 35, false, 3, true),
-  ('mt-composite', '{"en":"Composite (WPC)","af":"Saamgestelde (WPC)"}'::jsonb,      'composite',     '{"en":"Low maintenance, consistent colour, and eco-friendly. No staining or sealing required.","af":"Lae onderhoud, konsekwente kleur en ekovriendelik."}'::jsonb, 5, 'none', 25, 50, true, 4, true)
-on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, durability_rating=excluded.durability_rating, maintenance_level=excluded.maintenance_level, lifespan_years_min=excluded.lifespan_years_min, lifespan_years_max=excluded.lifespan_years_max, is_composite=excluded.is_composite, display_order=excluded.display_order;
+insert into public.material_types (name, slug, description, durability_rating, maintenance_level, lifespan_years_min, lifespan_years_max, is_composite, display_order, is_active) values
+  ('{"en":"Treated Pine (CCA)","af":"Behandelde Den"}'::jsonb,       'treated-pine',  '{"en":"Affordable, versatile, and stainable. The most popular choice for residential decks.","af":"Bekostigbaar, veelsydig en kleurbaar."}'::jsonb, 3, 'medium', 15, 20, false, 1, true),
+  ('{"en":"Balau Hardwood","af":"Balau Hardhout"}'::jsonb,            'balau',         '{"en":"Dense, durable, and naturally beautiful. Rich grain with excellent weather resistance.","af":"Dig, duursaam en natuurlik mooi."}'::jsonb, 5, 'low', 25, 40, false, 2, true),
+  ('{"en":"Garapa Hardwood","af":"Garapa Hardhout"}'::jsonb,          'garapa',        '{"en":"Golden tones that age beautifully. Excellent durability with a premium finish.","af":"Goue tone wat mooi verouder."}'::jsonb, 4, 'low', 25, 35, false, 3, true),
+  ('{"en":"Composite (WPC)","af":"Saamgestelde (WPC)"}'::jsonb,      'composite',     '{"en":"Low maintenance, consistent colour, and eco-friendly. No staining or sealing required.","af":"Lae onderhoud, konsekwente kleur en ekovriendelik."}'::jsonb, 5, 'none', 25, 50, true, 4, true)
+on conflict (slug) do update set name=excluded.name, description=excluded.description, durability_rating=excluded.durability_rating, maintenance_level=excluded.maintenance_level, lifespan_years_min=excluded.lifespan_years_min, lifespan_years_max=excluded.lifespan_years_max, is_composite=excluded.is_composite, display_order=excluded.display_order;
 
 -- ─── Deck Types ────────────────────────────────────────────
-insert into public.deck_types (id, name, slug, description, image_url, complexity_multiplier, labour_complexity_multiplier, applicable_extras, display_order, is_active) values
-  ('dt-ground',   '{"en":"Ground-Level Deck","af":"Grondvlak Dek"}'::jsonb,   'ground-level', '{"en":"Built directly on or close to ground level. Ideal for patios and entertainment areas.","af":"Gebou direk op of naby grondvlak. Ideaal vir patio''s en vermaakgebiede."}'::jsonb, null, 1.0, 1.0, '{}', 1, true),
-  ('dt-raised',   '{"en":"Raised Deck","af":"Verhoogde Dek"}'::jsonb,         'raised',       '{"en":"Built on posts and bearers for sloped gardens or elevated terraces.","af":"Gebou op pale en draers vir skuins tuine of verhoogde terrasse."}'::jsonb, null, 1.25, 1.3, '{}', 2, true),
-  ('dt-pool',     '{"en":"Pool Deck","af":"Swembad Dek"}'::jsonb,             'pool',         '{"en":"Designed for wet environments with non-slip profiles and drainage.","af":"Ontwerp vir nat omgewings met anti-glip profiele en dreinering."}'::jsonb, null, 1.15, 1.2, '{}', 3, true),
-  ('dt-balcony',  '{"en":"Balcony / Rooftop","af":"Balkon / Dakdek"}'::jsonb, 'balcony',      '{"en":"Overlay decking on pedestals — no drilling into existing surfaces.","af":"Oorleg-dekke op voetstukkies — geen boor in bestaande oppervlaktes nie."}'::jsonb, null, 1.3, 1.35, '{}', 4, true)
-on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, complexity_multiplier=excluded.complexity_multiplier, labour_complexity_multiplier=excluded.labour_complexity_multiplier, display_order=excluded.display_order;
+insert into public.deck_types (name, slug, description, image_url, complexity_multiplier, labour_complexity_multiplier, applicable_extras, display_order, is_active) values
+  ('{"en":"Ground-Level Deck","af":"Grondvlak Dek"}'::jsonb,   'ground-level', '{"en":"Built directly on or close to ground level. Ideal for patios and entertainment areas.","af":"Gebou direk op of naby grondvlak. Ideaal vir patio''s en vermaakgebiede."}'::jsonb, null, 1.0, 1.0, '{}', 1, true),
+  ('{"en":"Raised Deck","af":"Verhoogde Dek"}'::jsonb,         'raised',       '{"en":"Built on posts and bearers for sloped gardens or elevated terraces.","af":"Gebou op pale en draers vir skuins tuine of verhoogde terrasse."}'::jsonb, null, 1.25, 1.3, '{}', 2, true),
+  ('{"en":"Pool Deck","af":"Swembad Dek"}'::jsonb,             'pool',         '{"en":"Designed for wet environments with non-slip profiles and drainage.","af":"Ontwerp vir nat omgewings met anti-glip profiele en dreinering."}'::jsonb, null, 1.15, 1.2, '{}', 3, true),
+  ('{"en":"Balcony / Rooftop","af":"Balkon / Dakdek"}'::jsonb, 'balcony',      '{"en":"Overlay decking on pedestals — no drilling into existing surfaces.","af":"Oorleg-dekke op voetstukkies — geen boor in bestaande oppervlaktes nie."}'::jsonb, null, 1.3, 1.35, '{}', 4, true)
+on conflict (slug) do update set name=excluded.name, description=excluded.description, complexity_multiplier=excluded.complexity_multiplier, labour_complexity_multiplier=excluded.labour_complexity_multiplier, display_order=excluded.display_order;
 
 -- ─── Board Directions ──────────────────────────────────────
-insert into public.board_directions (id, name, slug, description, image_url, material_multiplier, labour_multiplier, display_order, is_active) values
-  ('bd-straight',    '{"en":"Straight","af":"Reguit"}'::jsonb,           'straight',    '{"en":"Boards run parallel to the longest edge. Most efficient use of materials."}'::jsonb, null, 1.0,  1.0,  1, true),
-  ('bd-diagonal',    '{"en":"Diagonal (45°)","af":"Diagonaal (45°)"}'::jsonb, 'diagonal', '{"en":"Boards at 45° angle. Uses ~10% more material due to angled cuts."}'::jsonb, null, 1.10, 1.10, 2, true),
-  ('bd-herringbone', '{"en":"Herringbone","af":"Visgraat"}'::jsonb,      'herringbone', '{"en":"Classic V-pattern. Uses ~15% more material and takes longer to install."}'::jsonb, null, 1.15, 1.25, 3, true),
-  ('bd-chevron',     '{"en":"Chevron","af":"Chevron"}'::jsonb,           'chevron',     '{"en":"Mitre-cut V-pattern for a clean point. Premium look with higher material use."}'::jsonb, null, 1.15, 1.30, 4, true)
-on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, material_multiplier=excluded.material_multiplier, labour_multiplier=excluded.labour_multiplier, display_order=excluded.display_order;
+insert into public.board_directions (name, slug, description, image_url, material_multiplier, labour_multiplier, display_order, is_active) values
+  ('{"en":"Straight","af":"Reguit"}'::jsonb,           'straight',    '{"en":"Boards run parallel to the longest edge. Most efficient use of materials."}'::jsonb, null, 1.0,  1.0,  1, true),
+  ('{"en":"Diagonal (45°)","af":"Diagonaal (45°)"}'::jsonb, 'diagonal', '{"en":"Boards at 45° angle. Uses ~10% more material due to angled cuts."}'::jsonb, null, 1.10, 1.10, 2, true),
+  ('{"en":"Herringbone","af":"Visgraat"}'::jsonb,      'herringbone', '{"en":"Classic V-pattern. Uses ~15% more material and takes longer to install."}'::jsonb, null, 1.15, 1.25, 3, true),
+  ('{"en":"Chevron","af":"Chevron"}'::jsonb,           'chevron',     '{"en":"Mitre-cut V-pattern for a clean point. Premium look with higher material use."}'::jsonb, null, 1.15, 1.30, 4, true)
+on conflict (slug) do update set name=excluded.name, description=excluded.description, material_multiplier=excluded.material_multiplier, labour_multiplier=excluded.labour_multiplier, display_order=excluded.display_order;
 
 -- ─── Board Profiles ────────────────────────────────────────
-insert into public.board_profiles (id, name, slug, description, image_url, price_modifier_percent, display_order, is_active) values
-  ('bp-smooth',  '{"en":"Smooth (Planed)","af":"Glad (Geskaafd)"}'::jsonb, 'smooth',  '{"en":"Clean, contemporary finish. Best for barefoot comfort."}'::jsonb, null, 0,  1, true),
-  ('bp-grooved', '{"en":"Grooved (Anti-slip)","af":"Gegroef (Anti-glip)"}'::jsonb, 'grooved', '{"en":"Channels for grip and drainage. Recommended for pool and wet areas."}'::jsonb, null, 5,  2, true),
-  ('bp-brushed', '{"en":"Brushed (Textured)","af":"Geborstel (Tekstuur)"}'::jsonb, 'brushed', '{"en":"Wire-brushed texture for a natural, rustic look with good grip."}'::jsonb, null, 8, 3, true)
-on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, price_modifier_percent=excluded.price_modifier_percent, display_order=excluded.display_order;
+insert into public.board_profiles (name, slug, description, image_url, price_modifier_percent, display_order, is_active) values
+  ('{"en":"Smooth (Planed)","af":"Glad (Geskaafd)"}'::jsonb, 'smooth',  '{"en":"Clean, contemporary finish. Best for barefoot comfort."}'::jsonb, null, 0,  1, true),
+  ('{"en":"Grooved (Anti-slip)","af":"Gegroef (Anti-glip)"}'::jsonb, 'grooved', '{"en":"Channels for grip and drainage. Recommended for pool and wet areas."}'::jsonb, null, 5,  2, true),
+  ('{"en":"Brushed (Textured)","af":"Geborstel (Tekstuur)"}'::jsonb, 'brushed', '{"en":"Wire-brushed texture for a natural, rustic look with good grip."}'::jsonb, null, 8, 3, true)
+on conflict (slug) do update set name=excluded.name, description=excluded.description, price_modifier_percent=excluded.price_modifier_percent, display_order=excluded.display_order;
 
 -- ─── Finish Options (per material) ─────────────────────────
-insert into public.finish_options (id, material_type_id, name, slug, hex_colour, price_modifier_cents, display_order, is_active) values
+insert into public.finish_options (material_type_id, name, slug, hex_colour, price_modifier_cents, display_order, is_active) values
   -- Pine finishes
-  ('fo-pine-natural',   'mt-pine', '{"en":"Natural (Unfinished)","af":"Natuurlik"}'::jsonb,     'natural',       null,     0,      1, true),
-  ('fo-pine-clear',     'mt-pine', '{"en":"Clear Seal","af":"Deursigtige Seël"}'::jsonb,        'clear-seal',    null,     4500,   2, true),
-  ('fo-pine-honey',     'mt-pine', '{"en":"Honey Oak Stain","af":"Heuningeik Beis"}'::jsonb,    'honey-oak',     '#C4963A', 5500,  3, true),
-  ('fo-pine-walnut',    'mt-pine', '{"en":"Dark Walnut Stain","af":"Donker Okkerneut"}'::jsonb, 'dark-walnut',   '#5C3A1E', 5500,  4, true),
-  ('fo-pine-charcoal',  'mt-pine', '{"en":"Charcoal Stain","af":"Houtskool Beis"}'::jsonb,     'charcoal',      '#3A3A3A', 5500,  5, true),
+  ((select id from material_types where slug = 'treated-pine'), '{"en":"Natural (Unfinished)","af":"Natuurlik"}'::jsonb,     'natural',       null,     0,      1, true),
+  ((select id from material_types where slug = 'treated-pine'), '{"en":"Clear Seal","af":"Deursigtige Seël"}'::jsonb,        'clear-seal',    null,     4500,   2, true),
+  ((select id from material_types where slug = 'treated-pine'), '{"en":"Honey Oak Stain","af":"Heuningeik Beis"}'::jsonb,    'honey-oak',     '#C4963A', 5500,  3, true),
+  ((select id from material_types where slug = 'treated-pine'), '{"en":"Dark Walnut Stain","af":"Donker Okkerneut"}'::jsonb, 'dark-walnut',   '#5C3A1E', 5500,  4, true),
+  ((select id from material_types where slug = 'treated-pine'), '{"en":"Charcoal Stain","af":"Houtskool Beis"}'::jsonb,     'charcoal',      '#3A3A3A', 5500,  5, true),
   -- Balau finishes
-  ('fo-balau-natural',  'mt-balau', '{"en":"Natural (Oil)","af":"Natuurlik (Olie)"}'::jsonb,    'natural-oil',   '#8B6B3D', 3500,  1, true),
-  ('fo-balau-teak',     'mt-balau', '{"en":"Teak Oil","af":"Teak Olie"}'::jsonb,                'teak-oil',      '#A67C52', 4500,  2, true),
+  ((select id from material_types where slug = 'balau'), '{"en":"Natural (Oil)","af":"Natuurlik (Olie)"}'::jsonb,    'natural-oil',   '#8B6B3D', 3500,  1, true),
+  ((select id from material_types where slug = 'balau'), '{"en":"Teak Oil","af":"Teak Olie"}'::jsonb,                'teak-oil',      '#A67C52', 4500,  2, true),
   -- Garapa finishes
-  ('fo-garapa-natural', 'mt-garapa', '{"en":"Natural (Oil)","af":"Natuurlik (Olie)"}'::jsonb,   'garapa-natural', '#C4A04A', 3500, 1, true),
-  ('fo-garapa-golden',  'mt-garapa', '{"en":"Golden Oil","af":"Goue Olie"}'::jsonb,             'golden-oil',    '#D4B04A', 4500,  2, true),
+  ((select id from material_types where slug = 'garapa'), '{"en":"Natural (Oil)","af":"Natuurlik (Olie)"}'::jsonb,   'garapa-natural', '#C4A04A', 3500, 1, true),
+  ((select id from material_types where slug = 'garapa'), '{"en":"Golden Oil","af":"Goue Olie"}'::jsonb,             'golden-oil',    '#D4B04A', 4500,  2, true),
   -- Composite finishes (colour is built in)
-  ('fo-comp-teak',      'mt-composite', '{"en":"Teak","af":"Teak"}'::jsonb,                     'comp-teak',     '#A67C52', 0,     1, true),
-  ('fo-comp-grey',      'mt-composite', '{"en":"Stone Grey","af":"Klipgrys"}'::jsonb,           'comp-grey',     '#8A8A82', 0,     2, true),
-  ('fo-comp-charcoal',  'mt-composite', '{"en":"Charcoal","af":"Houtskool"}'::jsonb,            'comp-charcoal', '#4A4A48', 0,     3, true),
-  ('fo-comp-walnut',    'mt-composite', '{"en":"Walnut","af":"Okkerneut"}'::jsonb,              'comp-walnut',   '#6B4E37', 0,     4, true)
-on conflict (id) do update set name=excluded.name, slug=excluded.slug, hex_colour=excluded.hex_colour, price_modifier_cents=excluded.price_modifier_cents, display_order=excluded.display_order;
+  ((select id from material_types where slug = 'composite'), '{"en":"Teak","af":"Teak"}'::jsonb,                     'comp-teak',     '#A67C52', 0,     1, true),
+  ((select id from material_types where slug = 'composite'), '{"en":"Stone Grey","af":"Klipgrys"}'::jsonb,           'comp-grey',     '#8A8A82', 0,     2, true),
+  ((select id from material_types where slug = 'composite'), '{"en":"Charcoal","af":"Houtskool"}'::jsonb,            'comp-charcoal', '#4A4A48', 0,     3, true),
+  ((select id from material_types where slug = 'composite'), '{"en":"Walnut","af":"Okkerneut"}'::jsonb,              'comp-walnut',   '#6B4E37', 0,     4, true)
+on conflict (slug) do update set name=excluded.name, hex_colour=excluded.hex_colour, price_modifier_cents=excluded.price_modifier_cents, display_order=excluded.display_order;
 
 -- ─── Configurator Rates (per material × rate type) ─────────
 -- Prices in cents per m²
-insert into public.configurator_rates (id, material_type_id, rate_type, supplier_cost_cents, customer_price_cents, unit, is_active) values
+insert into public.configurator_rates (material_type_id, rate_type, supplier_cost_cents, customer_price_cents, unit, is_active) values
   -- Pine rates
-  ('cr-pine-boards',  'mt-pine', 'boards_per_m2',       45000,  63000,  'per_m2', true),
-  ('cr-pine-sub',     'mt-pine', 'substructure_per_m2', 18000,  25200,  'per_m2', true),
-  ('cr-pine-fix',     'mt-pine', 'fixings_per_m2',       4500,   6300,  'per_m2', true),
-  ('cr-pine-labour',  'mt-pine', 'labour_per_m2',       25000,  35000,  'per_m2', true),
-  ('cr-pine-stain',   'mt-pine', 'staining_per_m2',      3500,   5000,  'per_m2', true),
+  ((select id from material_types where slug = 'treated-pine'), 'boards_per_m2',       45000,  63000,  'per_m2', true),
+  ((select id from material_types where slug = 'treated-pine'), 'substructure_per_m2', 18000,  25200,  'per_m2', true),
+  ((select id from material_types where slug = 'treated-pine'), 'fixings_per_m2',       4500,   6300,  'per_m2', true),
+  ((select id from material_types where slug = 'treated-pine'), 'labour_per_m2',       25000,  35000,  'per_m2', true),
+  ((select id from material_types where slug = 'treated-pine'), 'staining_per_m2',      3500,   5000,  'per_m2', true),
   -- Balau rates
-  ('cr-balau-boards', 'mt-balau', 'boards_per_m2',       85000, 119000, 'per_m2', true),
-  ('cr-balau-sub',    'mt-balau', 'substructure_per_m2',  22000,  30800, 'per_m2', true),
-  ('cr-balau-fix',    'mt-balau', 'fixings_per_m2',        5500,   7700, 'per_m2', true),
-  ('cr-balau-labour', 'mt-balau', 'labour_per_m2',        32000,  44800, 'per_m2', true),
-  ('cr-balau-stain',  'mt-balau', 'staining_per_m2',       3000,   4200, 'per_m2', true),
+  ((select id from material_types where slug = 'balau'), 'boards_per_m2',       85000, 119000, 'per_m2', true),
+  ((select id from material_types where slug = 'balau'), 'substructure_per_m2',  22000,  30800, 'per_m2', true),
+  ((select id from material_types where slug = 'balau'), 'fixings_per_m2',        5500,   7700, 'per_m2', true),
+  ((select id from material_types where slug = 'balau'), 'labour_per_m2',        32000,  44800, 'per_m2', true),
+  ((select id from material_types where slug = 'balau'), 'staining_per_m2',       3000,   4200, 'per_m2', true),
   -- Garapa rates
-  ('cr-garapa-boards','mt-garapa', 'boards_per_m2',       78000, 109200, 'per_m2', true),
-  ('cr-garapa-sub',   'mt-garapa', 'substructure_per_m2',  22000,  30800, 'per_m2', true),
-  ('cr-garapa-fix',   'mt-garapa', 'fixings_per_m2',        5500,   7700, 'per_m2', true),
-  ('cr-garapa-labour','mt-garapa', 'labour_per_m2',        30000,  42000, 'per_m2', true),
-  ('cr-garapa-stain', 'mt-garapa', 'staining_per_m2',       3000,   4200, 'per_m2', true),
+  ((select id from material_types where slug = 'garapa'), 'boards_per_m2',       78000, 109200, 'per_m2', true),
+  ((select id from material_types where slug = 'garapa'), 'substructure_per_m2',  22000,  30800, 'per_m2', true),
+  ((select id from material_types where slug = 'garapa'), 'fixings_per_m2',        5500,   7700, 'per_m2', true),
+  ((select id from material_types where slug = 'garapa'), 'labour_per_m2',        30000,  42000, 'per_m2', true),
+  ((select id from material_types where slug = 'garapa'), 'staining_per_m2',       3000,   4200, 'per_m2', true),
   -- Composite rates
-  ('cr-comp-boards',  'mt-composite', 'boards_per_m2',      95000, 133000, 'per_m2', true),
-  ('cr-comp-sub',     'mt-composite', 'substructure_per_m2', 20000,  28000, 'per_m2', true),
-  ('cr-comp-fix',     'mt-composite', 'fixings_per_m2',       6000,   8400, 'per_m2', true),
-  ('cr-comp-labour',  'mt-composite', 'labour_per_m2',       28000,  39200, 'per_m2', true)
-on conflict (id) do update set supplier_cost_cents=excluded.supplier_cost_cents, customer_price_cents=excluded.customer_price_cents;
+  ((select id from material_types where slug = 'composite'), 'boards_per_m2',      95000, 133000, 'per_m2', true),
+  ((select id from material_types where slug = 'composite'), 'substructure_per_m2', 20000,  28000, 'per_m2', true),
+  ((select id from material_types where slug = 'composite'), 'fixings_per_m2',       6000,   8400, 'per_m2', true),
+  ((select id from material_types where slug = 'composite'), 'labour_per_m2',       28000,  39200, 'per_m2', true)
+on conflict (material_type_id, rate_type) do update set supplier_cost_cents=excluded.supplier_cost_cents, customer_price_cents=excluded.customer_price_cents;
 
 -- ─── Configurator Extras ───────────────────────────────────
-insert into public.configurator_extras (id, name, slug, description, icon, pricing_model, display_order, is_active) values
-  ('ce-steps',    '{"en":"Steps","af":"Trappe"}'::jsonb,                  'steps',     '{"en":"Add timber steps to your deck.","af":"Voeg houttrappe by jou dek."}'::jsonb,                     'stairs',     'per_step_metre',    1, true),
-  ('ce-railing',  '{"en":"Railing","af":"Reling"}'::jsonb,               'railing',   '{"en":"Timber or stainless steel balustrade along edges.","af":"Hout- of vlekvrystaal balustrade langs rande."}'::jsonb,   'fence',      'per_linear_metre',  2, true),
-  ('ce-fascia',   '{"en":"Fascia Board","af":"Fassiabord"}'::jsonb,      'fascia',    '{"en":"Trim boards to cover exposed substructure.","af":"Randborde om blootgestelde substruktuur te bedek."}'::jsonb,          'layers',     'per_linear_metre',  3, true),
-  ('ce-lighting', '{"en":"LED Deck Lights","af":"LED Dekligte"}'::jsonb, 'lighting',  '{"en":"Recessed LED lights in deck boards or steps.","af":"Versteekte LED-ligte in dekplanke of trappe."}'::jsonb,        'lightbulb',  'per_unit',          4, true),
-  ('ce-skirting', '{"en":"Skirting","af":"Plint"}'::jsonb,               'skirting',  '{"en":"Enclose the space under a raised deck.","af":"Sluit die ruimte onder ''n verhoogde dek in."}'::jsonb,              'panel-left', 'per_linear_metre',  5, true),
-  ('ce-pergola',  '{"en":"Pergola Frame","af":"Pergolatrame"}'::jsonb,   'pergola',   '{"en":"Timber pergola structure over your deck.","af":"Hout pergolastruktuur oor jou dek."}'::jsonb,            'tent',       'per_m2',            6, true)
-on conflict (id) do update set name=excluded.name, slug=excluded.slug, description=excluded.description, pricing_model=excluded.pricing_model, display_order=excluded.display_order;
+insert into public.configurator_extras (name, slug, description, icon, pricing_model, display_order, is_active) values
+  ('{"en":"Steps","af":"Trappe"}'::jsonb,                  'steps',     '{"en":"Add timber steps to your deck.","af":"Voeg houttrappe by jou dek."}'::jsonb,                     'stairs',     'per_step_metre',    1, true),
+  ('{"en":"Railing","af":"Reling"}'::jsonb,               'railing',   '{"en":"Timber or stainless steel balustrade along edges.","af":"Hout- of vlekvrystaal balustrade langs rande."}'::jsonb,   'fence',      'per_linear_metre',  2, true),
+  ('{"en":"Fascia Board","af":"Fassiabord"}'::jsonb,      'fascia',    '{"en":"Trim boards to cover exposed substructure.","af":"Randborde om blootgestelde substruktuur te bedek."}'::jsonb,          'layers',     'per_linear_metre',  3, true),
+  ('{"en":"LED Deck Lights","af":"LED Dekligte"}'::jsonb, 'lighting',  '{"en":"Recessed LED lights in deck boards or steps.","af":"Versteekte LED-ligte in dekplanke of trappe."}'::jsonb,        'lightbulb',  'per_unit',          4, true),
+  ('{"en":"Skirting","af":"Plint"}'::jsonb,               'skirting',  '{"en":"Enclose the space under a raised deck.","af":"Sluit die ruimte onder ''n verhoogde dek in."}'::jsonb,              'panel-left', 'per_linear_metre',  5, true),
+  ('{"en":"Pergola Frame","af":"Pergolatrame"}'::jsonb,   'pergola',   '{"en":"Timber pergola structure over your deck.","af":"Hout pergolastruktuur oor jou dek."}'::jsonb,            'tent',       'per_m2',            6, true)
+on conflict (slug) do update set name=excluded.name, description=excluded.description, pricing_model=excluded.pricing_model, display_order=excluded.display_order;
 
 -- ─── Extras Pricing (per extra, optionally per material) ───
-insert into public.extras_pricing (id, extra_id, material_type_id, variant_label, supplier_cost_cents, customer_price_cents, display_order, is_active) values
+delete from public.extras_pricing;
+insert into public.extras_pricing (extra_id, material_type_id, variant_label, supplier_cost_cents, customer_price_cents, display_order, is_active) values
   -- Steps: per step-metre (width of step × number of steps)
-  ('ep-steps-pine',    'ce-steps',   'mt-pine',      'Pine',      85000,  119000, 1, true),
-  ('ep-steps-balau',   'ce-steps',   'mt-balau',     'Balau',    145000,  203000, 2, true),
-  ('ep-steps-garapa',  'ce-steps',   'mt-garapa',    'Garapa',   135000,  189000, 3, true),
-  ('ep-steps-comp',    'ce-steps',   'mt-composite', 'Composite',120000,  168000, 4, true),
+  ((select id from configurator_extras where slug = 'steps'),   (select id from material_types where slug = 'treated-pine'), 'Pine',      85000,  119000, 1, true),
+  ((select id from configurator_extras where slug = 'steps'),   (select id from material_types where slug = 'balau'),        'Balau',    145000,  203000, 2, true),
+  ((select id from configurator_extras where slug = 'steps'),   (select id from material_types where slug = 'garapa'),       'Garapa',   135000,  189000, 3, true),
+  ((select id from configurator_extras where slug = 'steps'),   (select id from material_types where slug = 'composite'),    'Composite',120000,  168000, 4, true),
   -- Railing: per linear metre
-  ('ep-rail-timber',   'ce-railing',  null,  'Timber',           65000,   91000, 1, true),
-  ('ep-rail-steel',    'ce-railing',  null,  'Stainless Steel', 125000,  175000, 2, true),
-  ('ep-rail-glass',    'ce-railing',  null,  'Glass Panel',     185000,  259000, 3, true),
+  ((select id from configurator_extras where slug = 'railing'),  null,  'Timber',           65000,   91000, 1, true),
+  ((select id from configurator_extras where slug = 'railing'),  null,  'Stainless Steel', 125000,  175000, 2, true),
+  ((select id from configurator_extras where slug = 'railing'),  null,  'Glass Panel',     185000,  259000, 3, true),
   -- Fascia: per linear metre
-  ('ep-fascia-pine',   'ce-fascia',  'mt-pine',      'Pine',      12000,   16800, 1, true),
-  ('ep-fascia-balau',  'ce-fascia',  'mt-balau',     'Balau',     22000,   30800, 2, true),
-  ('ep-fascia-garapa', 'ce-fascia',  'mt-garapa',    'Garapa',    20000,   28000, 3, true),
-  ('ep-fascia-comp',   'ce-fascia',  'mt-composite', 'Composite', 18000,   25200, 4, true),
+  ((select id from configurator_extras where slug = 'fascia'),  (select id from material_types where slug = 'treated-pine'), 'Pine',      12000,   16800, 1, true),
+  ((select id from configurator_extras where slug = 'fascia'),  (select id from material_types where slug = 'balau'),        'Balau',     22000,   30800, 2, true),
+  ((select id from configurator_extras where slug = 'fascia'),  (select id from material_types where slug = 'garapa'),       'Garapa',    20000,   28000, 3, true),
+  ((select id from configurator_extras where slug = 'fascia'),  (select id from material_types where slug = 'composite'),    'Composite', 18000,   25200, 4, true),
   -- LED lights: per unit
-  ('ep-light-recessed','ce-lighting', null, 'Recessed (warm white)', 15000, 21000, 1, true),
-  ('ep-light-step',    'ce-lighting', null, 'Step light (warm white)', 18000, 25200, 2, true),
+  ((select id from configurator_extras where slug = 'lighting'), null, 'Recessed (warm white)', 15000, 21000, 1, true),
+  ((select id from configurator_extras where slug = 'lighting'), null, 'Step light (warm white)', 18000, 25200, 2, true),
   -- Skirting: per linear metre
-  ('ep-skirt-pine',    'ce-skirting', 'mt-pine',      'Pine',      18000,  25200, 1, true),
-  ('ep-skirt-comp',    'ce-skirting', 'mt-composite', 'Composite', 25000,  35000, 2, true),
+  ((select id from configurator_extras where slug = 'skirting'), (select id from material_types where slug = 'treated-pine'), 'Pine',      18000,  25200, 1, true),
+  ((select id from configurator_extras where slug = 'skirting'), (select id from material_types where slug = 'composite'),    'Composite', 25000,  35000, 2, true),
   -- Pergola: per m²
-  ('ep-pergola-pine',  'ce-pergola',  'mt-pine',  'Pine',         95000, 133000, 1, true),
-  ('ep-pergola-balau', 'ce-pergola',  'mt-balau', 'Balau',       155000, 217000, 2, true)
-on conflict (id) do update set supplier_cost_cents=excluded.supplier_cost_cents, customer_price_cents=excluded.customer_price_cents, display_order=excluded.display_order;
+  ((select id from configurator_extras where slug = 'pergola'),  (select id from material_types where slug = 'treated-pine'), 'Pine',         95000, 133000, 1, true),
+  ((select id from configurator_extras where slug = 'pergola'),  (select id from material_types where slug = 'balau'),        'Balau',       155000, 217000, 2, true);
 
 -- ═══════════════════════════════════════════════════════════════
 -- BUILD 08 — PRODUCT CATALOGUE SEED DATA
@@ -439,393 +439,372 @@ on conflict (id) do update set supplier_cost_cents=excluded.supplier_cost_cents,
 
 -- ─── Product Categories (hierarchical) ──────────────────────
 delete from public.product_categories;
-insert into public.product_categories (id, name, slug, parent_id, material_type_id, display_order, is_active) values
-  -- Top-level categories
-  ('pc-boards',       '{"en":"Deck Boards","af":"Dekplanke"}'::jsonb,       'deck-boards',    null, null, 1, true),
-  ('pc-substructure', '{"en":"Substructure","af":"Substruktuur"}'::jsonb,    'substructure',   null, null, 2, true),
-  ('pc-fixings',      '{"en":"Fixings","af":"Bevestigings"}'::jsonb,        'fixings',        null, null, 3, true),
-  ('pc-finishing',    '{"en":"Finishing","af":"Afwerking"}'::jsonb,          'finishing',      null, null, 4, true),
-  ('pc-kits',         '{"en":"Deck Kits","af":"Dekstelle"}'::jsonb,         'deck-kits',      null, null, 5, true),
+-- Top-level categories first (no parent)
+insert into public.product_categories (name, slug, parent_id, material_type_id, display_order, is_active) values
+  ('{"en":"Deck Boards","af":"Dekplanke"}'::jsonb,       'deck-boards',    null, null, 1, true),
+  ('{"en":"Substructure","af":"Substruktuur"}'::jsonb,    'substructure',   null, null, 2, true),
+  ('{"en":"Fixings","af":"Bevestigings"}'::jsonb,        'fixings',        null, null, 3, true),
+  ('{"en":"Finishing","af":"Afwerking"}'::jsonb,          'finishing',      null, null, 4, true),
+  ('{"en":"Deck Kits","af":"Dekstelle"}'::jsonb,         'deck-kits',      null, null, 5, true);
+-- Subcategories (reference parent by slug subquery)
+insert into public.product_categories (name, slug, parent_id, material_type_id, display_order, is_active) values
   -- Board subcategories per material
-  ('pc-boards-pine',      '{"en":"Pine Boards","af":"Denplanke"}'::jsonb,             'pine-boards',      'pc-boards', 'mt-pine',      1, true),
-  ('pc-boards-balau',     '{"en":"Balau Boards","af":"Balau-planke"}'::jsonb,         'balau-boards',     'pc-boards', 'mt-balau',     2, true),
-  ('pc-boards-garapa',    '{"en":"Garapa Boards","af":"Garapa-planke"}'::jsonb,       'garapa-boards',    'pc-boards', 'mt-garapa',    3, true),
-  ('pc-boards-composite', '{"en":"Composite Boards","af":"Saamgestelde Planke"}'::jsonb, 'composite-boards', 'pc-boards', 'mt-composite', 4, true),
+  ('{"en":"Pine Boards","af":"Denplanke"}'::jsonb,             'pine-boards',      (select id from product_categories where slug = 'deck-boards'), (select id from material_types where slug = 'treated-pine'),  1, true),
+  ('{"en":"Balau Boards","af":"Balau-planke"}'::jsonb,         'balau-boards',     (select id from product_categories where slug = 'deck-boards'), (select id from material_types where slug = 'balau'),         2, true),
+  ('{"en":"Garapa Boards","af":"Garapa-planke"}'::jsonb,       'garapa-boards',    (select id from product_categories where slug = 'deck-boards'), (select id from material_types where slug = 'garapa'),        3, true),
+  ('{"en":"Composite Boards","af":"Saamgestelde Planke"}'::jsonb, 'composite-boards', (select id from product_categories where slug = 'deck-boards'), (select id from material_types where slug = 'composite'),  4, true),
   -- Substructure subcategories
-  ('pc-sub-joists',   '{"en":"Joists","af":"Balke"}'::jsonb,   'joists',  'pc-substructure', 'mt-pine', 1, true),
-  ('pc-sub-bearers',  '{"en":"Bearers","af":"Draers"}'::jsonb, 'bearers', 'pc-substructure', 'mt-pine', 2, true);
+  ('{"en":"Joists","af":"Balke"}'::jsonb,   'joists',  (select id from product_categories where slug = 'substructure'), (select id from material_types where slug = 'treated-pine'), 1, true),
+  ('{"en":"Bearers","af":"Draers"}'::jsonb, 'bearers', (select id from product_categories where slug = 'substructure'), (select id from material_types where slug = 'treated-pine'), 2, true);
 
 -- ─── Products ───────────────────────────────────────────────
-delete from public.products where id in (
-  'p-pine-22x108','p-pine-32x114','p-balau-19x90','p-garapa-19x90','p-garapa-19x140',
-  'p-comp-22x140','p-joist-38x114','p-joist-38x152','p-bearer-76x228',
-  'p-fix-ss-screws','p-fix-galv-screws','p-fix-spacers','p-fix-joist-tape',
-  'p-fin-stain','p-fin-cleaner'
+delete from public.products where slug in (
+  'pine-22x108','pine-32x114','balau-19x90','garapa-19x90','garapa-19x140',
+  'composite-22x140','joist-38x114','joist-38x152','bearer-76x228',
+  'stainless-deck-screws-200','galvanised-deck-screws-200','board-spacers-100','joist-tape-10m',
+  'deck-stain','deck-cleaner'
 );
-insert into public.products (id, name, slug, description, price_cents, images, category_id, stock_quantity, is_active, sku, material_type_id, dimensions, weight_kg) values
+insert into public.products (name, slug, description, price_cents, images, category_id, stock_quantity, is_active, sku, material_type_id, dimensions, weight_kg) values
   -- ── Deck Boards ──
-  ('p-pine-22x108',
-   '{"en":"Pine CCA 22×108mm Deck Board","af":"Den CCA 22×108mm Dekplank"}'::jsonb,
+  ('{"en":"Pine CCA 22×108mm Deck Board","af":"Den CCA 22×108mm Dekplank"}'::jsonb,
    'pine-22x108',
    '{"en":"CCA H3 treated pine deck board. Budget-friendly, ideal for ground-level residential decks. FSC certified.","af":"CCA H3 behandelde den dekplank. Bekostigbaar, ideaal vir grondvlak residensiële dekke. FSC gesertifiseer."}'::jsonb,
-   4500, '[]'::jsonb, 'pc-boards-pine', 200, true,
-   'DKB-PINE-22108', 'mt-pine', '{"width_mm":108,"thickness_mm":22}'::jsonb, 1.8),
+   4500, '[]'::jsonb, (select id from product_categories where slug = 'pine-boards'), 200, true,
+   'DKB-PINE-22108', (select id from material_types where slug = 'treated-pine'), '{"width_mm":108,"thickness_mm":22}'::jsonb, 1.8),
 
-  ('p-pine-32x114',
-   '{"en":"Pine CCA 32×114mm Deck Board","af":"Den CCA 32×114mm Dekplank"}'::jsonb,
+  ('{"en":"Pine CCA 32×114mm Deck Board","af":"Den CCA 32×114mm Dekplank"}'::jsonb,
    'pine-32x114',
    '{"en":"Heavy-duty CCA treated pine board. Thicker profile for wider joist spacing and longer spans.","af":"Swaargewig CCA behandelde denplank. Dikker profiel vir wyer balkafstand en langer spanne."}'::jsonb,
-   7500, '[]'::jsonb, 'pc-boards-pine', 150, true,
-   'DKB-PINE-32114', 'mt-pine', '{"width_mm":114,"thickness_mm":32}'::jsonb, 3.2),
+   7500, '[]'::jsonb, (select id from product_categories where slug = 'pine-boards'), 150, true,
+   'DKB-PINE-32114', (select id from material_types where slug = 'treated-pine'), '{"width_mm":114,"thickness_mm":32}'::jsonb, 3.2),
 
-  ('p-balau-19x90',
-   '{"en":"Balau 19×90mm Deck Board","af":"Balau 19×90mm Dekplank"}'::jsonb,
+  ('{"en":"Balau 19×90mm Deck Board","af":"Balau 19×90mm Dekplank"}'::jsonb,
    'balau-19x90',
    '{"en":"Premium African hardwood with exceptional durability (Class 1). Naturally resistant to rot and insects. Beautiful grain.","af":"Premium Afrika-harthout met uitsonderlike duursaamheid (Klas 1). Natuurlik bestand teen vrot en insekte. Pragtige nerf."}'::jsonb,
-   8000, '[]'::jsonb, 'pc-boards-balau', 100, true,
-   'DKB-BALAU-1990', 'mt-balau', '{"width_mm":90,"thickness_mm":19}'::jsonb, 1.5),
+   8000, '[]'::jsonb, (select id from product_categories where slug = 'balau-boards'), 100, true,
+   'DKB-BALAU-1990', (select id from material_types where slug = 'balau'), '{"width_mm":90,"thickness_mm":19}'::jsonb, 1.5),
 
-  ('p-garapa-19x90',
-   '{"en":"Garapa 19×90mm Deck Board","af":"Garapa 19×90mm Dekplank"}'::jsonb,
+  ('{"en":"Garapa 19×90mm Deck Board","af":"Garapa 19×90mm Dekplank"}'::jsonb,
    'garapa-19x90',
    '{"en":"Golden Brazilian hardwood with Class 2 durability. Lighter colour that weathers to silver-grey. Excellent value.","af":"Goue Brasiliaanse harthout met Klas 2 duursaamheid. Ligter kleur wat verweer na silwergrys. Uitstekende waarde."}'::jsonb,
-   7500, '[]'::jsonb, 'pc-boards-garapa', 120, true,
-   'DKB-GARAPA-1990', 'mt-garapa', '{"width_mm":90,"thickness_mm":19}'::jsonb, 1.4),
+   7500, '[]'::jsonb, (select id from product_categories where slug = 'garapa-boards'), 120, true,
+   'DKB-GARAPA-1990', (select id from material_types where slug = 'garapa'), '{"width_mm":90,"thickness_mm":19}'::jsonb, 1.4),
 
-  ('p-garapa-19x140',
-   '{"en":"Garapa 19×140mm Wide Deck Board","af":"Garapa 19×140mm Breë Dekplank"}'::jsonb,
+  ('{"en":"Garapa 19×140mm Wide Deck Board","af":"Garapa 19×140mm Breë Dekplank"}'::jsonb,
    'garapa-19x140',
    '{"en":"Wide-format Garapa board for fewer joints and a contemporary look. Same durability, bigger visual impact.","af":"Breëformaat Garapa-plank vir minder nate en ''n kontemporêre voorkoms. Dieselfde duursaamheid, groter visuele impak."}'::jsonb,
-   11000, '[]'::jsonb, 'pc-boards-garapa', 80, true,
-   'DKB-GARAPA-19140', 'mt-garapa', '{"width_mm":140,"thickness_mm":19}'::jsonb, 2.1),
+   11000, '[]'::jsonb, (select id from product_categories where slug = 'garapa-boards'), 80, true,
+   'DKB-GARAPA-19140', (select id from material_types where slug = 'garapa'), '{"width_mm":140,"thickness_mm":19}'::jsonb, 2.1),
 
-  ('p-comp-22x140',
-   '{"en":"Composite WPC 22×140mm Deck Board","af":"Saamgestelde WPC 22×140mm Dekplank"}'::jsonb,
+  ('{"en":"Composite WPC 22×140mm Deck Board","af":"Saamgestelde WPC 22×140mm Dekplank"}'::jsonb,
    'composite-22x140',
    '{"en":"Wood-plastic composite board. Zero maintenance, splinter-free, UV stable. Available in 4 colours. 25-year warranty.","af":"Hout-plastiek saamgestelde plank. Geen onderhoud, splintervry, UV-stabiel. Beskikbaar in 4 kleure. 25-jaar waarborg."}'::jsonb,
-   25000, '[]'::jsonb, 'pc-boards-composite', 200, true,
-   'DKB-COMP-22140', 'mt-composite', '{"width_mm":140,"thickness_mm":22}'::jsonb, 3.5),
+   25000, '[]'::jsonb, (select id from product_categories where slug = 'composite-boards'), 200, true,
+   'DKB-COMP-22140', (select id from material_types where slug = 'composite'), '{"width_mm":140,"thickness_mm":22}'::jsonb, 3.5),
 
   -- ── Substructure ──
-  ('p-joist-38x114',
-   '{"en":"Pine CCA 38×114mm Joist","af":"Den CCA 38×114mm Balk"}'::jsonb,
+  ('{"en":"Pine CCA 38×114mm Joist","af":"Den CCA 38×114mm Balk"}'::jsonb,
    'joist-38x114',
    '{"en":"Standard treated pine joist for residential decking. Supports spans up to 1.8m at 450mm centres.","af":"Standaard behandelde denbalk vir residensiële dekke. Ondersteun spanne tot 1.8m teen 450mm senters."}'::jsonb,
-   8500, '[]'::jsonb, 'pc-sub-joists', 150, true,
-   'SUB-JOIST-38114', 'mt-pine', '{"width_mm":114,"thickness_mm":38}'::jsonb, 4.2),
+   8500, '[]'::jsonb, (select id from product_categories where slug = 'joists'), 150, true,
+   'SUB-JOIST-38114', (select id from material_types where slug = 'treated-pine'), '{"width_mm":114,"thickness_mm":38}'::jsonb, 4.2),
 
-  ('p-joist-38x152',
-   '{"en":"Pine CCA 38×152mm Heavy Joist","af":"Den CCA 38×152mm Swaar Balk"}'::jsonb,
+  ('{"en":"Pine CCA 38×152mm Heavy Joist","af":"Den CCA 38×152mm Swaar Balk"}'::jsonb,
    'joist-38x152',
    '{"en":"Heavy-duty joist for raised decks and longer spans. Required for balcony and rooftop installations.","af":"Swaargewig balk vir verhoogde dekke en langer spanne. Vereis vir balkon- en dakinstallasies."}'::jsonb,
-   13000, '[]'::jsonb, 'pc-sub-joists', 100, true,
-   'SUB-JOIST-38152', 'mt-pine', '{"width_mm":152,"thickness_mm":38}'::jsonb, 5.6),
+   13000, '[]'::jsonb, (select id from product_categories where slug = 'joists'), 100, true,
+   'SUB-JOIST-38152', (select id from material_types where slug = 'treated-pine'), '{"width_mm":152,"thickness_mm":38}'::jsonb, 5.6),
 
-  ('p-bearer-76x228',
-   '{"en":"Pine CCA 76×228mm Bearer","af":"Den CCA 76×228mm Draer"}'::jsonb,
+  ('{"en":"Pine CCA 76×228mm Bearer","af":"Den CCA 76×228mm Draer"}'::jsonb,
    'bearer-76x228',
    '{"en":"Foundation bearer for raised deck structures. Supports joists over concrete piers or stumps.","af":"Fondamentdraer vir verhoogde dekstrukture. Ondersteun balke oor betonpilare of stompe."}'::jsonb,
-   32000, '[]'::jsonb, 'pc-sub-bearers', 60, true,
-   'SUB-BEARER-76228', 'mt-pine', '{"width_mm":228,"thickness_mm":76}'::jsonb, 12.5),
+   32000, '[]'::jsonb, (select id from product_categories where slug = 'bearers'), 60, true,
+   'SUB-BEARER-76228', (select id from material_types where slug = 'treated-pine'), '{"width_mm":228,"thickness_mm":76}'::jsonb, 12.5),
 
   -- ── Fixings ──
-  ('p-fix-ss-screws',
-   '{"en":"Stainless Steel Deck Screws (200pc)","af":"Vlekvrystaal Dekskroewe (200st)"}'::jsonb,
+  ('{"en":"Stainless Steel Deck Screws (200pc)","af":"Vlekvrystaal Dekskroewe (200st)"}'::jsonb,
    'stainless-deck-screws-200',
    '{"en":"Grade 316 stainless steel 50mm countersunk deck screws. Corrosion-proof for coastal and pool areas. Box of 200.","af":"Graad 316 vlekvrystaal 50mm versinkde dekskroewe. Korrosiebestand vir kus- en swembadgebiede. Boks van 200."}'::jsonb,
-   25000, '[]'::jsonb, 'pc-fixings', 300, true,
+   25000, '[]'::jsonb, (select id from product_categories where slug = 'fixings'), 300, true,
    'FIX-SS-50-200', null, null, 1.2),
 
-  ('p-fix-galv-screws',
-   '{"en":"Galvanised Deck Screws (200pc)","af":"Gegalvaniseerde Dekskroewe (200st)"}'::jsonb,
+  ('{"en":"Galvanised Deck Screws (200pc)","af":"Gegalvaniseerde Dekskroewe (200st)"}'::jsonb,
    'galvanised-deck-screws-200',
    '{"en":"Hot-dip galvanised 50mm countersunk screws. Cost-effective for covered and inland applications. Box of 200.","af":"Warmgedompelde gegalvaniseerde 50mm versinkde skroewe. Koste-effektief vir bedekte en binnelandse toepassings. Boks van 200."}'::jsonb,
-   15000, '[]'::jsonb, 'pc-fixings', 500, true,
+   15000, '[]'::jsonb, (select id from product_categories where slug = 'fixings'), 500, true,
    'FIX-GALV-50-200', null, null, 1.1),
 
-  ('p-fix-spacers',
-   '{"en":"Board Spacers (100pc)","af":"Plankafstandhouers (100st)"}'::jsonb,
+  ('{"en":"Board Spacers (100pc)","af":"Plankafstandhouers (100st)"}'::jsonb,
    'board-spacers-100',
    '{"en":"5mm polypropylene deck board spacers. Ensures consistent gaps for drainage and expansion. Pack of 100.","af":"5mm polipropileen dekplank-afstandhouers. Verseker konsekwente gapings vir dreinering en uitsetting. Pak van 100."}'::jsonb,
-   9500, '[]'::jsonb, 'pc-fixings', 400, true,
+   9500, '[]'::jsonb, (select id from product_categories where slug = 'fixings'), 400, true,
    'FIX-SPACERS-100', null, null, 0.3),
 
-  ('p-fix-joist-tape',
-   '{"en":"Joist Protection Tape (10m)","af":"Balkbeskermingsband (10m)"}'::jsonb,
+  ('{"en":"Joist Protection Tape (10m)","af":"Balkbeskermingsband (10m)"}'::jsonb,
    'joist-tape-10m',
    '{"en":"Self-adhesive butyl rubber tape to protect joist tops from moisture. Extends substructure lifespan by 50%. Roll of 10m.","af":"Selfklewende butielrubberband om balkkruine teen vog te beskerm. Verleng substruktuurleeftyd met 50%. Rol van 10m."}'::jsonb,
-   18000, '[]'::jsonb, 'pc-fixings', 200, true,
+   18000, '[]'::jsonb, (select id from product_categories where slug = 'fixings'), 200, true,
    'FIX-TAPE-10M', null, null, 0.5),
 
   -- ── Finishing ──
-  ('p-fin-stain',
-   '{"en":"Deck Stain & Sealer","af":"Dekbeis & Seëlmiddel"}'::jsonb,
+  ('{"en":"Deck Stain & Sealer","af":"Dekbeis & Seëlmiddel"}'::jsonb,
    'deck-stain',
    '{"en":"UV-protective oil-based deck stain. Penetrates deeply for long-lasting colour and water resistance. Available in 4 colours.","af":"UV-beskermende oliebasis dekbeis. Dring diep in vir langdurige kleur en waterbestandheid. Beskikbaar in 4 kleure."}'::jsonb,
-   12000, '[]'::jsonb, 'pc-finishing', 200, true,
+   12000, '[]'::jsonb, (select id from product_categories where slug = 'finishing'), 200, true,
    'FIN-STAIN', null, null, 1.0),
 
-  ('p-fin-cleaner',
-   '{"en":"Deck Cleaner & Restorer","af":"Dekreiniger & Hersteller"}'::jsonb,
+  ('{"en":"Deck Cleaner & Restorer","af":"Dekreiniger & Hersteller"}'::jsonb,
    'deck-cleaner',
    '{"en":"Oxygen-based deck cleaner that removes grey weathering, mildew and dirt. Safe for all wood types. Covers ~20m² per litre.","af":"Suurstofgebaseerde dekreiniger wat grys verwering, skimmel en vuil verwyder. Veilig vir alle houttipes. Dek ~20m² per liter."}'::jsonb,
-   8500, '[]'::jsonb, 'pc-finishing', 150, true,
+   8500, '[]'::jsonb, (select id from product_categories where slug = 'finishing'), 150, true,
    'FIN-CLEANER', null, null, 1.0);
 
 -- ─── Product Variants ───────────────────────────────────────
 delete from public.product_variants;
-insert into public.product_variants (id, product_id, name, sku, length_mm, colour, price_cents, supplier_cost_cents, stock_quantity, display_order, is_active) values
+insert into public.product_variants (product_id, name, sku, length_mm, colour, price_cents, supplier_cost_cents, stock_quantity, display_order, is_active) values
   -- Pine 22×108mm (4 lengths)
-  ('pv-pine22-2400', 'p-pine-22x108', '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'DKB-PINE-22108-2400', 2400, null, 4500,  3200, 200, 1, true),
-  ('pv-pine22-3000', 'p-pine-22x108', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'DKB-PINE-22108-3000', 3000, null, 5500,  3900, 180, 2, true),
-  ('pv-pine22-3600', 'p-pine-22x108', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'DKB-PINE-22108-3600', 3600, null, 6500,  4600, 160, 3, true),
-  ('pv-pine22-4800', 'p-pine-22x108', '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'DKB-PINE-22108-4800', 4800, null, 8500,  6100, 120, 4, true),
+  ((select id from products where slug = 'pine-22x108'), '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'DKB-PINE-22108-2400', 2400, null, 4500,  3200, 200, 1, true),
+  ((select id from products where slug = 'pine-22x108'), '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'DKB-PINE-22108-3000', 3000, null, 5500,  3900, 180, 2, true),
+  ((select id from products where slug = 'pine-22x108'), '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'DKB-PINE-22108-3600', 3600, null, 6500,  4600, 160, 3, true),
+  ((select id from products where slug = 'pine-22x108'), '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'DKB-PINE-22108-4800', 4800, null, 8500,  6100, 120, 4, true),
   -- Pine 32×114mm (4 lengths)
-  ('pv-pine32-2400', 'p-pine-32x114', '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'DKB-PINE-32114-2400', 2400, null, 7500,  5400, 150, 1, true),
-  ('pv-pine32-3000', 'p-pine-32x114', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'DKB-PINE-32114-3000', 3000, null, 9000,  6400, 120, 2, true),
-  ('pv-pine32-3600', 'p-pine-32x114', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'DKB-PINE-32114-3600', 3600, null, 11000, 7900, 100, 3, true),
-  ('pv-pine32-4800', 'p-pine-32x114', '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'DKB-PINE-32114-4800', 4800, null, 14500, 10400, 80, 4, true),
+  ((select id from products where slug = 'pine-32x114'), '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'DKB-PINE-32114-2400', 2400, null, 7500,  5400, 150, 1, true),
+  ((select id from products where slug = 'pine-32x114'), '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'DKB-PINE-32114-3000', 3000, null, 9000,  6400, 120, 2, true),
+  ((select id from products where slug = 'pine-32x114'), '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'DKB-PINE-32114-3600', 3600, null, 11000, 7900, 100, 3, true),
+  ((select id from products where slug = 'pine-32x114'), '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'DKB-PINE-32114-4800', 4800, null, 14500, 10400, 80, 4, true),
   -- Balau 19×90mm (5 lengths)
-  ('pv-balau-0900', 'p-balau-19x90', '{"en":"0.9m Length","af":"0.9m Lengte"}'::jsonb, 'DKB-BALAU-1990-0900', 900,  null, 8000,   5700, 100, 1, true),
-  ('pv-balau-1200', 'p-balau-19x90', '{"en":"1.2m Length","af":"1.2m Lengte"}'::jsonb, 'DKB-BALAU-1990-1200', 1200, null, 10500,  7500, 100, 2, true),
-  ('pv-balau-1500', 'p-balau-19x90', '{"en":"1.5m Length","af":"1.5m Lengte"}'::jsonb, 'DKB-BALAU-1990-1500', 1500, null, 13000,  9300, 80,  3, true),
-  ('pv-balau-1800', 'p-balau-19x90', '{"en":"1.8m Length","af":"1.8m Lengte"}'::jsonb, 'DKB-BALAU-1990-1800', 1800, null, 18000, 12900, 60,  4, true),
-  ('pv-balau-2100', 'p-balau-19x90', '{"en":"2.1m Length","af":"2.1m Lengte"}'::jsonb, 'DKB-BALAU-1990-2100', 2100, null, 21000, 15000, 40,  5, true),
+  ((select id from products where slug = 'balau-19x90'), '{"en":"0.9m Length","af":"0.9m Lengte"}'::jsonb, 'DKB-BALAU-1990-0900', 900,  null, 8000,   5700, 100, 1, true),
+  ((select id from products where slug = 'balau-19x90'), '{"en":"1.2m Length","af":"1.2m Lengte"}'::jsonb, 'DKB-BALAU-1990-1200', 1200, null, 10500,  7500, 100, 2, true),
+  ((select id from products where slug = 'balau-19x90'), '{"en":"1.5m Length","af":"1.5m Lengte"}'::jsonb, 'DKB-BALAU-1990-1500', 1500, null, 13000,  9300, 80,  3, true),
+  ((select id from products where slug = 'balau-19x90'), '{"en":"1.8m Length","af":"1.8m Lengte"}'::jsonb, 'DKB-BALAU-1990-1800', 1800, null, 18000, 12900, 60,  4, true),
+  ((select id from products where slug = 'balau-19x90'), '{"en":"2.1m Length","af":"2.1m Lengte"}'::jsonb, 'DKB-BALAU-1990-2100', 2100, null, 21000, 15000, 40,  5, true),
   -- Garapa 19×90mm (5 lengths)
-  ('pv-garapa90-0900', 'p-garapa-19x90', '{"en":"0.9m Length","af":"0.9m Lengte"}'::jsonb, 'DKB-GARAPA-1990-0900', 900,  null, 7500,   5400, 120, 1, true),
-  ('pv-garapa90-1200', 'p-garapa-19x90', '{"en":"1.2m Length","af":"1.2m Lengte"}'::jsonb, 'DKB-GARAPA-1990-1200', 1200, null, 10000,  7100, 100, 2, true),
-  ('pv-garapa90-1500', 'p-garapa-19x90', '{"en":"1.5m Length","af":"1.5m Lengte"}'::jsonb, 'DKB-GARAPA-1990-1500', 1500, null, 12500,  8900, 80,  3, true),
-  ('pv-garapa90-1800', 'p-garapa-19x90', '{"en":"1.8m Length","af":"1.8m Lengte"}'::jsonb, 'DKB-GARAPA-1990-1800', 1800, null, 16500, 11800, 60,  4, true),
-  ('pv-garapa90-2100', 'p-garapa-19x90', '{"en":"2.1m Length","af":"2.1m Lengte"}'::jsonb, 'DKB-GARAPA-1990-2100', 2100, null, 19500, 13900, 40,  5, true),
+  ((select id from products where slug = 'garapa-19x90'), '{"en":"0.9m Length","af":"0.9m Lengte"}'::jsonb, 'DKB-GARAPA-1990-0900', 900,  null, 7500,   5400, 120, 1, true),
+  ((select id from products where slug = 'garapa-19x90'), '{"en":"1.2m Length","af":"1.2m Lengte"}'::jsonb, 'DKB-GARAPA-1990-1200', 1200, null, 10000,  7100, 100, 2, true),
+  ((select id from products where slug = 'garapa-19x90'), '{"en":"1.5m Length","af":"1.5m Lengte"}'::jsonb, 'DKB-GARAPA-1990-1500', 1500, null, 12500,  8900, 80,  3, true),
+  ((select id from products where slug = 'garapa-19x90'), '{"en":"1.8m Length","af":"1.8m Lengte"}'::jsonb, 'DKB-GARAPA-1990-1800', 1800, null, 16500, 11800, 60,  4, true),
+  ((select id from products where slug = 'garapa-19x90'), '{"en":"2.1m Length","af":"2.1m Lengte"}'::jsonb, 'DKB-GARAPA-1990-2100', 2100, null, 19500, 13900, 40,  5, true),
   -- Garapa 19×140mm (5 lengths)
-  ('pv-garapa140-0900', 'p-garapa-19x140', '{"en":"0.9m Length","af":"0.9m Lengte"}'::jsonb, 'DKB-GARAPA-19140-0900', 900,  null, 11000,  7900, 80,  1, true),
-  ('pv-garapa140-1200', 'p-garapa-19x140', '{"en":"1.2m Length","af":"1.2m Lengte"}'::jsonb, 'DKB-GARAPA-19140-1200', 1200, null, 14500, 10400, 80,  2, true),
-  ('pv-garapa140-1500', 'p-garapa-19x140', '{"en":"1.5m Length","af":"1.5m Lengte"}'::jsonb, 'DKB-GARAPA-19140-1500', 1500, null, 18000, 12900, 60,  3, true),
-  ('pv-garapa140-1800', 'p-garapa-19x140', '{"en":"1.8m Length","af":"1.8m Lengte"}'::jsonb, 'DKB-GARAPA-19140-1800', 1800, null, 24000, 17100, 40,  4, true),
-  ('pv-garapa140-2100', 'p-garapa-19x140', '{"en":"2.1m Length","af":"2.1m Lengte"}'::jsonb, 'DKB-GARAPA-19140-2100', 2100, null, 28000, 20000, 30,  5, true),
+  ((select id from products where slug = 'garapa-19x140'), '{"en":"0.9m Length","af":"0.9m Lengte"}'::jsonb, 'DKB-GARAPA-19140-0900', 900,  null, 11000,  7900, 80,  1, true),
+  ((select id from products where slug = 'garapa-19x140'), '{"en":"1.2m Length","af":"1.2m Lengte"}'::jsonb, 'DKB-GARAPA-19140-1200', 1200, null, 14500, 10400, 80,  2, true),
+  ((select id from products where slug = 'garapa-19x140'), '{"en":"1.5m Length","af":"1.5m Lengte"}'::jsonb, 'DKB-GARAPA-19140-1500', 1500, null, 18000, 12900, 60,  3, true),
+  ((select id from products where slug = 'garapa-19x140'), '{"en":"1.8m Length","af":"1.8m Lengte"}'::jsonb, 'DKB-GARAPA-19140-1800', 1800, null, 24000, 17100, 40,  4, true),
+  ((select id from products where slug = 'garapa-19x140'), '{"en":"2.1m Length","af":"2.1m Lengte"}'::jsonb, 'DKB-GARAPA-19140-2100', 2100, null, 28000, 20000, 30,  5, true),
   -- Composite 22×140mm (3 lengths × 4 colours = 12 variants)
-  ('pv-comp-2200-teak',     'p-comp-22x140', '{"en":"2.2m — Teak","af":"2.2m — Teak"}'::jsonb,           'DKB-COMP-22140-2200-TK', 2200, 'Teak',       25000, 17900, 200, 1,  true),
-  ('pv-comp-2200-grey',     'p-comp-22x140', '{"en":"2.2m — Stone Grey","af":"2.2m — Klipgrys"}'::jsonb,  'DKB-COMP-22140-2200-GR', 2200, 'Stone Grey', 25000, 17900, 200, 2,  true),
-  ('pv-comp-2200-charcoal', 'p-comp-22x140', '{"en":"2.2m — Charcoal","af":"2.2m — Houtskool"}'::jsonb,  'DKB-COMP-22140-2200-CH', 2200, 'Charcoal',   25000, 17900, 200, 3,  true),
-  ('pv-comp-2200-walnut',   'p-comp-22x140', '{"en":"2.2m — Walnut","af":"2.2m — Okkerneut"}'::jsonb,    'DKB-COMP-22140-2200-WA', 2200, 'Walnut',     25000, 17900, 150, 4,  true),
-  ('pv-comp-3600-teak',     'p-comp-22x140', '{"en":"3.6m — Teak","af":"3.6m — Teak"}'::jsonb,           'DKB-COMP-22140-3600-TK', 3600, 'Teak',       35000, 25000, 150, 5,  true),
-  ('pv-comp-3600-grey',     'p-comp-22x140', '{"en":"3.6m — Stone Grey","af":"3.6m — Klipgrys"}'::jsonb,  'DKB-COMP-22140-3600-GR', 3600, 'Stone Grey', 35000, 25000, 150, 6,  true),
-  ('pv-comp-3600-charcoal', 'p-comp-22x140', '{"en":"3.6m — Charcoal","af":"3.6m — Houtskool"}'::jsonb,  'DKB-COMP-22140-3600-CH', 3600, 'Charcoal',   35000, 25000, 150, 7,  true),
-  ('pv-comp-3600-walnut',   'p-comp-22x140', '{"en":"3.6m — Walnut","af":"3.6m — Okkerneut"}'::jsonb,    'DKB-COMP-22140-3600-WA', 3600, 'Walnut',     35000, 25000, 100, 8,  true),
-  ('pv-comp-5400-teak',     'p-comp-22x140', '{"en":"5.4m — Teak","af":"5.4m — Teak"}'::jsonb,           'DKB-COMP-22140-5400-TK', 5400, 'Teak',       50000, 35700, 80,  9,  true),
-  ('pv-comp-5400-grey',     'p-comp-22x140', '{"en":"5.4m — Stone Grey","af":"5.4m — Klipgrys"}'::jsonb,  'DKB-COMP-22140-5400-GR', 5400, 'Stone Grey', 50000, 35700, 80,  10, true),
-  ('pv-comp-5400-charcoal', 'p-comp-22x140', '{"en":"5.4m — Charcoal","af":"5.4m — Houtskool"}'::jsonb,  'DKB-COMP-22140-5400-CH', 5400, 'Charcoal',   50000, 35700, 80,  11, true),
-  ('pv-comp-5400-walnut',   'p-comp-22x140', '{"en":"5.4m — Walnut","af":"5.4m — Okkerneut"}'::jsonb,    'DKB-COMP-22140-5400-WA', 5400, 'Walnut',     50000, 35700, 60,  12, true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"2.2m — Teak","af":"2.2m — Teak"}'::jsonb,           'DKB-COMP-22140-2200-TK', 2200, 'Teak',       25000, 17900, 200, 1,  true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"2.2m — Stone Grey","af":"2.2m — Klipgrys"}'::jsonb,  'DKB-COMP-22140-2200-GR', 2200, 'Stone Grey', 25000, 17900, 200, 2,  true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"2.2m — Charcoal","af":"2.2m — Houtskool"}'::jsonb,  'DKB-COMP-22140-2200-CH', 2200, 'Charcoal',   25000, 17900, 200, 3,  true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"2.2m — Walnut","af":"2.2m — Okkerneut"}'::jsonb,    'DKB-COMP-22140-2200-WA', 2200, 'Walnut',     25000, 17900, 150, 4,  true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"3.6m — Teak","af":"3.6m — Teak"}'::jsonb,           'DKB-COMP-22140-3600-TK', 3600, 'Teak',       35000, 25000, 150, 5,  true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"3.6m — Stone Grey","af":"3.6m — Klipgrys"}'::jsonb,  'DKB-COMP-22140-3600-GR', 3600, 'Stone Grey', 35000, 25000, 150, 6,  true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"3.6m — Charcoal","af":"3.6m — Houtskool"}'::jsonb,  'DKB-COMP-22140-3600-CH', 3600, 'Charcoal',   35000, 25000, 150, 7,  true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"3.6m — Walnut","af":"3.6m — Okkerneut"}'::jsonb,    'DKB-COMP-22140-3600-WA', 3600, 'Walnut',     35000, 25000, 100, 8,  true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"5.4m — Teak","af":"5.4m — Teak"}'::jsonb,           'DKB-COMP-22140-5400-TK', 5400, 'Teak',       50000, 35700, 80,  9,  true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"5.4m — Stone Grey","af":"5.4m — Klipgrys"}'::jsonb,  'DKB-COMP-22140-5400-GR', 5400, 'Stone Grey', 50000, 35700, 80,  10, true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"5.4m — Charcoal","af":"5.4m — Houtskool"}'::jsonb,  'DKB-COMP-22140-5400-CH', 5400, 'Charcoal',   50000, 35700, 80,  11, true),
+  ((select id from products where slug = 'composite-22x140'), '{"en":"5.4m — Walnut","af":"5.4m — Okkerneut"}'::jsonb,    'DKB-COMP-22140-5400-WA', 5400, 'Walnut',     50000, 35700, 60,  12, true),
   -- Joists 38×114mm (4 lengths)
-  ('pv-joist114-2400', 'p-joist-38x114', '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'SUB-JOIST-38114-2400', 2400, null, 8500,  6100, 150, 1, true),
-  ('pv-joist114-3000', 'p-joist-38x114', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'SUB-JOIST-38114-3000', 3000, null, 10500, 7500, 120, 2, true),
-  ('pv-joist114-3600', 'p-joist-38x114', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'SUB-JOIST-38114-3600', 3600, null, 12500, 8900, 100, 3, true),
-  ('pv-joist114-4800', 'p-joist-38x114', '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'SUB-JOIST-38114-4800', 4800, null, 16500, 11800, 80, 4, true),
+  ((select id from products where slug = 'joist-38x114'), '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'SUB-JOIST-38114-2400', 2400, null, 8500,  6100, 150, 1, true),
+  ((select id from products where slug = 'joist-38x114'), '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'SUB-JOIST-38114-3000', 3000, null, 10500, 7500, 120, 2, true),
+  ((select id from products where slug = 'joist-38x114'), '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'SUB-JOIST-38114-3600', 3600, null, 12500, 8900, 100, 3, true),
+  ((select id from products where slug = 'joist-38x114'), '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'SUB-JOIST-38114-4800', 4800, null, 16500, 11800, 80, 4, true),
   -- Joists 38×152mm (3 lengths)
-  ('pv-joist152-3000', 'p-joist-38x152', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'SUB-JOIST-38152-3000', 3000, null, 13000, 9300, 100, 1, true),
-  ('pv-joist152-3600', 'p-joist-38x152', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'SUB-JOIST-38152-3600', 3600, null, 15500, 11100, 80,  2, true),
-  ('pv-joist152-4800', 'p-joist-38x152', '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'SUB-JOIST-38152-4800', 4800, null, 21000, 15000, 60,  3, true),
+  ((select id from products where slug = 'joist-38x152'), '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'SUB-JOIST-38152-3000', 3000, null, 13000, 9300, 100, 1, true),
+  ((select id from products where slug = 'joist-38x152'), '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'SUB-JOIST-38152-3600', 3600, null, 15500, 11100, 80,  2, true),
+  ((select id from products where slug = 'joist-38x152'), '{"en":"4.8m Length","af":"4.8m Lengte"}'::jsonb, 'SUB-JOIST-38152-4800', 4800, null, 21000, 15000, 60,  3, true),
   -- Bearer 76×228mm (3 lengths)
-  ('pv-bearer-2400', 'p-bearer-76x228', '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'SUB-BEARER-76228-2400', 2400, null, 32000, 22900, 60, 1, true),
-  ('pv-bearer-3000', 'p-bearer-76x228', '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'SUB-BEARER-76228-3000', 3000, null, 39500, 28200, 40, 2, true),
-  ('pv-bearer-3600', 'p-bearer-76x228', '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'SUB-BEARER-76228-3600', 3600, null, 47500, 33900, 30, 3, true),
+  ((select id from products where slug = 'bearer-76x228'), '{"en":"2.4m Length","af":"2.4m Lengte"}'::jsonb, 'SUB-BEARER-76228-2400', 2400, null, 32000, 22900, 60, 1, true),
+  ((select id from products where slug = 'bearer-76x228'), '{"en":"3.0m Length","af":"3.0m Lengte"}'::jsonb, 'SUB-BEARER-76228-3000', 3000, null, 39500, 28200, 40, 2, true),
+  ((select id from products where slug = 'bearer-76x228'), '{"en":"3.6m Length","af":"3.6m Lengte"}'::jsonb, 'SUB-BEARER-76228-3600', 3600, null, 47500, 33900, 30, 3, true),
   -- Fixings (single variant each)
-  ('pv-ss-screws',   'p-fix-ss-screws',   '{"en":"Box of 200","af":"Boks van 200"}'::jsonb, 'FIX-SS-50-200-V1',   null, null, 25000, 17900, 300, 1, true),
-  ('pv-galv-screws', 'p-fix-galv-screws', '{"en":"Box of 200","af":"Boks van 200"}'::jsonb, 'FIX-GALV-50-200-V1', null, null, 15000, 10700, 500, 1, true),
-  ('pv-spacers',     'p-fix-spacers',     '{"en":"Pack of 100","af":"Pak van 100"}'::jsonb,  'FIX-SPACERS-100-V1', null, null, 9500,  6800,  400, 1, true),
-  ('pv-joist-tape',  'p-fix-joist-tape',  '{"en":"10m Roll","af":"10m Rol"}'::jsonb,         'FIX-TAPE-10M-V1',   null, null, 18000, 12900, 200, 1, true),
+  ((select id from products where slug = 'stainless-deck-screws-200'), '{"en":"Box of 200","af":"Boks van 200"}'::jsonb, 'FIX-SS-50-200-V1',   null, null, 25000, 17900, 300, 1, true),
+  ((select id from products where slug = 'galvanised-deck-screws-200'), '{"en":"Box of 200","af":"Boks van 200"}'::jsonb, 'FIX-GALV-50-200-V1', null, null, 15000, 10700, 500, 1, true),
+  ((select id from products where slug = 'board-spacers-100'), '{"en":"Pack of 100","af":"Pak van 100"}'::jsonb,  'FIX-SPACERS-100-V1', null, null, 9500,  6800,  400, 1, true),
+  ((select id from products where slug = 'joist-tape-10m'), '{"en":"10m Roll","af":"10m Rol"}'::jsonb,         'FIX-TAPE-10M-V1',   null, null, 18000, 12900, 200, 1, true),
   -- Stain (4 colours × 2 sizes = 8 variants)
-  ('pv-stain-clear-1',    'p-fin-stain', '{"en":"Clear Seal — 1L","af":"Deursigtige Seël — 1L"}'::jsonb,  'FIN-STAIN-CLEAR-1L',    null, 'Clear Seal',  12000, 8600,  200, 1, true),
-  ('pv-stain-clear-5',    'p-fin-stain', '{"en":"Clear Seal — 5L","af":"Deursigtige Seël — 5L"}'::jsonb,  'FIN-STAIN-CLEAR-5L',    null, 'Clear Seal',  45000, 32100, 80,  2, true),
-  ('pv-stain-honey-1',    'p-fin-stain', '{"en":"Honey Oak — 1L","af":"Heuningeik — 1L"}'::jsonb,         'FIN-STAIN-HONEY-1L',    null, 'Honey Oak',   12000, 8600,  200, 3, true),
-  ('pv-stain-honey-5',    'p-fin-stain', '{"en":"Honey Oak — 5L","af":"Heuningeik — 5L"}'::jsonb,         'FIN-STAIN-HONEY-5L',    null, 'Honey Oak',   45000, 32100, 80,  4, true),
-  ('pv-stain-walnut-1',   'p-fin-stain', '{"en":"Dark Walnut — 1L","af":"Donker Okkerneut — 1L"}'::jsonb, 'FIN-STAIN-WALNUT-1L',   null, 'Dark Walnut', 12000, 8600,  200, 5, true),
-  ('pv-stain-walnut-5',   'p-fin-stain', '{"en":"Dark Walnut — 5L","af":"Donker Okkerneut — 5L"}'::jsonb, 'FIN-STAIN-WALNUT-5L',   null, 'Dark Walnut', 45000, 32100, 80,  6, true),
-  ('pv-stain-charcoal-1', 'p-fin-stain', '{"en":"Charcoal — 1L","af":"Houtskool — 1L"}'::jsonb,           'FIN-STAIN-CHARCOAL-1L', null, 'Charcoal',    12000, 8600,  200, 7, true),
-  ('pv-stain-charcoal-5', 'p-fin-stain', '{"en":"Charcoal — 5L","af":"Houtskool — 5L"}'::jsonb,           'FIN-STAIN-CHARCOAL-5L', null, 'Charcoal',    45000, 32100, 80,  8, true),
+  ((select id from products where slug = 'deck-stain'), '{"en":"Clear Seal — 1L","af":"Deursigtige Seël — 1L"}'::jsonb,  'FIN-STAIN-CLEAR-1L',    null, 'Clear Seal',  12000, 8600,  200, 1, true),
+  ((select id from products where slug = 'deck-stain'), '{"en":"Clear Seal — 5L","af":"Deursigtige Seël — 5L"}'::jsonb,  'FIN-STAIN-CLEAR-5L',    null, 'Clear Seal',  45000, 32100, 80,  2, true),
+  ((select id from products where slug = 'deck-stain'), '{"en":"Honey Oak — 1L","af":"Heuningeik — 1L"}'::jsonb,         'FIN-STAIN-HONEY-1L',    null, 'Honey Oak',   12000, 8600,  200, 3, true),
+  ((select id from products where slug = 'deck-stain'), '{"en":"Honey Oak — 5L","af":"Heuningeik — 5L"}'::jsonb,         'FIN-STAIN-HONEY-5L',    null, 'Honey Oak',   45000, 32100, 80,  4, true),
+  ((select id from products where slug = 'deck-stain'), '{"en":"Dark Walnut — 1L","af":"Donker Okkerneut — 1L"}'::jsonb, 'FIN-STAIN-WALNUT-1L',   null, 'Dark Walnut', 12000, 8600,  200, 5, true),
+  ((select id from products where slug = 'deck-stain'), '{"en":"Dark Walnut — 5L","af":"Donker Okkerneut — 5L"}'::jsonb, 'FIN-STAIN-WALNUT-5L',   null, 'Dark Walnut', 45000, 32100, 80,  6, true),
+  ((select id from products where slug = 'deck-stain'), '{"en":"Charcoal — 1L","af":"Houtskool — 1L"}'::jsonb,           'FIN-STAIN-CHARCOAL-1L', null, 'Charcoal',    12000, 8600,  200, 7, true),
+  ((select id from products where slug = 'deck-stain'), '{"en":"Charcoal — 5L","af":"Houtskool — 5L"}'::jsonb,           'FIN-STAIN-CHARCOAL-5L', null, 'Charcoal',    45000, 32100, 80,  8, true),
   -- Cleaner (2 sizes)
-  ('pv-cleaner-1', 'p-fin-cleaner', '{"en":"1L Bottle","af":"1L Bottel"}'::jsonb,    'FIN-CLEANER-1L', null, null, 8500,  6100, 150, 1, true),
-  ('pv-cleaner-5', 'p-fin-cleaner', '{"en":"5L Container","af":"5L Houer"}'::jsonb, 'FIN-CLEANER-5L', null, null, 32000, 22900, 60, 2, true);
+  ((select id from products where slug = 'deck-cleaner'), '{"en":"1L Bottle","af":"1L Bottel"}'::jsonb,    'FIN-CLEANER-1L', null, null, 8500,  6100, 150, 1, true),
+  ((select id from products where slug = 'deck-cleaner'), '{"en":"5L Container","af":"5L Houer"}'::jsonb, 'FIN-CLEANER-5L', null, null, 32000, 22900, 60, 2, true);
 
 -- ─── Board Dimensions (for layout engine) ───────────────────
-insert into public.board_dimensions (id, material_type_id, board_type, width_mm, thickness_mm, available_lengths_mm, price_per_metre_cents, display_order, is_active) values
-  ('bdim-pine-22x108',   'mt-pine',      'deck_board', 108, 22, '{2400,3000,3600,4800}',      1875,  1, true),
-  ('bdim-pine-32x114',   'mt-pine',      'deck_board', 114, 32, '{2400,3000,3600,4800}',      3125,  2, true),
-  ('bdim-balau-19x90',   'mt-balau',     'deck_board', 90,  19, '{900,1200,1500,1800,2100}',  10000, 1, true),
-  ('bdim-garapa-19x90',  'mt-garapa',    'deck_board', 90,  19, '{900,1200,1500,1800,2100}',  8333,  1, true),
-  ('bdim-garapa-19x140', 'mt-garapa',    'deck_board', 140, 19, '{900,1200,1500,1800,2100}',  12222, 2, true),
-  ('bdim-comp-22x140',   'mt-composite', 'deck_board', 140, 22, '{2200,3600,5400}',           9722,  1, true),
-  ('bdim-joist-38x114',  'mt-pine',      'joist',      114, 38, '{2400,3000,3600,4800}',      3542,  1, true),
-  ('bdim-joist-38x152',  'mt-pine',      'joist',      152, 38, '{3000,3600,4800}',           4333,  2, true),
-  ('bdim-bearer-76x228', 'mt-pine',      'bearer',     228, 76, '{2400,3000,3600}',           13333, 1, true)
-on conflict (id) do update set
-  material_type_id=excluded.material_type_id, board_type=excluded.board_type,
-  width_mm=excluded.width_mm, thickness_mm=excluded.thickness_mm,
-  available_lengths_mm=excluded.available_lengths_mm, price_per_metre_cents=excluded.price_per_metre_cents;
+delete from public.board_dimensions;
+insert into public.board_dimensions (material_type_id, board_type, width_mm, thickness_mm, available_lengths_mm, price_per_metre_cents, display_order, is_active) values
+  ((select id from material_types where slug = 'treated-pine'), 'deck_board', 108, 22, '{2400,3000,3600,4800}',      1875,  1, true),
+  ((select id from material_types where slug = 'treated-pine'), 'deck_board', 114, 32, '{2400,3000,3600,4800}',      3125,  2, true),
+  ((select id from material_types where slug = 'balau'),        'deck_board', 90,  19, '{900,1200,1500,1800,2100}',  10000, 1, true),
+  ((select id from material_types where slug = 'garapa'),       'deck_board', 90,  19, '{900,1200,1500,1800,2100}',  8333,  1, true),
+  ((select id from material_types where slug = 'garapa'),       'deck_board', 140, 19, '{900,1200,1500,1800,2100}',  12222, 2, true),
+  ((select id from material_types where slug = 'composite'),    'deck_board', 140, 22, '{2200,3600,5400}',           9722,  1, true),
+  ((select id from material_types where slug = 'treated-pine'), 'joist',      114, 38, '{2400,3000,3600,4800}',      3542,  1, true),
+  ((select id from material_types where slug = 'treated-pine'), 'joist',      152, 38, '{3000,3600,4800}',           4333,  2, true),
+  ((select id from material_types where slug = 'treated-pine'), 'bearer',     228, 76, '{2400,3000,3600}',           13333, 1, true);
 
 -- ─── Bulk Pricing (quantity discounts) ──────────────────────
 delete from public.bulk_pricing;
 insert into public.bulk_pricing (product_id, variant_id, min_quantity, price_cents) values
   -- Pine 22×108 popular lengths
-  (null, 'pv-pine22-2400', 20, 4200), (null, 'pv-pine22-2400', 50, 3900), (null, 'pv-pine22-2400', 100, 3600),
-  (null, 'pv-pine22-3600', 20, 6000), (null, 'pv-pine22-3600', 50, 5700), (null, 'pv-pine22-3600', 100, 5200),
-  (null, 'pv-pine22-4800', 20, 7900), (null, 'pv-pine22-4800', 50, 7400), (null, 'pv-pine22-4800', 100, 6800),
+  (null, (select id from product_variants where sku = 'DKB-PINE-22108-2400'), 20, 4200),
+  (null, (select id from product_variants where sku = 'DKB-PINE-22108-2400'), 50, 3900),
+  (null, (select id from product_variants where sku = 'DKB-PINE-22108-2400'), 100, 3600),
+  (null, (select id from product_variants where sku = 'DKB-PINE-22108-3600'), 20, 6000),
+  (null, (select id from product_variants where sku = 'DKB-PINE-22108-3600'), 50, 5700),
+  (null, (select id from product_variants where sku = 'DKB-PINE-22108-3600'), 100, 5200),
+  (null, (select id from product_variants where sku = 'DKB-PINE-22108-4800'), 20, 7900),
+  (null, (select id from product_variants where sku = 'DKB-PINE-22108-4800'), 50, 7400),
+  (null, (select id from product_variants where sku = 'DKB-PINE-22108-4800'), 100, 6800),
   -- Composite 3.6m (popular)
-  (null, 'pv-comp-3600-teak', 20, 32500), (null, 'pv-comp-3600-teak', 50, 30000),
+  (null, (select id from product_variants where sku = 'DKB-COMP-22140-3600-TK'), 20, 32500),
+  (null, (select id from product_variants where sku = 'DKB-COMP-22140-3600-TK'), 50, 30000),
   -- Screws bulk
-  (null, 'pv-ss-screws', 5, 23800), (null, 'pv-ss-screws', 10, 22500),
-  (null, 'pv-galv-screws', 5, 14300), (null, 'pv-galv-screws', 10, 13500),
+  (null, (select id from product_variants where sku = 'FIX-SS-50-200-V1'), 5, 23800),
+  (null, (select id from product_variants where sku = 'FIX-SS-50-200-V1'), 10, 22500),
+  (null, (select id from product_variants where sku = 'FIX-GALV-50-200-V1'), 5, 14300),
+  (null, (select id from product_variants where sku = 'FIX-GALV-50-200-V1'), 10, 13500),
   -- Joists 38×114 3.6m
-  (null, 'pv-joist114-3600', 10, 11500), (null, 'pv-joist114-3600', 25, 10500);
+  (null, (select id from product_variants where sku = 'SUB-JOIST-38114-3600'), 10, 11500),
+  (null, (select id from product_variants where sku = 'SUB-JOIST-38114-3600'), 25, 10500);
 
 -- ─── Kits / Bundles ─────────────────────────────────────────
 delete from public.kits;
-insert into public.kits (id, name, slug, description, image_url, price_cents, supplier_cost_cents, material_type_id, area_m2, display_order, is_active) values
-  ('kit-pine-starter',
-   '{"en":"Pine Starter Deck Kit — 10m²","af":"Den Beginnersdekstel — 10m²"}'::jsonb,
+insert into public.kits (name, slug, description, image_url, price_cents, supplier_cost_cents, material_type_id, area_m2, display_order, is_active) values
+  ('{"en":"Pine Starter Deck Kit — 10m²","af":"Den Beginnersdekstel — 10m²"}'::jsonb,
    'pine-starter-10',
    '{"en":"Everything you need for a 10m² ground-level pine deck. Includes boards, joists, fixings and finishing. Just add labour!","af":"Alles wat jy nodig het vir ''n 10m² grondvlak dendek. Sluit planke, balke, bevestigings en afwerking in. Voeg net arbeid by!"}'::jsonb,
-   null, 850000, 607000, 'mt-pine', 10.00, 1, true),
-  ('kit-balau-premium',
-   '{"en":"Balau Premium Deck Kit — 10m²","af":"Balau Premium Dekstel — 10m²"}'::jsonb,
+   null, 850000, 607000, (select id from material_types where slug = 'treated-pine'), 10.00, 1, true),
+  ('{"en":"Balau Premium Deck Kit — 10m²","af":"Balau Premium Dekstel — 10m²"}'::jsonb,
    'balau-premium-10',
    '{"en":"Premium Balau hardwood deck kit for 10m². Includes boards, substructure, stainless fixings and teak oil. Built to last 30+ years.","af":"Premium Balau-harthout dekstel vir 10m². Sluit planke, substruktuur, vlekvrystaal bevestigings en teak-olie in. Gebou om 30+ jaar te hou."}'::jsonb,
-   null, 1650000, 1179000, 'mt-balau', 10.00, 2, true),
-  ('kit-comp-easy',
-   '{"en":"Composite Easy Deck Kit — 10m²","af":"Saamgestelde Maklike Dekstel — 10m²"}'::jsonb,
+   null, 1650000, 1179000, (select id from material_types where slug = 'balau'), 10.00, 2, true),
+  ('{"en":"Composite Easy Deck Kit — 10m²","af":"Saamgestelde Maklike Dekstel — 10m²"}'::jsonb,
    'composite-easy-10',
    '{"en":"Zero-maintenance composite deck kit for 10m². Includes boards, joists, hidden clips and edge trim. 25-year warranty.","af":"Geen-onderhoud saamgestelde dekstel vir 10m². Sluit planke, balke, versteekte knippies en randafwerking in. 25-jaar waarborg."}'::jsonb,
-   null, 1450000, 1036000, 'mt-composite', 10.00, 3, true),
-  ('kit-pine-diy-15',
-   '{"en":"Pine DIY Deck Kit — 15m²","af":"Den DIY Dekstel — 15m²"}'::jsonb,
+   null, 1450000, 1036000, (select id from material_types where slug = 'composite'), 10.00, 3, true),
+  ('{"en":"Pine DIY Deck Kit — 15m²","af":"Den DIY Dekstel — 15m²"}'::jsonb,
    'pine-diy-15',
    '{"en":"Large pine deck kit for the serious DIYer. Covers 15m² with heavy-duty 32mm boards, joists, bearers and all fixings.","af":"Groot dendekstel vir die ernstige DIY-er. Dek 15m² met swaargewig 32mm-planke, balke, draers en alle bevestigings."}'::jsonb,
-   null, 1550000, 1107000, 'mt-pine', 15.00, 4, true);
+   null, 1550000, 1107000, (select id from material_types where slug = 'treated-pine'), 15.00, 4, true);
 
 -- ─── Kit Components ─────────────────────────────────────────
 delete from public.kit_components;
 insert into public.kit_components (kit_id, product_id, variant_id, quantity, display_order) values
   -- Pine Starter 10m²
-  ('kit-pine-starter', 'p-pine-22x108',   'pv-pine22-3600',    28, 1),
-  ('kit-pine-starter', 'p-joist-38x114',  'pv-joist114-3600',  14, 2),
-  ('kit-pine-starter', 'p-fix-ss-screws', 'pv-ss-screws',       3, 3),
-  ('kit-pine-starter', 'p-fix-spacers',   'pv-spacers',         1, 4),
-  ('kit-pine-starter', 'p-fix-joist-tape','pv-joist-tape',       2, 5),
-  ('kit-pine-starter', 'p-fin-stain',     'pv-stain-clear-5',   1, 6),
+  ((select id from kits where slug = 'pine-starter-10'), (select id from products where slug = 'pine-22x108'),              (select id from product_variants where sku = 'DKB-PINE-22108-3600'),  28, 1),
+  ((select id from kits where slug = 'pine-starter-10'), (select id from products where slug = 'joist-38x114'),             (select id from product_variants where sku = 'SUB-JOIST-38114-3600'), 14, 2),
+  ((select id from kits where slug = 'pine-starter-10'), (select id from products where slug = 'stainless-deck-screws-200'),(select id from product_variants where sku = 'FIX-SS-50-200-V1'),      3, 3),
+  ((select id from kits where slug = 'pine-starter-10'), (select id from products where slug = 'board-spacers-100'),        (select id from product_variants where sku = 'FIX-SPACERS-100-V1'),    1, 4),
+  ((select id from kits where slug = 'pine-starter-10'), (select id from products where slug = 'joist-tape-10m'),           (select id from product_variants where sku = 'FIX-TAPE-10M-V1'),       2, 5),
+  ((select id from kits where slug = 'pine-starter-10'), (select id from products where slug = 'deck-stain'),               (select id from product_variants where sku = 'FIN-STAIN-CLEAR-5L'),    1, 6),
   -- Balau Premium 10m²
-  ('kit-balau-premium', 'p-balau-19x90',   'pv-balau-1800',     56, 1),
-  ('kit-balau-premium', 'p-joist-38x152',  'pv-joist152-3600',  10, 2),
-  ('kit-balau-premium', 'p-fix-ss-screws', 'pv-ss-screws',       4, 3),
-  ('kit-balau-premium', 'p-fix-spacers',   'pv-spacers',         1, 4),
-  ('kit-balau-premium', 'p-fix-joist-tape','pv-joist-tape',       2, 5),
+  ((select id from kits where slug = 'balau-premium-10'), (select id from products where slug = 'balau-19x90'),              (select id from product_variants where sku = 'DKB-BALAU-1990-1800'),  56, 1),
+  ((select id from kits where slug = 'balau-premium-10'), (select id from products where slug = 'joist-38x152'),             (select id from product_variants where sku = 'SUB-JOIST-38152-3600'), 10, 2),
+  ((select id from kits where slug = 'balau-premium-10'), (select id from products where slug = 'stainless-deck-screws-200'),(select id from product_variants where sku = 'FIX-SS-50-200-V1'),      4, 3),
+  ((select id from kits where slug = 'balau-premium-10'), (select id from products where slug = 'board-spacers-100'),        (select id from product_variants where sku = 'FIX-SPACERS-100-V1'),    1, 4),
+  ((select id from kits where slug = 'balau-premium-10'), (select id from products where slug = 'joist-tape-10m'),           (select id from product_variants where sku = 'FIX-TAPE-10M-V1'),       2, 5),
   -- Composite Easy 10m²
-  ('kit-comp-easy', 'p-comp-22x140',   'pv-comp-3600-teak',  20, 1),
-  ('kit-comp-easy', 'p-joist-38x114',  'pv-joist114-3600',   14, 2),
-  ('kit-comp-easy', 'p-fix-ss-screws', 'pv-ss-screws',        3, 3),
-  ('kit-comp-easy', 'p-fix-spacers',   'pv-spacers',          1, 4),
+  ((select id from kits where slug = 'composite-easy-10'), (select id from products where slug = 'composite-22x140'),         (select id from product_variants where sku = 'DKB-COMP-22140-3600-TK'), 20, 1),
+  ((select id from kits where slug = 'composite-easy-10'), (select id from products where slug = 'joist-38x114'),             (select id from product_variants where sku = 'SUB-JOIST-38114-3600'),   14, 2),
+  ((select id from kits where slug = 'composite-easy-10'), (select id from products where slug = 'stainless-deck-screws-200'),(select id from product_variants where sku = 'FIX-SS-50-200-V1'),        3, 3),
+  ((select id from kits where slug = 'composite-easy-10'), (select id from products where slug = 'board-spacers-100'),        (select id from product_variants where sku = 'FIX-SPACERS-100-V1'),      1, 4),
   -- Pine DIY 15m²
-  ('kit-pine-diy-15', 'p-pine-32x114',   'pv-pine32-4800',   32, 1),
-  ('kit-pine-diy-15', 'p-joist-38x152',  'pv-joist152-4800',  12, 2),
-  ('kit-pine-diy-15', 'p-bearer-76x228', 'pv-bearer-3000',     4, 3),
-  ('kit-pine-diy-15', 'p-fix-ss-screws', 'pv-ss-screws',       5, 4),
-  ('kit-pine-diy-15', 'p-fix-spacers',   'pv-spacers',         2, 5),
-  ('kit-pine-diy-15', 'p-fix-joist-tape','pv-joist-tape',       3, 6),
-  ('kit-pine-diy-15', 'p-fin-stain',     'pv-stain-honey-5',   2, 7);
+  ((select id from kits where slug = 'pine-diy-15'), (select id from products where slug = 'pine-32x114'),              (select id from product_variants where sku = 'DKB-PINE-32114-4800'),  32, 1),
+  ((select id from kits where slug = 'pine-diy-15'), (select id from products where slug = 'joist-38x152'),             (select id from product_variants where sku = 'SUB-JOIST-38152-4800'), 12, 2),
+  ((select id from kits where slug = 'pine-diy-15'), (select id from products where slug = 'bearer-76x228'),            (select id from product_variants where sku = 'SUB-BEARER-76228-3000'),  4, 3),
+  ((select id from kits where slug = 'pine-diy-15'), (select id from products where slug = 'stainless-deck-screws-200'),(select id from product_variants where sku = 'FIX-SS-50-200-V1'),        5, 4),
+  ((select id from kits where slug = 'pine-diy-15'), (select id from products where slug = 'board-spacers-100'),        (select id from product_variants where sku = 'FIX-SPACERS-100-V1'),      2, 5),
+  ((select id from kits where slug = 'pine-diy-15'), (select id from products where slug = 'joist-tape-10m'),           (select id from product_variants where sku = 'FIX-TAPE-10M-V1'),         3, 6),
+  ((select id from kits where slug = 'pine-diy-15'), (select id from products where slug = 'deck-stain'),               (select id from product_variants where sku = 'FIN-STAIN-HONEY-5L'),      2, 7);
 
 -- ─── Product Relations (cross-sell) ─────────────────────────
 delete from public.product_relations;
 insert into public.product_relations (product_id, related_product_id, relation_type, display_order) values
-  ('p-pine-22x108',  'p-fix-ss-screws', 'frequently_bought_together', 1),
-  ('p-pine-22x108',  'p-fix-spacers',   'frequently_bought_together', 2),
-  ('p-pine-22x108',  'p-fin-stain',     'frequently_bought_together', 3),
-  ('p-pine-32x114',  'p-fix-ss-screws', 'frequently_bought_together', 1),
-  ('p-pine-32x114',  'p-fin-stain',     'frequently_bought_together', 2),
-  ('p-balau-19x90',  'p-fix-ss-screws', 'frequently_bought_together', 1),
-  ('p-balau-19x90',  'p-fix-spacers',   'frequently_bought_together', 2),
-  ('p-garapa-19x90', 'p-fix-ss-screws', 'frequently_bought_together', 1),
-  ('p-garapa-19x90', 'p-fin-stain',     'frequently_bought_together', 2),
-  ('p-comp-22x140',  'p-fix-ss-screws', 'frequently_bought_together', 1),
-  ('p-fix-ss-screws',   'p-fix-spacers',    'frequently_bought_together', 1),
-  ('p-fix-ss-screws',   'p-fix-joist-tape', 'frequently_bought_together', 2),
-  ('p-fix-galv-screws', 'p-fix-spacers',    'frequently_bought_together', 1),
-  ('p-fin-stain',   'p-fin-cleaner', 'frequently_bought_together', 1),
-  ('p-fin-cleaner', 'p-fin-stain',   'frequently_bought_together', 1);
+  ((select id from products where slug = 'pine-22x108'),              (select id from products where slug = 'stainless-deck-screws-200'), 'frequently_bought_together', 1),
+  ((select id from products where slug = 'pine-22x108'),              (select id from products where slug = 'board-spacers-100'),         'frequently_bought_together', 2),
+  ((select id from products where slug = 'pine-22x108'),              (select id from products where slug = 'deck-stain'),                'frequently_bought_together', 3),
+  ((select id from products where slug = 'pine-32x114'),              (select id from products where slug = 'stainless-deck-screws-200'), 'frequently_bought_together', 1),
+  ((select id from products where slug = 'pine-32x114'),              (select id from products where slug = 'deck-stain'),                'frequently_bought_together', 2),
+  ((select id from products where slug = 'balau-19x90'),              (select id from products where slug = 'stainless-deck-screws-200'), 'frequently_bought_together', 1),
+  ((select id from products where slug = 'balau-19x90'),              (select id from products where slug = 'board-spacers-100'),         'frequently_bought_together', 2),
+  ((select id from products where slug = 'garapa-19x90'),             (select id from products where slug = 'stainless-deck-screws-200'), 'frequently_bought_together', 1),
+  ((select id from products where slug = 'garapa-19x90'),             (select id from products where slug = 'deck-stain'),                'frequently_bought_together', 2),
+  ((select id from products where slug = 'composite-22x140'),         (select id from products where slug = 'stainless-deck-screws-200'), 'frequently_bought_together', 1),
+  ((select id from products where slug = 'stainless-deck-screws-200'),(select id from products where slug = 'board-spacers-100'),         'frequently_bought_together', 1),
+  ((select id from products where slug = 'stainless-deck-screws-200'),(select id from products where slug = 'joist-tape-10m'),            'frequently_bought_together', 2),
+  ((select id from products where slug = 'galvanised-deck-screws-200'),(select id from products where slug = 'board-spacers-100'),        'frequently_bought_together', 1),
+  ((select id from products where slug = 'deck-stain'),               (select id from products where slug = 'deck-cleaner'),              'frequently_bought_together', 1),
+  ((select id from products where slug = 'deck-cleaner'),             (select id from products where slug = 'deck-stain'),                'frequently_bought_together', 1);
 
 -- ═══════════════════════════════════════════════════════════════
 -- BUILD 35 — FAQ SEED DATA (10 bilingual deck-related FAQs)
 -- ═══════════════════════════════════════════════════════════════
 
-INSERT INTO public.faqs (id, question, answer, display_order, is_active) VALUES
+DELETE FROM public.faqs WHERE display_order BETWEEN 1 AND 10;
+INSERT INTO public.faqs (question, answer, display_order, is_active) VALUES
   (
-    'faq-01-how-long',
     '{"en":"How long does a deck installation take?","af":"Hoe lank neem ''n dekinstallasie?"}',
     '{"en":"A standard ground-level deck (10–20 m²) typically takes 3–5 working days. Raised decks, pool surrounds, and complex shapes may take 5–10 days. We''ll give you a firm timeline in your quote.","af":"''n Standaard grondvlak-dek (10–20 m²) neem gewoonlik 3–5 werksdae. Verhoogde dekke, swembadsorronde en komplekse vorms kan 5–10 dae neem. Ons sal jou ''n vaste tydlyn in jou kwotasie gee."}',
     1, true
   ),
   (
-    'faq-02-pine-vs-hardwood',
     '{"en":"What is the difference between pine and hardwood decking?","af":"Wat is die verskil tussen denne- en hardehoutvloere?"}',
     '{"en":"Pine (CCA-treated) is the most affordable option and works well for ground-level decks. It needs staining every 1–2 years. Hardwoods like balau and garapa are naturally durable, resist rot and insects, and age to a beautiful silver-grey if left untreated. They cost more upfront but last 25+ years with minimal maintenance.","af":"Denne (CCA-behandeld) is die bekostigste opsie en werk goed vir grondvlakdekke. Dit moet elke 1–2 jaar gebeis word. Hardehoute soos balau en garapa is natuurlik duursaam, bestand teen verrotting en insekte, en verouder tot ''n pragtige silwergrys as dit onbehandeld gelaat word. Hulle kos meer aanvanklik, maar hou 25+ jaar met minimale onderhoud."}',
     2, true
   ),
   (
-    'faq-03-composite',
     '{"en":"Is composite decking worth it?","af":"Is saamgestelde dekmateriaal die moeite werd?"}',
     '{"en":"Composite boards never need staining, won''t splinter, and resist fading. They''re ideal for pool areas and low-maintenance homes. The upfront cost is higher than pine but lower than premium hardwood, and you save on yearly maintenance costs.","af":"Saamgestelde planke hoef nooit gebeis te word nie, sal nie splinter nie en is bestand teen verbleking. Hulle is ideaal vir swembadgebiede en lae-onderhoud huise. Die aanvanklike koste is hoër as denne, maar laer as premie hardehout, en jy spaar op jaarlikse onderhoudskoste."}',
     3, true
   ),
   (
-    'faq-04-cost',
     '{"en":"How much does a deck cost per square metre?","af":"Hoeveel kos ''n dek per vierkante meter?"}',
     '{"en":"Prices vary by material and complexity. As a rough guide: pine decks start from R850/m² (supply only) or R1,500/m² (installed). Hardwood runs R1,800–R2,500/m² installed. Composite sits between R1,600–R2,200/m² installed. Use our online configurator for an instant, accurate quote.","af":"Pryse wissel na gelang van materiaal en kompleksiteit. As ''n rowwe riglyn: dennedekke begin vanaf R850/m² (slegs voorsiening) of R1 500/m² (geïnstalleer). Hardehout is R1 800–R2 500/m² geïnstalleer. Saamgesteld is tussen R1 600–R2 200/m² geïnstalleer. Gebruik ons aanlyn konfigurator vir ''n vinnige, akkurate kwotasie."}',
     4, true
   ),
   (
-    'faq-05-maintenance',
     '{"en":"How do I maintain my deck?","af":"Hoe onderhou ek my dek?"}',
     '{"en":"For pine: clean annually with a deck wash, sand lightly, and apply a quality deck stain every 12–18 months. For hardwood: clean annually; staining is optional (it keeps the original colour, or let it silver naturally). For composite: just hose it down — no staining needed.","af":"Vir denne: was jaarliks met ''n dekwas, skuur liggies, en smeer ''n kwaliteit dekbeis elke 12–18 maande. Vir hardehout: was jaarliks; beis is opsioneel (dit hou die oorspronklike kleur, of laat dit natuurlik versilwer). Vir saamgesteld: spuit dit net af — geen beis nodig nie."}',
     5, true
   ),
   (
-    'faq-06-diy',
     '{"en":"Can I install the deck myself?","af":"Kan ek die dek self installeer?"}',
     '{"en":"Absolutely! We offer a supply-only option with all the materials, fixings, and a detailed build plan. Our DIY kits include pre-cut boards and step-by-step instructions. If you get stuck, you can always book a consultation or upgrade to full installation.","af":"Absoluut! Ons bied ''n slegs-voorsiening opsie met al die materiale, hegstukke en ''n gedetailleerde bouplan. Ons DIY-stelle sluit voorafgesnyde planke en stap-vir-stap instruksies in. As jy vashaak, kan jy altyd ''n konsultasie bespreek of opgradeer na volledige installasie."}',
     6, true
   ),
   (
-    'faq-07-warranty',
     '{"en":"Do you offer a warranty?","af":"Bied julle ''n waarborg?"}',
     '{"en":"Yes. All installed decks carry a 2-year workmanship warranty. Material warranties depend on the supplier: CCA pine has a 20-year treatment guarantee, balau and garapa carry natural durability guarantees, and composite boards typically have a 10–25 year manufacturer warranty.","af":"Ja. Alle geïnstalleerde dekke het ''n 2-jaar vakmanskap waarborg. Materiaalwaarborge hang af van die verskaffer: CCA-denne het ''n 20-jaar behandelingswaarborg, balau en garapa het natuurlike duursaamheidswaarborge, en saamgestelde planke het gewoonlik ''n 10–25 jaar vervaardigerwaarborg."}',
     7, true
   ),
   (
-    'faq-08-service-area',
     '{"en":"Where do you operate?","af":"Waar bedryf julle?"}',
     '{"en":"We install decks throughout the Western Cape — Cape Town, Stellenbosch, Paarl, Somerset West, Hermanus, and surrounding areas. For supply-only orders, we deliver nationwide via courier.","af":"Ons installeer dekke regdeur die Wes-Kaap — Kaapstad, Stellenbosch, Paarl, Somerset-Wes, Hermanus en omliggende gebiede. Vir slegs-voorsiening bestellings lewer ons landwyd via koerier."}',
     8, true
   ),
   (
-    'faq-09-raised-deck',
     '{"en":"Can you build a raised or multi-level deck?","af":"Kan julle ''n verhoogde of multi-vlak dek bou?"}',
     '{"en":"Yes — raised decks, split-level designs, and multi-tier configurations are our speciality. These require additional substructure (bearers and posts) and may need council approval if over 500 mm above ground. We handle the engineering and can advise on regulations.","af":"Ja — verhoogde dekke, verdeelde-vlak ontwerpe en multi-vlak konfigurasies is ons spesialiteit. Hierdie vereis addisionele substruktuur (draers en pale) en mag raadsgoedkeuring nodig hê as dit meer as 500 mm bo die grond is. Ons hanteer die ingenieurswese en kan adviseer oor regulasies."}',
     9, true
   ),
   (
-    'faq-10-quote-process',
     '{"en":"How does the quoting process work?","af":"Hoe werk die kwotasieproses?"}',
     '{"en":"Use our online deck configurator to get an instant estimate. You can save your quote and we''ll email you a detailed PDF. For complex projects, book a free on-site consultation — we''ll measure up, discuss options, and provide a fixed-price quote within 48 hours.","af":"Gebruik ons aanlyn dek-konfigurator om ''n onmiddellike beraming te kry. Jy kan jou kwotasie stoor en ons sal jou ''n gedetailleerde PDF e-pos. Vir komplekse projekte, bespreek ''n gratis terreinbesoek — ons sal opmeet, opsies bespreek, en ''n vasteprys-kwotasie binne 48 uur verskaf."}',
     10, true
-  )
-ON CONFLICT (id) DO UPDATE SET question = EXCLUDED.question, answer = EXCLUDED.answer, display_order = EXCLUDED.display_order;
+  );
 
 -- ═══════════════════════════════════════════════════════════════
 -- SITE SETTINGS, NAV LINKS, FOOTER SECTIONS
 -- ═══════════════════════════════════════════════════════════════
 
 -- Site settings (stored in site_content with section_key='site_settings')
-INSERT INTO public.site_content (id, section_key, content) VALUES
+INSERT INTO public.site_content (section_key, content) VALUES
   (
-    'sc-site-settings',
     'site_settings',
     '{
       "logo_text": "The Deck Lab",
@@ -844,22 +823,22 @@ INSERT INTO public.site_content (id, section_key, content) VALUES
       ]
     }'
   )
-ON CONFLICT (id) DO UPDATE SET content = EXCLUDED.content;
+ON CONFLICT (section_key) DO UPDATE SET content = EXCLUDED.content;
 
 -- Navigation links
-INSERT INTO public.nav_links (id, label, href, display_order, is_active) VALUES
-  ('nav-home',        '{"en":"Home","af":"Tuis"}',          '/',              1, true),
-  ('nav-configurator','{"en":"Design Your Deck","af":"Ontwerp Jou Dek"}', '/configurator', 2, true),
-  ('nav-shop',        '{"en":"Shop","af":"Winkel"}',        '/shop',          3, true),
-  ('nav-services',    '{"en":"Services","af":"Dienste"}',   '/services',      4, true),
-  ('nav-about',       '{"en":"About","af":"Oor Ons"}',      '/about',         5, true),
-  ('nav-contact',     '{"en":"Contact","af":"Kontak"}',     '/contact',       6, true)
-ON CONFLICT (id) DO UPDATE SET label = EXCLUDED.label, href = EXCLUDED.href, display_order = EXCLUDED.display_order;
+DELETE FROM public.nav_links;
+INSERT INTO public.nav_links (label, href, display_order, is_active) VALUES
+  ('{"en":"Home","af":"Tuis"}',          '/',              1, true),
+  ('{"en":"Design Your Deck","af":"Ontwerp Jou Dek"}', '/configurator', 2, true),
+  ('{"en":"Shop","af":"Winkel"}',        '/shop',          3, true),
+  ('{"en":"Services","af":"Dienste"}',   '/services',      4, true),
+  ('{"en":"About","af":"Oor Ons"}',      '/about',         5, true),
+  ('{"en":"Contact","af":"Kontak"}',     '/contact',       6, true);
 
 -- Footer sections
-INSERT INTO public.footer_sections (id, title, links, display_order, is_active) VALUES
+DELETE FROM public.footer_sections;
+INSERT INTO public.footer_sections (title, links, display_order, is_active) VALUES
   (
-    'fs-navigate',
     '{"en":"Navigate","af":"Navigeer"}',
     '[
       {"label":{"en":"Home","af":"Tuis"},"href":"/"},
@@ -870,7 +849,6 @@ INSERT INTO public.footer_sections (id, title, links, display_order, is_active) 
     1, true
   ),
   (
-    'fs-company',
     '{"en":"Company","af":"Maatskappy"}',
     '[
       {"label":{"en":"About Us","af":"Oor Ons"},"href":"/about"},
@@ -881,7 +859,6 @@ INSERT INTO public.footer_sections (id, title, links, display_order, is_active) 
     2, true
   ),
   (
-    'fs-support',
     '{"en":"Support","af":"Ondersteuning"}',
     '[
       {"label":{"en":"Contact Us","af":"Kontak Ons"},"href":"/contact"},
@@ -889,16 +866,14 @@ INSERT INTO public.footer_sections (id, title, links, display_order, is_active) 
       {"label":{"en":"Privacy Policy","af":"Privaatheidsbeleid"},"href":"/privacy"}
     ]',
     3, true
-  )
-ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, links = EXCLUDED.links, display_order = EXCLUDED.display_order;
+  );
 
 -- ═══════════════════════════════════════════════════════════════
 -- HOMEPAGE SECTIONS
 -- ═══════════════════════════════════════════════════════════════
 
-INSERT INTO public.homepage_sections (id, section_key, content, display_order, is_active) VALUES
+INSERT INTO public.homepage_sections (section_key, content, display_order, is_active) VALUES
   (
-    'hs-hero',
     'hero',
     '{
       "heading": {"en":"Your Deck, Your Way","af":"Jou Dek, Jou Manier"},
@@ -910,7 +885,6 @@ INSERT INTO public.homepage_sections (id, section_key, content, display_order, i
     1, true
   ),
   (
-    'hs-trust-stats',
     'trust_stats',
     '{
       "items": [
@@ -923,7 +897,6 @@ INSERT INTO public.homepage_sections (id, section_key, content, display_order, i
     2, true
   ),
   (
-    'hs-how-it-works',
     'how_it_works',
     '{
       "heading": {"en":"How It Works","af":"Hoe Dit Werk"},
@@ -937,7 +910,6 @@ INSERT INTO public.homepage_sections (id, section_key, content, display_order, i
     3, true
   ),
   (
-    'hs-materials',
     'materials',
     '{
       "heading": {"en":"Premium Materials","af":"Premium Materiale"},
@@ -952,7 +924,6 @@ INSERT INTO public.homepage_sections (id, section_key, content, display_order, i
     4, true
   ),
   (
-    'hs-cta',
     'cta_banner',
     '{
       "heading": {"en":"Ready to Build Your Dream Deck?","af":"Gereed om Jou Droomdek te Bou?"},
@@ -961,40 +932,39 @@ INSERT INTO public.homepage_sections (id, section_key, content, display_order, i
     }',
     5, true
   )
-ON CONFLICT (id) DO UPDATE SET content = EXCLUDED.content, display_order = EXCLUDED.display_order;
+ON CONFLICT (section_key) DO UPDATE SET content = EXCLUDED.content, display_order = EXCLUDED.display_order;
 
 -- ═══════════════════════════════════════════════════════════════
 -- PAGE SEO METADATA
 -- ═══════════════════════════════════════════════════════════════
 
-INSERT INTO public.page_seo (id, page_key, title, description) VALUES
-  ('seo-home',        'home',         '{"en":"Custom Decking — Design, Supply & Install | The Deck Lab","af":"Pasgemaakte Dekke — Ontwerp, Voorsien & Installeer | The Deck Lab"}',
+INSERT INTO public.page_seo (page_key, title, description) VALUES
+  ('home',         '{"en":"Custom Decking — Design, Supply & Install | The Deck Lab","af":"Pasgemaakte Dekke — Ontwerp, Voorsien & Installeer | The Deck Lab"}',
     '{"en":"Design your perfect deck online, get an instant quote, and order premium materials or full installation. Serving the Western Cape.","af":"Ontwerp jou perfekte dek aanlyn, kry ''n onmiddellike kwotasie, en bestel premium materiale of volledige installasie. Bedien die Wes-Kaap."}'),
-  ('seo-about',       'about',        '{"en":"About The Deck Lab — Our Story","af":"Oor The Deck Lab — Ons Storie"}',
+  ('about',        '{"en":"About The Deck Lab — Our Story","af":"Oor The Deck Lab — Ons Storie"}',
     '{"en":"Learn about our team of decking specialists, our craftsmanship philosophy, and why Cape Town homeowners trust The Deck Lab.","af":"Leer oor ons span dekvloerspesialiste, ons vakmanskap-filosofie, en waarom Kaapstadse huiseienaars The Deck Lab vertrou."}'),
-  ('seo-services',    'services',     '{"en":"Decking Services — Design, Supply & Installation","af":"Dekdienste — Ontwerp, Voorsiening & Installasie"}',
+  ('services',     '{"en":"Decking Services — Design, Supply & Installation","af":"Dekdienste — Ontwerp, Voorsiening & Installasie"}',
     '{"en":"From design consultations to full turnkey installation, we offer complete decking services across the Western Cape.","af":"Van ontwerpkonsultasies tot volledige sleutelklaar installasie, ons bied volledige dekdienste regdeur die Wes-Kaap."}'),
-  ('seo-contact',     'contact',      '{"en":"Contact The Deck Lab — Get in Touch","af":"Kontak The Deck Lab — Kom in Aanraking"}',
+  ('contact',      '{"en":"Contact The Deck Lab — Get in Touch","af":"Kontak The Deck Lab — Kom in Aanraking"}',
     '{"en":"Get in touch for a free consultation, quote, or any decking questions. We''re based in Cape Town and serve the Western Cape.","af":"Kom in aanraking vir ''n gratis konsultasie, kwotasie, of enige dekvrae. Ons is gebaseer in Kaapstad en bedien die Wes-Kaap."}'),
-  ('seo-faq',         'faq',          '{"en":"Frequently Asked Questions — Decking FAQ","af":"Gereelde Vrae — Dek Vrae"}',
+  ('faq',          '{"en":"Frequently Asked Questions — Decking FAQ","af":"Gereelde Vrae — Dek Vrae"}',
     '{"en":"Answers to common questions about deck materials, costs, installation, maintenance, and our services.","af":"Antwoorde op algemene vrae oor dekmateriaal, koste, installasie, onderhoud en ons dienste."}'),
-  ('seo-terms',       'terms',        '{"en":"Terms & Conditions | The Deck Lab","af":"Bepalings & Voorwaardes | The Deck Lab"}',
+  ('terms',        '{"en":"Terms & Conditions | The Deck Lab","af":"Bepalings & Voorwaardes | The Deck Lab"}',
     '{"en":"Read our terms and conditions for deck installations, material supply, and online orders.","af":"Lees ons bepalings en voorwaardes vir dekinstallasies, materiaalvoorsiening en aanlyn bestellings."}'),
-  ('seo-privacy',     'privacy',      '{"en":"Privacy Policy | The Deck Lab","af":"Privaatheidsbeleid | The Deck Lab"}',
+  ('privacy',      '{"en":"Privacy Policy | The Deck Lab","af":"Privaatheidsbeleid | The Deck Lab"}',
     '{"en":"How we collect, use, and protect your personal information in compliance with POPIA.","af":"Hoe ons jou persoonlike inligting versamel, gebruik en beskerm in ooreenstemming met POPIA."}'),
-  ('seo-shop',        'shop',         '{"en":"Shop Decking Materials — Boards, Fixings & Kits","af":"Koop Dekmateriaal — Planke, Hegstukke & Stelle"}',
+  ('shop',         '{"en":"Shop Decking Materials — Boards, Fixings & Kits","af":"Koop Dekmateriaal — Planke, Hegstukke & Stelle"}',
     '{"en":"Browse and order premium decking boards, fixings, stains, and complete DIY kits. Nationwide delivery available.","af":"Blaai en bestel premium dekplanke, hegstukke, beitse en volledige DIY-stelle. Landwye aflewering beskikbaar."}'),
-  ('seo-configurator', 'configurator', '{"en":"Deck Configurator — Design & Price Your Deck Online","af":"Dek Konfigurator — Ontwerp & Prys Jou Dek Aanlyn"}',
+  ('configurator', '{"en":"Deck Configurator — Design & Price Your Deck Online","af":"Dek Konfigurator — Ontwerp & Prys Jou Dek Aanlyn"}',
     '{"en":"Choose your deck type, material, dimensions, and extras — get an instant price in under 2 minutes.","af":"Kies jou dektipe, materiaal, afmetings en ekstras — kry ''n onmiddellike prys in minder as 2 minute."}')
-ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description;
+ON CONFLICT (page_key) DO UPDATE SET title = EXCLUDED.title, description = EXCLUDED.description;
 
 -- ═══════════════════════════════════════════════════════════════
 -- LEGAL CONTENT (Terms & Privacy)
 -- ═══════════════════════════════════════════════════════════════
 
-INSERT INTO public.site_content (id, section_key, content) VALUES
+INSERT INTO public.site_content (section_key, content) VALUES
   (
-    'sc-terms',
     'terms',
     '{
       "title": {"en":"Terms & Conditions","af":"Bepalings & Voorwaardes"},
@@ -1011,7 +981,6 @@ INSERT INTO public.site_content (id, section_key, content) VALUES
     }'
   ),
   (
-    'sc-privacy',
     'privacy',
     '{
       "title": {"en":"Privacy Policy","af":"Privaatheidsbeleid"},
@@ -1027,7 +996,7 @@ INSERT INTO public.site_content (id, section_key, content) VALUES
       ]
     }'
   )
-ON CONFLICT (id) DO UPDATE SET content = EXCLUDED.content;
+ON CONFLICT (section_key) DO UPDATE SET content = EXCLUDED.content;
 
 -- ─── Admin User Note ─────────────────────────────────────────
 -- To create an admin user:
