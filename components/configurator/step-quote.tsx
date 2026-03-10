@@ -67,11 +67,12 @@ export function StepQuote({
       toast.error(formState.error);
     }
   }, [formState]);
+
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-        <Loader2 className="size-8 animate-spin" />
-        <p className="mt-3">Calculating your quote...</p>
+      <div className="flex flex-col items-center justify-center py-16">
+        <Loader2 className="size-8 animate-spin text-[#D4622A]" />
+        <p className="mt-3 text-[#A8A099]">Calculating your quote...</p>
       </div>
     );
   }
@@ -79,10 +80,14 @@ export function StepQuote({
   if (!quote) {
     return (
       <div className="py-12 text-center">
-        <p className="text-muted-foreground">
+        <p className="text-[#A8A099]">
           Could not calculate quote. Please check your selections and try again.
         </p>
-        <Button variant="outline" onClick={onRecalculate} className="mt-4">
+        <Button
+          variant="outline"
+          onClick={onRecalculate}
+          className="mt-4 border-[#2A2725] bg-[#1A1918] text-[#A8A099] hover:bg-[#2A2725] hover:text-[#F5F1EC]"
+        >
           <RefreshCw className="size-4" />
           Retry
         </Button>
@@ -101,39 +106,45 @@ export function StepQuote({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Your Deck Quote</h2>
-        <Button variant="ghost" size="sm" onClick={onRecalculate}>
+        <h2 className="text-lg font-semibold text-[#F5F1EC]">Your Deck Quote</h2>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onRecalculate}
+          className="text-[#A8A099] hover:bg-[#2A2725] hover:text-[#F5F1EC]"
+        >
           <RefreshCw className="size-4" />
           Recalculate
         </Button>
       </div>
 
       {/* Configuration summary */}
-      <div className="rounded-lg border bg-muted/30 p-4">
-        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+      <div className="rounded-lg border border-[#2A2725] bg-[#0F0E0D] p-4">
+        <h3 className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#736B62]">
           Configuration
         </h3>
         <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-          <dt className="text-muted-foreground">Deck Type</dt>
-          <dd className="font-medium">{deckType}</dd>
-          <dt className="text-muted-foreground">Material</dt>
-          <dd className="font-medium">{material}</dd>
-          <dt className="text-muted-foreground">Dimensions</dt>
-          <dd className="font-medium">
-            {state.length_m}m × {state.width_m}m ({quote.area_m2.toFixed(1)} m²)
+          <dt className="text-[#736B62]">Deck Type</dt>
+          <dd className="font-medium text-[#F5F1EC]">{deckType}</dd>
+          <dt className="text-[#736B62]">Material</dt>
+          <dd className="font-medium text-[#F5F1EC]">{material}</dd>
+          <dt className="text-[#736B62]">Dimensions</dt>
+          <dd className="font-medium text-[#F5F1EC]">
+            {state.length_m.toFixed ? state.length_m.toFixed(2) : state.length_m}m ×{" "}
+            {state.width_m.toFixed ? state.width_m.toFixed(2) : state.width_m}m ({quote.area_m2.toFixed(1)} m²)
           </dd>
-          <dt className="text-muted-foreground">Board Direction</dt>
-          <dd className="font-medium">{direction}</dd>
-          <dt className="text-muted-foreground">Profile</dt>
-          <dd className="font-medium">{profile}</dd>
+          <dt className="text-[#736B62]">Board Direction</dt>
+          <dd className="font-medium text-[#F5F1EC]">{direction}</dd>
+          <dt className="text-[#736B62]">Profile</dt>
+          <dd className="font-medium text-[#F5F1EC]">{profile}</dd>
           {finish && (
             <>
-              <dt className="text-muted-foreground">Finish</dt>
-              <dd className="font-medium">{finish}</dd>
+              <dt className="text-[#736B62]">Finish</dt>
+              <dd className="font-medium text-[#F5F1EC]">{finish}</dd>
             </>
           )}
-          <dt className="text-muted-foreground">Installation</dt>
-          <dd className="font-medium">
+          <dt className="text-[#736B62]">Installation</dt>
+          <dd className="font-medium text-[#F5F1EC]">
             {state.include_installation ? "Yes (Western Cape)" : "No — Supply Only"}
           </dd>
         </dl>
@@ -141,10 +152,10 @@ export function StepQuote({
 
       {/* Price breakdown */}
       <div className="space-y-1">
-        <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        <h3 className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#736B62]">
           Price Breakdown
         </h3>
-        <div className="divide-y rounded-lg border">
+        <div className="divide-y divide-[#2A2725] rounded-lg border border-[#2A2725]">
           <LineItem label="Deck boards" amount={quote.materials_cents} />
           <LineItem label="Substructure" amount={quote.substructure_cents} />
           <LineItem label="Fixings" amount={quote.fixings_cents} />
@@ -157,24 +168,20 @@ export function StepQuote({
           {quote.extras_cents > 0 && (
             <LineItem label="Extras" amount={quote.extras_cents} />
           )}
-          <LineItem
-            label="Subtotal (excl. VAT)"
-            amount={quote.subtotal_cents}
-            bold
-          />
+          <LineItem label="Subtotal (excl. VAT)" amount={quote.subtotal_cents} bold />
           {quote.delivery_fee_cents > 0 && (
             <LineItem label="Delivery" amount={quote.delivery_fee_cents} />
           )}
           {quote.delivery_fee_cents === 0 && !state.include_installation && (
             <div className="flex justify-between px-4 py-2 text-sm">
-              <span className="text-muted-foreground">Delivery</span>
-              <span className="text-secondary font-medium">FREE</span>
+              <span className="text-[#736B62]">Delivery</span>
+              <span className="font-medium text-emerald-400">FREE</span>
             </div>
           )}
           <LineItem label="VAT (15%)" amount={quote.vat_cents} />
-          <div className="flex justify-between bg-primary/5 px-4 py-3">
-            <span className="text-base font-bold">Total</span>
-            <span className="text-xl font-bold text-primary">
+          <div className="flex justify-between rounded-b-lg bg-[#D4622A]/10 px-4 py-3">
+            <span className="text-base font-bold text-[#F5F1EC]">Total</span>
+            <span className="text-xl font-bold text-[#D4622A]">
               {formatRand(quote.total_cents)}
             </span>
           </div>
@@ -188,20 +195,22 @@ export function StepQuote({
       </div>
 
       {/* Per m² note */}
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="text-center text-xs text-[#736B62]">
         That&apos;s{" "}
-        <strong>{formatRand(Math.round(quote.total_cents / quote.area_m2))}/m²</strong>{" "}
+        <strong className="text-[#A8A099]">
+          {formatRand(Math.round(quote.total_cents / quote.area_m2))}/m²
+        </strong>{" "}
         including VAT
         {state.include_installation ? " and installation" : ""}.
       </p>
 
       {/* Build Plan PDF */}
       {boardLayout && cutoffMetrics && (
-        <div className="rounded-lg border bg-muted/30 p-4">
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        <div className="rounded-lg border border-[#2A2725] bg-[#0F0E0D] p-4">
+          <h3 className="mb-2 font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#736B62]">
             Build Plan
           </h3>
-          <p className="mb-3 text-sm text-muted-foreground">
+          <p className="mb-3 text-sm text-[#A8A099]">
             Download a detailed 7-page PDF with board layout diagrams, cut list,
             shopping list, and installation notes for your deck.
           </p>
@@ -222,8 +231,8 @@ export function StepQuote({
       )}
 
       {/* Save Quote form */}
-      <div className="rounded-lg border bg-muted/30 p-4">
-        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+      <div className="rounded-lg border border-[#2A2725] bg-[#0F0E0D] p-4">
+        <h3 className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#736B62]">
           Save Your Quote
         </h3>
         <form action={formAction} className="space-y-3">
@@ -231,8 +240,8 @@ export function StepQuote({
           <input type="hidden" name="total_cents" value={quote.total_cents} />
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <label htmlFor="sq-name" className="mb-1 block text-sm font-medium">
-                Name <span className="text-destructive">*</span>
+              <label htmlFor="sq-name" className="mb-1 block text-sm font-medium text-[#A8A099]">
+                Name <span className="text-red-400">*</span>
               </label>
               <input
                 id="sq-name"
@@ -240,12 +249,12 @@ export function StepQuote({
                 type="text"
                 required
                 placeholder="Your full name"
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full rounded-md border border-[#2A2725] bg-[#1A1918] px-3 py-2 text-sm text-[#F5F1EC] placeholder:text-[#4A4540] focus:outline-none focus:ring-2 focus:ring-[#D4622A]/50"
               />
             </div>
             <div>
-              <label htmlFor="sq-email" className="mb-1 block text-sm font-medium">
-                Email <span className="text-destructive">*</span>
+              <label htmlFor="sq-email" className="mb-1 block text-sm font-medium text-[#A8A099]">
+                Email <span className="text-red-400">*</span>
               </label>
               <input
                 id="sq-email"
@@ -253,42 +262,46 @@ export function StepQuote({
                 type="email"
                 required
                 placeholder="you@example.com"
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full rounded-md border border-[#2A2725] bg-[#1A1918] px-3 py-2 text-sm text-[#F5F1EC] placeholder:text-[#4A4540] focus:outline-none focus:ring-2 focus:ring-[#D4622A]/50"
               />
             </div>
           </div>
           <div>
-            <label htmlFor="sq-phone" className="mb-1 block text-sm font-medium">
-              Phone <span className="text-muted-foreground text-xs">(optional)</span>
+            <label htmlFor="sq-phone" className="mb-1 block text-sm font-medium text-[#A8A099]">
+              Phone <span className="text-[#736B62] text-xs">(optional)</span>
             </label>
             <input
               id="sq-phone"
               name="phone"
               type="tel"
               placeholder="082 000 0000"
-              className="w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full rounded-md border border-[#2A2725] bg-[#1A1918] px-3 py-2 text-sm text-[#F5F1EC] placeholder:text-[#4A4540] focus:outline-none focus:ring-2 focus:ring-[#D4622A]/50"
             />
           </div>
           <div>
-            <label htmlFor="sq-notes" className="mb-1 block text-sm font-medium">
-              Notes <span className="text-muted-foreground text-xs">(optional)</span>
+            <label htmlFor="sq-notes" className="mb-1 block text-sm font-medium text-[#A8A099]">
+              Notes <span className="text-[#736B62] text-xs">(optional)</span>
             </label>
             <textarea
               id="sq-notes"
               name="notes"
               rows={2}
               placeholder="Any additional details or questions..."
-              className="w-full rounded-md border bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full rounded-md border border-[#2A2725] bg-[#1A1918] px-3 py-2 text-sm text-[#F5F1EC] placeholder:text-[#4A4540] focus:outline-none focus:ring-2 focus:ring-[#D4622A]/50"
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isPending || formState?.success}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending || formState?.success}
+          >
             {isPending ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
                 Saving...
               </>
             ) : formState?.success ? (
-              "Quote Saved!"
+              "Quote Saved ✓"
             ) : (
               "Save My Quote"
             )}
@@ -299,23 +312,20 @@ export function StepQuote({
   );
 }
 
-function LineItem({
-  label,
-  amount,
-  bold,
-}: {
-  label: string;
-  amount: number;
-  bold?: boolean;
-}) {
+interface LineItemProps {
+  readonly label: string;
+  readonly amount: number;
+  readonly bold?: boolean;
+}
+
+function LineItem({ label, amount, bold }: LineItemProps) {
+  const rowCls = bold ? "bg-[#2A2725]" : "";
+  const labelCls = bold ? "font-semibold text-[#F5F1EC]" : "text-[#736B62]";
+  const valueCls = bold ? "tabular-nums font-semibold text-[#F5F1EC]" : "tabular-nums text-[#A8A099]";
   return (
-    <div
-      className={`flex justify-between px-4 py-2 text-sm ${
-        bold ? "font-semibold" : ""
-      }`}
-    >
-      <span className={bold ? "" : "text-muted-foreground"}>{label}</span>
-      <span className="tabular-nums">{formatRand(amount)}</span>
+    <div className={`flex justify-between px-4 py-2 text-sm ${rowCls}`}>
+      <span className={labelCls}>{label}</span>
+      <span className={valueCls}>{formatRand(amount)}</span>
     </div>
   );
 }
