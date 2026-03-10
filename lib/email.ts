@@ -26,6 +26,9 @@ const templates: Record<EmailTemplate, () => Promise<{ default: React.ComponentT
   admin_new_order: () => import("@/components/email/admin-new-order"),
   enrollment_confirmation: () => import("@/components/email/enrollment-confirmation"),
   admin_new_message: () => import("@/components/email/admin-new-message"),
+  quote_saved: () => import("@/components/email/quote-saved"),
+  admin_new_quote: () => import("@/components/email/admin-new-quote"),
+  consultation_request: () => import("@/components/email/consultation-request"),
 };
 
 // Subject line generators
@@ -43,6 +46,9 @@ const subjects: Record<EmailTemplate, (props: Record<string, any>) => string> = 
   admin_new_order: (p) => `New Order — ${p.orderReference} (${p.total})`,
   enrollment_confirmation: (p) => `You're enrolled — ${p.courseName}`,
   admin_new_message: (p) => `New message from ${p.clientName}`,
+  quote_saved: (p) => `Your deck quote is saved — Ref ${p.quoteId.slice(0, 8).toUpperCase()}`,
+  admin_new_quote: (p) => `New deck quote from ${p.customerName}`,
+  consultation_request: (p) => `Consultation request received — ${p.customerName}`,
 };
 
 // ─── Resend Instance ──────────────────────────────────────

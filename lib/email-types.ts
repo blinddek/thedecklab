@@ -22,7 +22,11 @@ export type EmailTemplate =
   // LMS / Courses
   | "enrollment_confirmation"
   // Admin notifications
-  | "admin_new_message";
+  | "admin_new_message"
+  // Deck Lab — configurator
+  | "quote_saved"
+  | "admin_new_quote"
+  | "consultation_request";
 
 // ─── Template Props ───────────────────────────────────────
 
@@ -112,4 +116,33 @@ export interface AdminNewMessageProps {
   projectName: string;
   messagePreview: string;
   adminUrl: string;
+}
+
+export interface QuoteSavedProps {
+  customerName: string;
+  quoteId: string;
+  totalCents: number;
+  deckType?: string;
+  material?: string;
+  areaSqm?: number;
+  siteUrl?: string;
+}
+
+export interface AdminNewQuoteProps {
+  customerName: string;
+  customerEmail: string;
+  customerPhone?: string;
+  quoteId: string;
+  totalCents: number;
+  deckType?: string;
+  material?: string;
+  areaSqm?: number;
+  adminUrl: string;
+}
+
+export interface ConsultationRequestProps {
+  customerName: string;
+  preferredDate?: string;
+  address?: string;
+  siteUrl?: string;
 }

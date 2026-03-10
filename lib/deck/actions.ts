@@ -1,6 +1,12 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { sendEmail, notifyAdmin } from "@/lib/email";
+
+const ADMIN_URL =
+  process.env.NEXT_PUBLIC_APP_URL
+    ? `${process.env.NEXT_PUBLIC_APP_URL}/admin`
+    : "http://localhost:3000/admin";
 
 export async function saveQuote(
   _prevState: { success: boolean; quote_id?: string; error?: string } | null,
@@ -18,7 +24,7 @@ export async function saveQuote(
       return { success: false as const, error: "Name, email, and a valid quote are required." };
     }
 
-    let parsed: unknown;
+    let parsed: Record<string, unknown>;
     try {
       parsed = JSON.parse(configSnapshot);
     } catch {
@@ -44,6 +50,31 @@ export async function saveQuote(
     if (error) {
       return { success: false as const, error: error.message };
     }
+
+    // Extract readable fields from snapshot for emails
+    const deckType = (parsed.deckType as string) || undefined;
+    const material = (parsed.material as string) || undefined;
+    const areaSqm = parsed.areaSqm == null ? undefined : Number(parsed.areaSqm);
+
+    // Fire emails in the background — don't block the response
+    Promise.all([
+      sendEmail({
+        to: email,
+        template: "quote_saved",
+        props: { customerName: name, quoteId: data.id, totalCents, deckType, material, areaSqm },
+      }),
+      notifyAdmin("admin_new_quote", {
+        customerName: name,
+        customerEmail: email,
+        customerPhone: phone ?? undefined,
+        quoteId: data.id,
+        totalCents,
+        deckType,
+        material,
+        areaSqm,
+        adminUrl: `${ADMIN_URL}/quotes`,
+      }),
+    ]).catch((err) => console.error("[saveQuote] Email send failed:", err));
 
     return { success: true as const, quote_id: data.id };
   } catch (err) {
@@ -85,6 +116,25 @@ export async function requestConsultation(
     if (error) {
       return { success: false as const, error: error.message };
     }
+
+    // Fire emails in the background
+    Promise.all([
+      sendEmail({
+        to: email,
+        template: "consultation_request",
+        props: {
+          customerName: name,
+          preferredDate: preferredDate ?? undefined,
+          address: address ?? undefined,
+        },
+      }),
+      notifyAdmin("admin_new_message", {
+        clientName: name,
+        projectName: "Consultation Request",
+        messagePreview: notes ?? [name, "requested a consultation", address ? `at ${address}` : ""].filter(Boolean).join(" ") + ".",
+        adminUrl: `${ADMIN_URL}/quotes`,
+      }),
+    ]).catch((err) => console.error("[requestConsultation] Email send failed:", err));
 
     return { success: true as const };
   } catch (err) {

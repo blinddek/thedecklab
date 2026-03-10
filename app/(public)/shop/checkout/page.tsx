@@ -7,15 +7,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCart } from "@/components/shop/cart-provider";
 import { formatPrice } from "@/lib/shop/format";
+import { AddressAutocomplete, type AddressResult } from "@/components/shop/address-autocomplete";
 import { trackInitiateCheckout } from "@/lib/integrations/facebook-pixel";
 import { siteConfig } from "@/config/site";
-import { Loader2 } from "lucide-react";
+import { Loader2, Truck } from "lucide-react";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotalCents, totalItems, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Address state — auto-filled by autocomplete
+  const [addressLine1, setAddressLine1] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [addressLat, setAddressLat] = useState<number | null>(null);
+  const [addressLng, setAddressLng] = useState<number | null>(null);
+
+  // Delivery fee state
+  const [calcingDelivery, setCalcingDelivery] = useState(false);
+  const [deliveryKm, setDeliveryKm] = useState<number | null>(null);
+  const [deliveryError, setDeliveryError] = useState<string | null>(null);
 
   useEffect(() => {
     if (totalItems > 0) {
@@ -42,7 +56,38 @@ export default function CheckoutPage() {
     );
   }
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function handleAddressSelect(result: AddressResult) {
+    setAddressLine1(result.street || result.display_name);
+    setCity(result.city);
+    setProvince(result.province);
+    setPostalCode(result.postal_code);
+    setAddressLat(result.lat);
+    setAddressLng(result.lng);
+
+    // Auto-calculate delivery distance
+    setDeliveryKm(null);
+    setDeliveryError(null);
+    if (result.lat && result.lng) {
+      setCalcingDelivery(true);
+      fetch("/api/distance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lat: result.lat, lng: result.lng }),
+      })
+        .then((r) => r.json())
+        .then((data: { distance_km?: number; error?: string }) => {
+          if (data.distance_km != null) {
+            setDeliveryKm(data.distance_km);
+          } else {
+            setDeliveryError(data.error ?? "Could not calculate delivery distance.");
+          }
+        })
+        .catch(() => setDeliveryError("Delivery distance unavailable."))
+        .finally(() => setCalcingDelivery(false));
+    }
+  }
+
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -52,11 +97,11 @@ export default function CheckoutPage() {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
       phone: formData.get("phone") as string,
-      address_line_1: formData.get("address_line_1") as string,
+      address_line_1: addressLine1 || (formData.get("address_line_1") as string),
       address_line_2: formData.get("address_line_2") as string,
-      city: formData.get("city") as string,
-      province: formData.get("province") as string,
-      postal_code: formData.get("postal_code") as string,
+      city: city || (formData.get("city") as string),
+      province: province || (formData.get("province") as string),
+      postal_code: postalCode || (formData.get("postal_code") as string),
     };
 
     try {
@@ -86,7 +131,7 @@ export default function CheckoutPage() {
       clearCart();
 
       // Redirect to Paystack
-      window.location.href = data.authorization_url;
+      globalThis.location.href = data.authorization_url;
     } catch {
       setError("Network error. Please try again.");
       setLoading(false);
@@ -125,11 +170,27 @@ export default function CheckoutPage() {
 
         {/* Shipping Address */}
         <div>
-          <h2 className="text-lg font-semibold">Shipping Address</h2>
+          <h2 className="text-lg font-semibold">Delivery Address</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
+              <Label>Address Search</Label>
+              <AddressAutocomplete
+                onSelect={handleAddressSelect}
+                placeholder="e.g. 12 Main Street, Cape Town"
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Search to auto-fill your address, or fill in the fields below manually.
+              </p>
+            </div>
+            <div className="sm:col-span-2">
               <Label htmlFor="address_line_1">Address Line 1</Label>
-              <Input id="address_line_1" name="address_line_1" required />
+              <Input
+                id="address_line_1"
+                name="address_line_1"
+                value={addressLine1}
+                onChange={(e) => setAddressLine1(e.target.value)}
+                required
+              />
             </div>
             <div className="sm:col-span-2">
               <Label htmlFor="address_line_2">Address Line 2 (optional)</Label>
@@ -137,16 +198,55 @@ export default function CheckoutPage() {
             </div>
             <div>
               <Label htmlFor="city">City</Label>
-              <Input id="city" name="city" required />
+              <Input
+                id="city"
+                name="city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                required
+              />
             </div>
             <div>
               <Label htmlFor="province">Province</Label>
-              <Input id="province" name="province" required />
+              <Input
+                id="province"
+                name="province"
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+                required
+              />
             </div>
             <div>
               <Label htmlFor="postal_code">Postal Code</Label>
-              <Input id="postal_code" name="postal_code" required />
+              <Input
+                id="postal_code"
+                name="postal_code"
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
+                required
+              />
             </div>
+
+            {/* Delivery distance indicator */}
+            {(calcingDelivery || deliveryKm !== null || deliveryError) && (
+              <div className="sm:col-span-2 flex items-center gap-2 rounded-md border bg-muted/40 px-3 py-2 text-sm">
+                <Truck className="h-4 w-4 shrink-0 text-muted-foreground" />
+                {calcingDelivery && (
+                  <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                    Calculating delivery distance…
+                  </span>
+                )}
+                {!calcingDelivery && deliveryKm !== null && (
+                  <span className="text-foreground">
+                    Approx. <strong>{deliveryKm} km</strong> from our depot — final delivery fee confirmed at dispatch.
+                  </span>
+                )}
+                {!calcingDelivery && deliveryError && (
+                  <span className="text-muted-foreground">{deliveryError}</span>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -172,32 +272,24 @@ export default function CheckoutPage() {
               <span>{formatPrice(subtotalCents)}</span>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Shipping and tax calculated on payment.
+              Delivery fee and VAT calculated at checkout.
             </p>
           </div>
         </div>
 
         {/* POPIA notice */}
         <p className="text-xs text-muted-foreground">
-          By placing this order you agree to our{" "}
-          <a href="/terms" className="underline">
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a href="/privacy" className="underline">
-            Privacy Policy
-          </a>
-          . Your personal information will be processed in accordance with POPIA.
+          By placing this order you agree to our <a href="/terms" className="underline">Terms of Service</a> and <a href="/privacy" className="underline">Privacy Policy</a>. Your personal information will be processed in accordance with POPIA.
         </p>
 
         <Button type="submit" size="lg" className="w-full" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
+              Processing…
             </>
           ) : (
-            `Pay ${formatPrice(subtotalCents)}`
+            `Proceed to Payment — ${formatPrice(subtotalCents)}`
           )}
         </Button>
       </form>
