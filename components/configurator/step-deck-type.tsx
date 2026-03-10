@@ -13,8 +13,8 @@ export function StepDeckType({ options, value, onChange }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold">Choose your deck type</h2>
-        <p className="text-sm text-muted-foreground">
+        <h2 className="text-lg font-semibold text-[#F5F1EC]">Choose your deck type</h2>
+        <p className="text-sm text-[#A8A099]">
           This affects substructure complexity and labour costs.
         </p>
       </div>
@@ -24,15 +24,15 @@ export function StepDeckType({ options, value, onChange }: Props) {
             key={opt.id}
             onClick={() => onChange(opt.id)}
             className={cn(
-              "rounded-lg border p-4 text-left transition-all hover:border-primary/50 hover:shadow-sm",
+              "rounded-lg border p-4 text-left transition-all hover:border-[#D4622A]/50",
               value === opt.id
-                ? "border-primary bg-primary/5 ring-1 ring-primary/20"
-                : "border-border"
+                ? "border-[#D4622A] bg-[#D4622A]/10 ring-1 ring-[#D4622A]/20"
+                : "border-[#2A2725]"
             )}
           >
-            <div className="font-medium">{opt.name.en}</div>
+            <div className="font-semibold text-[#F5F1EC]">{opt.name.en}</div>
             {opt.description && (
-              <div className="mt-1 text-sm text-muted-foreground">
+              <div className="mt-1 text-sm text-[#A8A099]">
                 {opt.description.en}
               </div>
             )}

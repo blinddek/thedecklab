@@ -31,8 +31,8 @@ export function StepStyle({
       {/* Board Direction */}
       <div className="space-y-3">
         <div>
-          <h2 className="text-lg font-semibold">Board direction</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-lg font-semibold text-[#F5F1EC]">Board direction</h2>
+          <p className="text-sm text-[#A8A099]">
             Diagonal and pattern layouts use more material.
           </p>
         </div>
@@ -45,16 +45,16 @@ export function StepStyle({
                 key={d.id}
                 onClick={() => onChangeDirection(d.id)}
                 className={cn(
-                  "rounded-lg border p-3 text-left transition-all hover:border-primary/50",
+                  "rounded-lg border p-3 text-left transition-all hover:border-[#D4622A]/50",
                   directionId === d.id
-                    ? "border-primary bg-primary/5 ring-1 ring-primary/20"
-                    : "border-border"
+                    ? "border-[#D4622A] bg-[#D4622A]/10 ring-1 ring-[#D4622A]/20"
+                    : "border-[#2A2725]"
                 )}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{d.name.en}</span>
+                  <span className="font-semibold text-[#F5F1EC]">{d.name.en}</span>
                   {extra && (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-[#A8A099]">
                       {extra}
                     </span>
                   )}
@@ -68,8 +68,8 @@ export function StepStyle({
       {/* Board Profile */}
       <div className="space-y-3">
         <div>
-          <h2 className="text-lg font-semibold">Board profile</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="text-lg font-semibold text-[#F5F1EC]">Board profile</h2>
+          <p className="text-sm text-[#A8A099]">
             Grooved profiles are recommended for pool and wet areas.
           </p>
         </div>
@@ -81,15 +81,15 @@ export function StepStyle({
                 key={p.id}
                 onClick={() => onChangeProfile(p.id)}
                 className={cn(
-                  "rounded-lg border p-3 text-left transition-all hover:border-primary/50",
+                  "rounded-lg border p-3 text-left transition-all hover:border-[#D4622A]/50",
                   profileId === p.id
-                    ? "border-primary bg-primary/5 ring-1 ring-primary/20"
-                    : "border-border"
+                    ? "border-[#D4622A] bg-[#D4622A]/10 ring-1 ring-[#D4622A]/20"
+                    : "border-[#2A2725]"
                 )}
               >
-                <div className="font-medium">{p.name.en}</div>
+                <div className="font-semibold text-[#F5F1EC]">{p.name.en}</div>
                 {mod > 0 && (
-                  <div className="mt-0.5 text-xs text-muted-foreground">
+                  <div className="mt-0.5 text-xs text-[#A8A099]">
                     +{mod}%
                   </div>
                 )}
@@ -103,8 +103,8 @@ export function StepStyle({
       {finishes.length > 0 && (
         <div className="space-y-3">
           <div>
-            <h2 className="text-lg font-semibold">Finish / Colour</h2>
-            <p className="text-sm text-muted-foreground">
+            <h2 className="text-lg font-semibold text-[#F5F1EC]">Finish / Colour</h2>
+            <p className="text-sm text-[#A8A099]">
               Optional — select a stain or colour for your boards.
             </p>
           </div>
@@ -112,10 +112,10 @@ export function StepStyle({
             <button
               onClick={() => onChangeFinish("")}
               className={cn(
-                "rounded-full border px-3 py-1.5 text-sm transition-all hover:border-primary/50",
+                "rounded-full border px-3 py-1.5 text-sm text-[#F5F1EC] transition-all hover:border-[#D4622A]/50",
                 !finishId
-                  ? "border-primary bg-primary/5 ring-1 ring-primary/20"
-                  : "border-border"
+                  ? "border-[#D4622A] bg-[#D4622A]/10 ring-1 ring-[#D4622A]/20"
+                  : "border-[#2A2725]"
               )}
             >
               None
@@ -128,21 +128,21 @@ export function StepStyle({
                   key={f.id}
                   onClick={() => onChangeFinish(f.id)}
                   className={cn(
-                    "flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-all hover:border-primary/50",
+                    "flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm text-[#F5F1EC] transition-all hover:border-[#D4622A]/50",
                     finishId === f.id
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/20"
-                      : "border-border"
+                      ? "border-[#D4622A] bg-[#D4622A]/10 ring-1 ring-[#D4622A]/20"
+                      : "border-[#2A2725]"
                   )}
                 >
                   {hex && (
                     <span
-                      className="inline-block size-4 rounded-full border"
+                      className="inline-block size-4 rounded-full border border-[#2A2725]"
                       style={{ backgroundColor: hex }}
                     />
                   )}
                   <span>{f.name.en}</span>
                   {priceCents > 0 && (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-[#736B62]">
                       +R{(priceCents / 100).toFixed(0)}/m²
                     </span>
                   )}

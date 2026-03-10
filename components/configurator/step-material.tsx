@@ -13,8 +13,8 @@ export function StepMaterial({ options, value, onChange }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold">Choose your material</h2>
-        <p className="text-sm text-muted-foreground">
+        <h2 className="text-lg font-semibold text-[#F5F1EC]">Choose your material</h2>
+        <p className="text-sm text-[#A8A099]">
           Each material has different pricing, durability, and maintenance
           requirements.
         </p>
@@ -31,31 +31,31 @@ export function StepMaterial({ options, value, onChange }: Props) {
               key={mat.id}
               onClick={() => onChange(mat.id)}
               className={cn(
-                "rounded-lg border p-4 text-left transition-all hover:border-primary/50 hover:shadow-sm",
+                "rounded-lg border p-4 text-left transition-all hover:border-[#D4622A]/50",
                 value === mat.id
-                  ? "border-primary bg-primary/5 ring-1 ring-primary/20"
-                  : "border-border"
+                  ? "border-[#D4622A] bg-[#D4622A]/10 ring-1 ring-[#D4622A]/20"
+                  : "border-[#2A2725]"
               )}
             >
-              <div className="font-medium">{mat.name.en}</div>
+              <div className="font-semibold text-[#F5F1EC]">{mat.name.en}</div>
               {mat.description && (
-                <div className="mt-1 text-sm text-muted-foreground">
+                <div className="mt-1 text-sm text-[#A8A099]">
                   {mat.description.en}
                 </div>
               )}
               <div className="mt-3 flex flex-wrap gap-2 text-xs">
                 {durability > 0 && (
-                  <span className="rounded-full bg-secondary/10 px-2 py-0.5 text-secondary">
+                  <span className="rounded-full bg-[#D4622A]/15 px-2 py-0.5 text-[#D4622A]">
                     Durability: {durability}/5
                   </span>
                 )}
                 {maintenance && (
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                  <span className="rounded-full bg-[#2A2725] px-2 py-0.5 text-[#A8A099]">
                     Maintenance: {maintenance}
                   </span>
                 )}
                 {lifespanMin > 0 && (
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground">
+                  <span className="rounded-full bg-[#2A2725] px-2 py-0.5 text-[#A8A099]">
                     {lifespanMin}–{lifespanMax} years
                   </span>
                 )}

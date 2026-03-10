@@ -1643,11 +1643,11 @@ function DesignerCanvas({
 
 function ConsultationView() {
   return (
-    <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border bg-muted/30 py-16 text-center">
-      <MessageSquare className="size-12 text-muted-foreground" />
+    <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border border-[#2A2725] bg-[#0F0E0D] py-16 text-center">
+      <MessageSquare className="size-12 text-[#D4622A]" />
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Need a custom shape?</h3>
-        <p className="mx-auto max-w-md text-sm text-muted-foreground">
+        <h3 className="text-lg font-semibold text-[#F5F1EC]">Need a custom shape?</h3>
+        <p className="mx-auto max-w-md text-sm text-[#A8A099]">
           For complex deck shapes (curves, multi-level, wraparound), request a
           free consultation. Our team will design your deck and provide a
           detailed quote.
