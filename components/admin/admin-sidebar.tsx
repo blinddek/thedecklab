@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Navigation,
   Settings,
-  FileText,
   Globe,
   CalendarDays,
   GraduationCap,
@@ -16,19 +15,15 @@ import {
   X,
   Mail,
   UserCog,
-  Image,
   Layers,
   MapPin,
-  MessageSquare,
-  Activity,
   Receipt,
-  Megaphone,
-  MessageCircle as MessageCircleIcon,
   Scale,
   Tag,
   Users,
   Ruler,
   Calculator,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminSignOutButton } from "@/components/auth/admin-sign-out-button";
@@ -61,12 +56,6 @@ function buildSidebarNav(): NavGroup[] {
   const contentItems: NavItem[] = [
     { href: "/admin/pages", label: "Pages", icon: Layers },
   ];
-  if (isEnabled("blog")) {
-    contentItems.push({ href: "/admin/blog", label: "Blog", icon: FileText });
-  }
-  if (isEnabled("portfolio")) {
-    contentItems.push({ href: "/admin/portfolio", label: "Portfolio", icon: Image });
-  }
   if (isEnabled("booking")) {
     contentItems.push({ href: "/admin/booking", label: "Booking", icon: CalendarDays });
   }
@@ -82,18 +71,9 @@ function buildSidebarNav(): NavGroup[] {
   groups.push({ title: "Content", items: contentItems });
 
   // Manage
-  const manageItems: NavItem[] = [
-    { href: "/admin/contact", label: "Messages", icon: MessageSquare },
-    { href: "/admin/activity", label: "Activity Log", icon: Activity },
-  ];
+  const manageItems: NavItem[] = [];
   if (isEnabled("billing")) {
     manageItems.push({ href: "/admin/billing", label: "Billing", icon: Receipt });
-  }
-  if (isEnabled("emailCampaigns") || isEnabled("dripEmails")) {
-    manageItems.push({ href: "/admin/campaigns", label: "Campaigns", icon: Megaphone });
-  }
-  if (isEnabled("whatsapp")) {
-    manageItems.push({ href: "/admin/whatsapp", label: "WhatsApp", icon: MessageCircleIcon });
   }
   if (isEnabled("coupons") || isEnabled("gifts") || isEnabled("hybridPackages")) {
     manageItems.push({ href: "/admin/commerce", label: "Commerce", icon: Tag });
@@ -101,10 +81,10 @@ function buildSidebarNav(): NavGroup[] {
   if (isEnabled("clientImport")) {
     manageItems.push({ href: "/admin/clients/import", label: "Client Import", icon: Users });
   }
-  // Deck Lab
   manageItems.push(
     { href: "/admin/configurator", label: "Configurator", icon: Ruler },
     { href: "/admin/pricing", label: "Markup & Pricing", icon: Calculator },
+    { href: "/admin/orders", label: "Orders", icon: FileText },
   );
   groups.push({ title: "Manage", items: manageItems });
 

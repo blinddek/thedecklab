@@ -173,6 +173,88 @@ export async function getLastCronRuns(): Promise<CronRun[]> {
   return latest;
 }
 
+// ---------- DeckLab Stats ----------
+
+export interface DeckLabStats {
+  totalOrders: number;
+  ordersThisMonth: number;
+  paidRevenueCents: number;
+  revenueThisMonthCents: number;
+  pendingQuotes: number;
+  consultationRequests: number;
+}
+
+export async function getDeckLabStats(): Promise<DeckLabStats> {
+  const admin = createAdminClient();
+  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+
+  const [totalRes, monthRes, paidRes, monthPaidRes, quotesRes, consultRes] = await Promise.all([
+    admin.from("decklab_orders").select("id", { count: "exact", head: true }),
+    admin.from("decklab_orders").select("id", { count: "exact", head: true }).gte("created_at", monthStart),
+    admin.from("decklab_orders").select("total_cents").eq("payment_status", "paid"),
+    admin.from("decklab_orders").select("total_cents").eq("payment_status", "paid").gte("created_at", monthStart),
+    admin.from("saved_quotes").select("id", { count: "exact", head: true }).is("converted_at", null),
+    admin.from("consultation_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
+  ]);
+
+  return {
+    totalOrders: totalRes.count ?? 0,
+    ordersThisMonth: monthRes.count ?? 0,
+    paidRevenueCents: (paidRes.data ?? []).reduce((s, o) => s + (o.total_cents ?? 0), 0),
+    revenueThisMonthCents: (monthPaidRes.data ?? []).reduce((s, o) => s + (o.total_cents ?? 0), 0),
+    pendingQuotes: quotesRes.count ?? 0,
+    consultationRequests: consultRes.count ?? 0,
+  };
+}
+
+export interface MonthlyDeckRevenue {
+  revenue_cents: number;
+  order_count: number;
+}
+
+export async function getMonthlyDeckRevenue(year: number): Promise<MonthlyDeckRevenue[]> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("decklab_orders")
+    .select("total_cents, created_at")
+    .eq("payment_status", "paid")
+    .gte("created_at", `${year}-01-01`)
+    .lt("created_at", `${year + 1}-01-01`);
+
+  const months: MonthlyDeckRevenue[] = Array.from({ length: 12 }, () => ({ revenue_cents: 0, order_count: 0 }));
+  for (const order of data ?? []) {
+    const m = new Date(order.created_at).getMonth();
+    months[m].revenue_cents += order.total_cents ?? 0;
+    months[m].order_count++;
+  }
+  return months;
+}
+
+export interface RecentDeckOrder {
+  id: string;
+  order_number: string;
+  order_status: string;
+  payment_status: string;
+  customer_name: string | null;
+  total_cents: number;
+  created_at: string;
+}
+
+export async function getRecentDeckOrders(limit = 8): Promise<RecentDeckOrder[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("decklab_orders")
+    .select("id, order_number, order_status, payment_status, customer_name, total_cents, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("[getRecentDeckOrders]", error.message);
+    return [];
+  }
+  return (data ?? []) as RecentDeckOrder[];
+}
+
 // ---------- Site Settings ----------
 
 export async function getSiteSettings(): Promise<Record<string, unknown>> {
