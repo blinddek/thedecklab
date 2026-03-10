@@ -1333,8 +1333,8 @@ function DesignerCanvas({
       ctx.save();
       ctx.translate(pan.x, pan.y);
       ctx.scale(zoom, zoom);
-      ctx.fillStyle = isCutoutMode ? CUTOUT_FILL : resolveColor(PRIMARY_FILL, canvas);
-      ctx.strokeStyle = isCutoutMode ? CUTOUT_STROKE : resolveColor(PRIMARY_STROKE, canvas);
+      ctx.fillStyle = isCutoutMode ? "rgba(239, 68, 68, 0.25)" : resolveColor(PRIMARY_FILL, canvas);
+      ctx.strokeStyle = isCutoutMode ? "#EF4444" : resolveColor(PRIMARY_STROKE, canvas);
       ctx.setLineDash([6, 4]);
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -1747,33 +1747,6 @@ function DesignerCanvas({
                         "height",
                         Math.max(100, Number(e.target.value))
                       )
-                    }
-                    className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <Label className="text-xs text-[#A8A099]">X (mm)</Label>
-                  <Input
-                    type="number"
-                    step={50}
-                    value={selectedShape.x}
-                    onChange={(e) =>
-                      updateShapeDimension("x", Number(e.target.value))
-                    }
-                    className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs text-[#A8A099]">Y (mm)</Label>
-                  <Input
-                    type="number"
-                    step={50}
-                    value={selectedShape.y}
-                    onChange={(e) =>
-                      updateShapeDimension("y", Number(e.target.value))
                     }
                     className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
                   />
