@@ -273,13 +273,18 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
   let clearSpan = bearerSpacing_mm;
   let bearerOverhang = (totalDepth - (numClearSpans + 1) * bearerWidth - numClearSpans * clearSpan) / 2;
 
-  if (bearerOverhang > maxCantilever) {
+  if (bearerOverhang < 0) {
+    // Deck too small for a full-spacing span — compress span to fit exactly, no overhang
+    const spaceForSpans = totalDepth - (numClearSpans + 1) * bearerWidth;
+    clearSpan = Math.max(0, spaceForSpans / numClearSpans);
+    bearerOverhang = 0;
+  } else if (bearerOverhang > maxCantilever) {
     // Overhang too large — add a span and compress spacing to fit
     numClearSpans++;
     const spaceForSpans = totalDepth - (numClearSpans + 1) * bearerWidth;
     if (spaceForSpans < numClearSpans * bearerSpacing_mm) {
       // Full spacing won't fit — distribute evenly with no overhang
-      clearSpan = spaceForSpans / numClearSpans;
+      clearSpan = Math.max(0, spaceForSpans / numClearSpans);
       bearerOverhang = 0;
     } else {
       bearerOverhang = (totalDepth - (numClearSpans + 1) * bearerWidth - numClearSpans * clearSpan) / 2;
