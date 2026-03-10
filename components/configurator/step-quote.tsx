@@ -204,6 +204,34 @@ export function StepQuote({
         {state.include_installation ? " and installation" : ""}.
       </p>
 
+      {/* Regulatory disclaimer */}
+      <div className="rounded-lg border border-[#2A2725] bg-[#0F0E0D] p-4 space-y-3">
+        <h3 className="font-mono text-[11px] font-bold uppercase tracking-[2px] text-[#736B62]">
+          Regulatory Notice
+        </h3>
+        {quote.area_m2 < 40 ? (
+          <p className="text-sm text-[#A8A099]">
+            Decks under 40m² are classified as Minor Building Works under SANS 10400. You do not
+            need formal building plans, but you are required to submit a Minor Building Works
+            application and basic drawings to your local municipality before construction. Your
+            municipality has final say and may request additional documentation.
+          </p>
+        ) : (
+          <p className="text-sm text-[#A8A099]">
+            Decks over 40m² require formal building plans to be drawn up and submitted to your
+            local municipality for approval before construction can begin. Plans must be prepared
+            and submitted by a SACAP-registered architect or architectural technologist, or an
+            ECSA-registered engineer.
+          </p>
+        )}
+        <p className="text-xs text-[#736B62]">
+          If your property is in an estate or complex, you will also need body corporate or HOA
+          approval regardless of deck size. Compliance with all municipal and building regulations
+          is the responsibility of the homeowner. The Deck Lab recommends consulting your local
+          municipality before construction begins.
+        </p>
+      </div>
+
       {/* Build Plan PDF */}
       {boardLayout && cutoffMetrics && (
         <div className="rounded-lg border border-[#2A2725] bg-[#0F0E0D] p-4">
