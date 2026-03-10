@@ -40,7 +40,7 @@ const GRID_SIZE_MM = 100; // 100mm grid lines
 const SNAP_SIZE_MM = 50; // snap to 50mm
 const MIN_ZOOM = 0.02;  // must handle up to 200 m² decks (~14 m wide)
 const MAX_ZOOM = 4;
-const ZOOM_STEP = 0.15;
+const ZOOM_STEP = 0.05;
 const MM_PER_M = 1000;
 
 // Colours — hardcoded to avoid CSS variable resolution failures in canvas context
@@ -1188,7 +1188,7 @@ function DesignerCanvas({
       {/* Canvas area */}
       <div className="flex-1 space-y-2">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-1 rounded-lg border bg-muted/30 p-1">
+        <div className="flex flex-wrap items-center gap-1 rounded-lg border border-[#2A2725] bg-[#1A1918] p-1">
           <Button
             variant={tool === "select" ? "default" : "ghost"}
             size="icon-sm"
@@ -1215,7 +1215,7 @@ function DesignerCanvas({
             L-Shape
           </Button>
 
-          <div className="mx-1 h-5 w-px bg-border" />
+          <div className="mx-1 h-5 w-px bg-[#2A2725]" />
 
           <Button
             variant="ghost"
@@ -1245,11 +1245,11 @@ function DesignerCanvas({
           >
             <Maximize className="size-4" />
           </Button>
-          <span className="ml-1 text-xs text-muted-foreground tabular-nums">
+          <span className="ml-1 text-xs text-[#736B62] tabular-nums">
             {Math.round(zoom * 100)}%
           </span>
 
-          <div className="mx-1 h-5 w-px bg-border" />
+          <div className="mx-1 h-5 w-px bg-[#2A2725]" />
 
           <Button
             variant="ghost"
@@ -1272,7 +1272,7 @@ function DesignerCanvas({
 
           {selectedId && (
             <>
-              <div className="mx-1 h-5 w-px bg-border" />
+              <div className="mx-1 h-5 w-px bg-[#2A2725]" />
               <Button
                 variant="ghost"
                 size="icon-sm"
@@ -1289,7 +1289,7 @@ function DesignerCanvas({
         {/* Canvas */}
         <div
           ref={containerRef}
-          className="relative w-full overflow-hidden rounded-lg border bg-background"
+          className="relative w-full overflow-hidden rounded-lg border border-[#2A2725] bg-[#0F0E0D] canvas-grid"
           style={{ aspectRatio: "16 / 10", minHeight: "300px" }}
         >
           <canvas
@@ -1311,20 +1311,20 @@ function DesignerCanvas({
             onContextMenu={(e) => e.preventDefault()}
           />
           {design.shapes.length === 0 && (
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-[#736B62]">
               Click &amp; drag to draw a rectangle, or use the L-Shape button
             </div>
           )}
         </div>
 
         {/* Total area readout */}
-        <div className="rounded-lg border bg-muted/30 p-3">
+        <div className="rounded-lg border border-[#2A2725] bg-[#1A1918] p-3">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-[#736B62]">
               Total area ({design.shapes.length}{" "}
               {design.shapes.length === 1 ? "shape" : "shapes"})
             </span>
-            <span className="text-xl font-bold tabular-nums">
+            <span className="text-xl font-bold tabular-nums text-[#F5F1EC]">
               {design.total_area_m2.toFixed(1)} m²
             </span>
           </div>
@@ -1339,13 +1339,13 @@ function DesignerCanvas({
 
       {/* Side panel — selected shape properties */}
       <div className="w-full shrink-0 space-y-4 lg:w-64">
-        <div className="rounded-lg border p-4">
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        <div className="rounded-lg border border-[#2A2725] bg-[#1A1918] p-4">
+          <h3 className="mb-3 font-display text-[11px] font-bold uppercase tracking-widest text-[#736B62]">
             {selectedShape ? "Shape Properties" : "Instructions"}
           </h3>
 
           {!selectedShape ? (
-            <div className="space-y-2 text-sm text-muted-foreground">
+            <div className="space-y-2 text-sm text-[#A8A099]">
               <p>
                 <strong>Draw:</strong> Select Rectangle or L-Shape tool, then click
                 and drag on the canvas.
@@ -1366,13 +1366,13 @@ function DesignerCanvas({
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="rounded bg-muted/50 px-2 py-1 text-xs text-muted-foreground">
+              <div className="rounded bg-[#2A2725] px-2 py-1 text-xs text-[#A8A099]">
                 {selectedShape.type === "l-shape" ? "L-Shape" : "Rectangle"}
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <Label className="text-xs">Width (mm)</Label>
+                  <Label className="text-xs text-[#A8A099]">Width (mm)</Label>
                   <Input
                     type="number"
                     min={100}
@@ -1384,11 +1384,11 @@ function DesignerCanvas({
                         Math.max(100, Number(e.target.value))
                       )
                     }
-                    className="h-8"
+                    className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Height (mm)</Label>
+                  <Label className="text-xs text-[#A8A099]">Height (mm)</Label>
                   <Input
                     type="number"
                     min={100}
@@ -1400,14 +1400,14 @@ function DesignerCanvas({
                         Math.max(100, Number(e.target.value))
                       )
                     }
-                    className="h-8"
+                    className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <Label className="text-xs">X (mm)</Label>
+                  <Label className="text-xs text-[#A8A099]">X (mm)</Label>
                   <Input
                     type="number"
                     step={50}
@@ -1415,11 +1415,11 @@ function DesignerCanvas({
                     onChange={(e) =>
                       updateShapeDimension("x", Number(e.target.value))
                     }
-                    className="h-8"
+                    className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Y (mm)</Label>
+                  <Label className="text-xs text-[#A8A099]">Y (mm)</Label>
                   <Input
                     type="number"
                     step={50}
@@ -1427,13 +1427,13 @@ function DesignerCanvas({
                     onChange={(e) =>
                       updateShapeDimension("y", Number(e.target.value))
                     }
-                    className="h-8"
+                    className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
                   />
                 </div>
               </div>
 
               {/* Dimensions in metres */}
-              <div className="rounded bg-muted/50 px-2 py-1.5 text-xs text-muted-foreground">
+              <div className="rounded bg-[#2A2725] px-2 py-1.5 text-xs text-[#A8A099]">
                 {(selectedShape.width / MM_PER_M).toFixed(2)}m ×{" "}
                 {(selectedShape.height / MM_PER_M).toFixed(2)}m ={" "}
                 {(
@@ -1445,13 +1445,13 @@ function DesignerCanvas({
 
               {/* L-shape cutout controls */}
               {selectedShape.type === "l-shape" && selectedShape.cutout && (
-                <div className="space-y-2 border-t pt-3">
-                  <h4 className="text-xs font-semibold text-muted-foreground">
+                <div className="space-y-2 border-t border-[#2A2725] pt-3">
+                  <h4 className="text-xs font-semibold text-[#736B62]">
                     Cutout
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <Label className="text-xs">Width (mm)</Label>
+                      <Label className="text-xs text-[#A8A099]">Width (mm)</Label>
                       <Input
                         type="number"
                         min={100}
@@ -1463,11 +1463,11 @@ function DesignerCanvas({
                             Math.max(100, Number(e.target.value))
                           )
                         }
-                        className="h-8"
+                        className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
                       />
                     </div>
                     <div className="space-y-1">
-                      <Label className="text-xs">Height (mm)</Label>
+                      <Label className="text-xs text-[#A8A099]">Height (mm)</Label>
                       <Input
                         type="number"
                         min={100}
@@ -1479,13 +1479,13 @@ function DesignerCanvas({
                             Math.max(100, Number(e.target.value))
                           )
                         }
-                        className="h-8"
+                        className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <Label className="text-xs">Corner</Label>
+                    <Label className="text-xs text-[#A8A099]">Corner</Label>
                     <div className="grid grid-cols-2 gap-1">
                       {(
                         [
@@ -1502,7 +1502,7 @@ function DesignerCanvas({
                             "rounded border px-2 py-1 text-xs transition-colors",
                             selectedShape.cutout?.corner === corner
                               ? "border-primary bg-primary/10 text-primary"
-                              : "border-border text-muted-foreground hover:border-primary/50"
+                              : "border-[#2A2725] text-[#736B62] hover:border-[#D4622A]/50"
                           )}
                         >
                           {corner.replace("-", " ")}

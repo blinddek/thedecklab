@@ -156,6 +156,12 @@ export function DeckConfigurator() {
   const handleDesignChange = useCallback(
     (newDesign: DeckDesign) => {
       setDesign(newDesign);
+      // Clear board layout immediately when all shapes are removed
+      if (newDesign.shapes.length === 0) {
+        setBoardLayout(null);
+        setCutoffMetrics(null);
+        setLayoutLoading(false);
+      }
       if (designMode === "quick" && newDesign.shapes.length === 1) {
         // In quick mode, keep length/width in sync from the single rect
         const shape = newDesign.shapes[0];

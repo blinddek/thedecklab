@@ -152,15 +152,21 @@ export function optimizeCutoffs(input: OptimizationInput): {
   const naiveBoardCount = cuts.length; // worst case: 1 new board per cut
   const boardsSaved = naiveBoardCount - newBoardsOpened;
 
-  // Waste = sum of all unusable offcuts (remaining pieces too small to reuse)
-  // plus the leftover in remaining pool entries below threshold would already
-  // have been removed, but pool entries still present are usable.
-  // Waste comes from the gap between stock material and actual used material.
-  const totalUsedMaterial_mm = sortedCuts.reduce(
-    (sum, cut) => sum + cut.required_length_mm + kerf_mm,
+  // Waste = stock opened − deck board material − usable offcuts still in pool.
+  // The old formula counted offcut-sourced cuts against totalUsedMaterial even
+  // though those boards were already opened, causing negative waste values.
+  const totalRequiredMaterial_mm = sortedCuts.reduce(
+    (sum, cut) => sum + cut.required_length_mm,
     0
   );
-  const totalWaste_mm = totalStockMaterial_mm - totalUsedMaterial_mm;
+  const usableOffcutsRemaining_mm = offcutPool.reduce(
+    (sum, o) => sum + o.remaining_mm,
+    0
+  );
+  const totalWaste_mm = Math.max(
+    0,
+    totalStockMaterial_mm - totalRequiredMaterial_mm - usableOffcutsRemaining_mm
+  );
   const wastePercent =
     totalStockMaterial_mm > 0
       ? (totalWaste_mm / totalStockMaterial_mm) * 100
