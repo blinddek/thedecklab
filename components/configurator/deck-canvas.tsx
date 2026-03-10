@@ -38,9 +38,9 @@ import Link from "next/link";
 
 const GRID_SIZE_MM = 100; // 100mm grid lines
 const SNAP_SIZE_MM = 50; // snap to 50mm
-const MIN_ZOOM = 0.25;
+const MIN_ZOOM = 0.02;  // must handle up to 200 m² decks (~14 m wide)
 const MAX_ZOOM = 4;
-const ZOOM_STEP = 0.25;
+const ZOOM_STEP = 0.15;
 const MM_PER_M = 1000;
 
 // Colours — hardcoded to avoid CSS variable resolution failures in canvas context
@@ -589,12 +589,13 @@ function DesignerCanvas({
   const [tool, setTool] = useState<DesignerTool>("select");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(0.5);
+  const [zoom, setZoom] = useState(0.1);
   const [pan, setPan] = useState({ x: 40, y: 40 });
   const [history, setHistory] = useState<HistoryState>({
     past: [],
     future: [],
   });
+  const autoFittedRef = useRef(false);
 
   // Drawing / dragging state
   const dragRef = useRef<{
@@ -1029,6 +1030,30 @@ function DesignerCanvas({
       y: (containerSize.h - dh * newZoom) / 2 - minY * newZoom,
     });
   }, [design.shapes, containerSize]);
+
+  // Auto-fit once on mount — read container size from the DOM to avoid stale state
+  useEffect(() => {
+    if (autoFittedRef.current || design.shapes.length === 0) return;
+    const raf = requestAnimationFrame(() => {
+      const container = containerRef.current;
+      if (!container) return;
+      const { width: cw, height: ch } = container.getBoundingClientRect();
+      if (cw === 0 || ch === 0) return;
+      autoFittedRef.current = true;
+      const minX = Math.min(...design.shapes.map((s) => s.x));
+      const minY = Math.min(...design.shapes.map((s) => s.y));
+      const maxX = Math.max(...design.shapes.map((s) => s.x + s.width));
+      const maxY = Math.max(...design.shapes.map((s) => s.y + s.height));
+      const dw = maxX - minX;
+      const dh = maxY - minY;
+      const padding = 80;
+      const newZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.min((cw - padding * 2) / dw, (ch - padding * 2) / dh)));
+      setZoom(newZoom);
+      setPan({ x: (cw - dw * newZoom) / 2 - minX * newZoom, y: (ch - dh * newZoom) / 2 - minY * newZoom });
+    });
+    return () => cancelAnimationFrame(raf);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Add L-shape template
   const addLShapeTemplate = useCallback(() => {
