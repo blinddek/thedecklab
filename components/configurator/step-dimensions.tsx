@@ -89,10 +89,10 @@ export function StepDimensions({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold">Set your dimensions</h2>
-        <p className="text-sm text-muted-foreground">
-          Enter the length and width of your deck in metres, or use the
-          interactive designer for complex shapes.
+        <h2 className="font-display text-lg font-bold text-[#F5F1EC]">Deck Shape &amp; Dimensions</h2>
+        <p className="text-sm text-[#A8A099]">
+          Enter length and width for a simple rectangle, or switch to Designer
+          for complex shapes.
         </p>
       </div>
 
@@ -101,14 +101,23 @@ export function StepDimensions({
         value={mode}
         onValueChange={(v) => onModeChange(v as DesignMode)}
       >
-        <TabsList className="w-full">
-          <TabsTrigger value="quick" className="flex-1">
+        <TabsList className="w-full border border-[#2A2725] bg-[#1A1918]">
+          <TabsTrigger
+            value="quick"
+            className="flex-1 data-[state=active]:bg-[#2A2725] data-[state=active]:text-[#F5F1EC] text-[#A8A099]"
+          >
             Quick
           </TabsTrigger>
-          <TabsTrigger value="designer" className="flex-1">
+          <TabsTrigger
+            value="designer"
+            className="flex-1 data-[state=active]:bg-[#2A2725] data-[state=active]:text-[#F5F1EC] text-[#A8A099]"
+          >
             Designer
           </TabsTrigger>
-          <TabsTrigger value="consultation" className="flex-1">
+          <TabsTrigger
+            value="consultation"
+            className="flex-1 data-[state=active]:bg-[#2A2725] data-[state=active]:text-[#F5F1EC] text-[#A8A099]"
+          >
             Consultation
           </TabsTrigger>
         </TabsList>
@@ -116,31 +125,58 @@ export function StepDimensions({
         {/* Quick mode */}
         <TabsContent value="quick">
           <div className="space-y-4 pt-4">
-            {/* Dimension inputs */}
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="length">Length (m)</Label>
-                <Input
-                  id="length"
-                  type="number"
-                  min={1}
-                  max={20}
-                  step={0.1}
-                  value={length}
-                  onChange={(e) => handleLengthChange(Number(e.target.value))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="width">Width (m)</Label>
-                <Input
-                  id="width"
-                  type="number"
-                  min={1}
-                  max={20}
-                  step={0.1}
-                  value={width}
-                  onChange={(e) => handleWidthChange(Number(e.target.value))}
-                />
+            {/* Dimension inputs — dark workshop panel */}
+            <div className="rounded-lg border border-[#2A2725] bg-[#1A1918] p-4">
+              <p className="mb-3 font-display text-[11px] font-bold uppercase tracking-widest text-[#736B62]">
+                Deck Dimensions
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="length"
+                    className="text-xs font-semibold uppercase tracking-wider text-[#D4622A]"
+                  >
+                    Length
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="length"
+                      type="number"
+                      min={1}
+                      max={20}
+                      step={0.1}
+                      value={length}
+                      onChange={(e) => handleLengthChange(Number(e.target.value))}
+                      className="border-[#2A2725] bg-[#0F0E0D] pr-10 font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50 placeholder:text-[#4A4540]"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs text-[#736B62]">
+                      m
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="width"
+                    className="text-xs font-semibold uppercase tracking-wider text-[#D4622A]"
+                  >
+                    Width
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="width"
+                      type="number"
+                      min={1}
+                      max={20}
+                      step={0.1}
+                      value={width}
+                      onChange={(e) => handleWidthChange(Number(e.target.value))}
+                      className="border-[#2A2725] bg-[#0F0E0D] pr-10 font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50 placeholder:text-[#4A4540]"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs text-[#736B62]">
+                      m
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -151,14 +187,17 @@ export function StepDimensions({
               mode="quick"
             />
 
-            {/* Area preview */}
-            <div className="rounded-lg border bg-muted/30 p-4">
+            {/* Area readout — ember accent */}
+            <div className="relative overflow-hidden rounded-lg border border-[#2A2725] bg-[#1A1918] p-4">
+              {/* ember top bar */}
+              <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-[#D4622A]/60 to-transparent" />
               <div className="flex items-baseline justify-between">
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#736B62]">
                   Total area
                 </span>
-                <span className="text-2xl font-bold tabular-nums">
-                  {area.toFixed(1)} m²
+                <span className="font-mono text-2xl font-bold tabular-nums text-[#F5F1EC]">
+                  {area.toFixed(1)}{" "}
+                  <span className="text-base font-normal text-[#A8A099]">m²</span>
                 </span>
               </div>
               {!valid && area > 0 && (
@@ -215,13 +254,15 @@ export function StepDimensions({
             )}
 
             {/* Area summary */}
-            <div className="rounded-lg border bg-muted/30 p-4">
+            <div className="relative overflow-hidden rounded-lg border border-[#2A2725] bg-[#1A1918] p-4">
+              <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-[#D4622A]/60 to-transparent" />
               <div className="flex items-baseline justify-between">
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#736B62]">
                   Total area
                 </span>
-                <span className="text-2xl font-bold tabular-nums">
-                  {area.toFixed(1)} m²
+                <span className="font-mono text-2xl font-bold tabular-nums text-[#F5F1EC]">
+                  {area.toFixed(1)}{" "}
+                  <span className="text-base font-normal text-[#A8A099]">m²</span>
                 </span>
               </div>
             </div>
@@ -292,16 +333,16 @@ function LayoutLoadingWidget() {
   const progress = Math.min(((stepIndex + 1) / LOADING_STEPS.length) * 90, 90);
 
   return (
-    <div className="space-y-3 rounded-lg border bg-muted/30 px-4 py-3">
+    <div className="space-y-3 rounded-lg border border-[#2A2725] bg-[#1A1918] px-4 py-3">
       {/* Progress bar */}
       <div className="space-y-1.5">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center justify-between text-xs text-[#A8A099]">
           <span>{LOADING_STEPS[stepIndex]}</span>
-          <span className="tabular-nums">{Math.round(progress)}%</span>
+          <span className="font-mono tabular-nums">{Math.round(progress)}%</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+        <div className="h-1 overflow-hidden rounded-full bg-[#2A2725]">
           <div
-            className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
+            className="h-full rounded-full bg-[#D4622A] transition-all duration-700 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -309,8 +350,8 @@ function LayoutLoadingWidget() {
 
       {/* Fun quip */}
       <div className="flex items-center gap-2">
-        <Loader2 className="size-3.5 shrink-0 animate-spin text-muted-foreground" />
-        <span className="text-xs italic text-muted-foreground/70">
+        <Loader2 className="size-3.5 shrink-0 animate-spin text-[#736B62]" />
+        <span className="text-xs italic text-[#736B62]">
           {LAYOUT_QUIPS[quipIndex]}
         </span>
       </div>
@@ -324,19 +365,19 @@ function BomSummary({
   layout,
   metrics,
 }: {
-  layout: BoardLayoutResult;
-  metrics?: CutoffMetrics | null;
+  readonly layout: BoardLayoutResult;
+  readonly metrics?: CutoffMetrics | null;
 }) {
   const { bom } = layout;
   const offcutBoards = layout.boards.filter((b) => b.source === "offcut").length;
   const newBoards = bom.total_boards - offcutBoards;
 
   return (
-    <details className="rounded-lg border bg-muted/30" open>
-      <summary className="cursor-pointer px-4 py-3 text-sm font-semibold">
+    <details className="rounded-lg border border-[#2A2725] bg-[#1A1918]" open>
+      <summary className="cursor-pointer px-4 py-3 font-display text-[11px] font-bold uppercase tracking-widest text-[#F5F1EC]">
         Bill of Materials
       </summary>
-      <div className="space-y-2 px-4 pb-4 text-sm text-muted-foreground">
+      <div className="space-y-2 px-4 pb-4 text-sm text-[#A8A099]">
         {/* Boards */}
         <div className="flex items-baseline justify-between">
           <span>

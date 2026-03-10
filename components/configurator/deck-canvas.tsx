@@ -44,10 +44,10 @@ const ZOOM_STEP = 0.25;
 const MM_PER_M = 1000;
 
 // Colours — CSS vars evaluated at render time
-const PRIMARY_FILL = "hsla(var(--primary) / 0.15)";
+const PRIMARY_FILL = "hsla(var(--primary) / 0.22)";
 const PRIMARY_STROKE = "hsl(var(--primary))";
-const PRIMARY_FILL_SELECTED = "hsla(var(--primary) / 0.3)";
-const GRID_LINE_COLOR = "rgba(0,0,0,0.06)";
+const PRIMARY_FILL_SELECTED = "hsla(var(--primary) / 0.4)";
+const GRID_LINE_COLOR = "rgba(255,255,255,0.04)";
 const LABEL_COLOR = "hsl(var(--foreground))";
 const LABEL_BG = "hsla(var(--background) / 0.85)";
 
@@ -505,7 +505,7 @@ function QuickCanvas({
   return (
     <div
       ref={containerRef}
-      className="relative w-full overflow-hidden rounded-lg border bg-background"
+      className="relative w-full overflow-hidden rounded-lg border border-[#2A2725] bg-[#0F0E0D] canvas-grid"
       style={{ aspectRatio: "16 / 10" }}
     >
       <canvas ref={canvasRef} className="absolute inset-0" />
