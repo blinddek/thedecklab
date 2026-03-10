@@ -38,7 +38,7 @@ export function NavbarAuthButton() {
   if (!ready) {
     return (
       <Link href="/login">
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]">
           {t({ en: "Login", af: "Teken In" })}
         </Button>
       </Link>
@@ -48,7 +48,7 @@ export function NavbarAuthButton() {
   if (!user) {
     return (
       <Link href="/login">
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]">
           {t({ en: "Login", af: "Teken In" })}
         </Button>
       </Link>
@@ -76,7 +76,7 @@ export function NavbarAuthButton() {
   return (
     <div className="flex items-center gap-1">
       <Link href="/portal">
-        <Button variant="ghost" size="sm" className="gap-2">
+        <Button variant="ghost" size="sm" className="gap-2 text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]">
           {initials ? (
             <span className="flex size-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
               {initials}
@@ -94,7 +94,7 @@ export function NavbarAuthButton() {
         size="sm"
         onClick={handleSignOut}
         aria-label={t({ en: "Sign out", af: "Teken uit" })}
-        className="size-8 p-0"
+        className="size-8 p-0 text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
       >
         <LogOut className="size-4" />
       </Button>

@@ -816,7 +816,7 @@ INSERT INTO public.site_content (section_key, content) VALUES
       "address": "Cape Town, Western Cape, South Africa",
       "business_hours": "Mon–Fri 07:30–17:00, Sat 08:00–13:00",
       "cta_label": {"en":"Get a Quote","af":"Kry ''n Kwotasie"},
-      "cta_url": "/configurator",
+      "cta_url": "/configure",
       "social_links": [
         {"platform":"facebook","url":"https://facebook.com/thedecklab"},
         {"platform":"instagram","url":"https://instagram.com/thedecklab"}
@@ -829,7 +829,7 @@ ON CONFLICT (section_key) DO UPDATE SET content = EXCLUDED.content;
 DELETE FROM public.nav_links;
 INSERT INTO public.nav_links (label, href, display_order, is_active) VALUES
   ('{"en":"Home","af":"Tuis"}',          '/',              1, true),
-  ('{"en":"Design Your Deck","af":"Ontwerp Jou Dek"}', '/configurator', 2, true),
+  ('{"en":"Design Your Deck","af":"Ontwerp Jou Dek"}', '/configure', 2, true),
   ('{"en":"Shop","af":"Winkel"}',        '/shop',          3, true),
   ('{"en":"Services","af":"Dienste"}',   '/services',      4, true),
   ('{"en":"About","af":"Oor Ons"}',      '/about',         5, true),
@@ -842,7 +842,7 @@ INSERT INTO public.footer_sections (title, links, display_order, is_active) VALU
     '{"en":"Navigate","af":"Navigeer"}',
     '[
       {"label":{"en":"Home","af":"Tuis"},"href":"/"},
-      {"label":{"en":"Design Your Deck","af":"Ontwerp Jou Dek"},"href":"/configurator"},
+      {"label":{"en":"Design Your Deck","af":"Ontwerp Jou Dek"},"href":"/configure"},
       {"label":{"en":"Shop Materials","af":"Koop Materiale"},"href":"/shop"},
       {"label":{"en":"Deck Kits","af":"Dekstelle"},"href":"/shop/kits"}
     ]',
@@ -878,7 +878,7 @@ INSERT INTO public.homepage_sections (section_key, content, display_order, is_ac
     '{
       "heading": {"en":"Design Your Deck","af":"Ontwerp Jou Dek"},
       "subheading": {"en":"Draw your deck online and get an exact quote — every board, joist, screw, and fixing calculated for you. Supply only, or full installation.","af":"Ontwerp jou dek aanlyn en kry 'n presiese kwotasie — elke plank, moerasplank, skroef en bevestiging bereken vir jou."},
-      "cta_primary": {"label":{"en":"Design Your Deck","af":"Ontwerp Jou Dek"},"href":"/configurator"},
+      "cta_primary": {"label":{"en":"Design Your Deck","af":"Ontwerp Jou Dek"},"href":"/configure"},
       "cta_secondary": {"label":{"en":"Browse Materials","af":"Blaai deur Materiale"},"href":"/shop"},
       "background_image": "/images/hero-deck.jpg"
     }',
@@ -928,7 +928,7 @@ INSERT INTO public.homepage_sections (section_key, content, display_order, is_ac
     '{
       "heading": {"en":"Ready to Build Your Dream Deck?","af":"Gereed om Jou Droomdek te Bou?"},
       "subheading": {"en":"Get a free instant quote in under 2 minutes.","af":"Kry ''n gratis onmiddellike kwotasie in minder as 2 minute."},
-      "cta": {"label":{"en":"Start Designing","af":"Begin Ontwerp"},"href":"/configurator"}
+      "cta": {"label":{"en":"Start Designing","af":"Begin Ontwerp"},"href":"/configure"}
     }',
     5, true
   )

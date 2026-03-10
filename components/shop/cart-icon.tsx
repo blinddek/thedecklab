@@ -10,7 +10,7 @@ export function CartIcon() {
   return (
     <Link
       href="/shop/cart"
-      className="relative rounded-md p-2 text-muted-foreground transition-colors hover:text-foreground"
+      className="relative rounded-md p-2 text-[#A8A099] transition-colors hover:text-[#F5F1EC]"
       aria-label={`Cart (${totalItems} items)`}
     >
       <ShoppingCart className="h-5 w-5" />
