@@ -251,25 +251,50 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
     }
   }
 
-  // Step 4: Bearers -- perpendicular to joists at bearerSpacing centres
-  // Distribute evenly so overhangs are equal on both sides: divide the total
-  // depth into n = ceil(depth/spacing) equal spans, then place at each node.
+  // Step 4: Bearers -- perpendicular to joists
+  //
+  // Layout rule:
+  //   • Use floor(depth / (spacing + width)) full clear spans at bearerSpacing_mm.
+  //   • Remaining space is split equally as overhang on both ends.
+  //   • If that overhang exceeds the structural cantilever limit
+  //     (min(spacing×0.25, 450mm)), add one more span and reduce the clear
+  //     span so everything fits evenly with zero overhang.
+  //
+  // Bearer `y` stores the OUTER FACE position; the bearer box extends from
+  // there to y + width_mm (rendered correctly by the 3D preview).
   const bearers: BearerPiece[] = [];
   let bearerIndex = 0;
 
   const totalDepth = maxY - minY;
-  const numBearerSpans = Math.max(1, Math.ceil(totalDepth / bearerSpacing_mm));
-  const actualBearerSpacing = totalDepth / numBearerSpans;
+  const bearerWidth = bearerDimension.width_mm;
+  const maxCantilever = Math.min(bearerSpacing_mm * 0.25, 450);
+
+  let numClearSpans = Math.max(1, Math.floor((totalDepth - bearerWidth) / (bearerSpacing_mm + bearerWidth)));
+  let clearSpan = bearerSpacing_mm;
+  let bearerOverhang = (totalDepth - (numClearSpans + 1) * bearerWidth - numClearSpans * clearSpan) / 2;
+
+  if (bearerOverhang > maxCantilever) {
+    // Overhang too large — add a span and compress spacing to fit
+    numClearSpans++;
+    const spaceForSpans = totalDepth - (numClearSpans + 1) * bearerWidth;
+    if (spaceForSpans < numClearSpans * bearerSpacing_mm) {
+      // Full spacing won't fit — distribute evenly with no overhang
+      clearSpan = spaceForSpans / numClearSpans;
+      bearerOverhang = 0;
+    } else {
+      bearerOverhang = (totalDepth - (numClearSpans + 1) * bearerWidth - numClearSpans * clearSpan) / 2;
+    }
+  }
+
+  const numBearers = numClearSpans + 1;
   const bearerYPositions: number[] = [];
-  for (let i = 0; i <= numBearerSpans; i++) {
-    bearerYPositions.push(minY + i * actualBearerSpacing);
+  for (let i = 0; i < numBearers; i++) {
+    bearerYPositions.push(minY + bearerOverhang + i * (clearSpan + bearerWidth));
   }
 
   for (const by of bearerYPositions) {
-    // intersectScanline uses y < yMax (exclusive top edge), so positions at
-    // exactly maxY return nothing. Nudge the scan point fractionally inward
-    // so the edge bearer is found while still being placed at the true `by`.
-    const scanY = by >= maxY ? maxY - 0.01 : by;
+    // Scan at bearer centre for polygon intersection (avoids exclusive-top edge issues)
+    const scanY = by + bearerWidth / 2;
 
     // Clip bearer against polygon and cutouts — one piece per contiguous segment
     let segs = intersectScanline(scanY, workPolygon);
