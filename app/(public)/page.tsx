@@ -241,7 +241,7 @@ export default async function HomePage() {
   const heroHeading = hero?.heading?.en ?? "Design Your Deck";
   const heroSub =
     hero?.subheading?.en ??
-    "Draw your shape. Get an exact bill of materials — down to the last screw. Then order everything or book installation.";
+    "Draw your deck online and get an exact quote — every board, joist, screw, and fixing calculated for you. Supply only, or full installation.";
   const heroCta = { text: hero?.cta_text?.en ?? "Start Designing →", url: hero?.cta_url ?? "/configure" };
   const heroCtaSec = { text: hero?.cta_secondary_text?.en ?? "Book a Free Site Visit", url: hero?.cta_secondary_url ?? "/book" };
   const statBoards = hero?.stat_boards ?? "31 boards";
@@ -281,7 +281,7 @@ export default async function HomePage() {
               </span>
             </div>
 
-            <h1 className="font-display text-[3rem] font-extrabold leading-[1.02] tracking-[-0.045em] text-foreground sm:text-[3.8rem] lg:text-[4.2rem]">
+            <h1 className="font-display text-[3rem] font-extrabold leading-[1.02] tracking-[-0.045em] text-[#F5F1EC] sm:text-[3.8rem] lg:text-[4.2rem]">
               {heroHeading.includes("Deck") ? (
                 <>
                   {heroHeading.split("Deck")[0]}
@@ -293,17 +293,17 @@ export default async function HomePage() {
               )}
             </h1>
 
-            <p className="mt-6 max-w-[420px] text-[1.05rem] leading-relaxed text-muted-foreground">
+            <p className="mt-6 max-w-[420px] text-[1.05rem] leading-relaxed text-[#C9C4BF]">
               {heroSub}
             </p>
 
             {/* Mono stats pills */}
-            <div className="mt-6 flex flex-wrap items-center gap-2 font-mono text-[13px] text-muted-foreground">
-              <span className="text-muted-foreground/40">e.g.</span>
+            <div className="mt-6 flex flex-wrap items-center gap-2 font-mono text-[13px]">
+              <span className="text-[#736B62]">e.g.</span>
               {[statBoards, statScrews, statPrice].map((stat) => (
                 <span
                   key={stat}
-                  className="rounded-md border border-border bg-muted/50 px-3 py-1.5 text-foreground"
+                  className="rounded-md border border-[#3A3530] bg-[#2A2725]/80 px-3 py-1.5 text-[#F5F1EC]"
                 >
                   {stat.startsWith("R ") ? (
                     <>
@@ -327,20 +327,20 @@ export default async function HomePage() {
               </Link>
               <Link
                 href={heroCtaSec.url}
-                className="inline-flex items-center rounded-xl border border-border px-7 py-4 text-[1rem] font-medium text-muted-foreground transition-colors hover:border-border/80 hover:text-foreground"
+                className="inline-flex items-center rounded-xl border border-[#4A4540] px-7 py-4 text-[1rem] font-medium text-[#C9C4BF] transition-colors hover:border-[#736B62] hover:text-[#F5F1EC]"
               >
                 {heroCtaSec.text}
               </Link>
             </div>
 
             {settings.whatsapp_number && (
-              <p className="mt-5 text-sm text-muted-foreground/60">
+              <p className="mt-5 text-sm text-[#736B62]">
                 Or{" "}
                 <a
                   href={`https://wa.me/${settings.whatsapp_number.replaceAll(/\D/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                  className="text-[#A8A099] underline underline-offset-2 hover:text-[#F5F1EC]"
                 >
                   WhatsApp us
                 </a>
