@@ -296,6 +296,32 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
   for (let i = 0; i < numBearers; i++) {
     bearerYPositions.push(minY + bearerOverhang + i * (clearSpan + bearerWidth));
   }
+  // Clamp last bearer: floating-point drift (e.g. clearSpan = N/3) can push
+  // it fractionally past maxY - bearerWidth, making it render outside the deck.
+  if (bearerYPositions.length > 0) {
+    const last = bearerYPositions.length - 1;
+    if (bearerYPositions[last] + bearerWidth > maxY) {
+      bearerYPositions[last] = maxY - bearerWidth;
+    }
+  }
+
+  // Add structural bearers flush with each cutout's Y-edges.
+  // A cutout can remove or split the regular bearer at those positions,
+  // leaving joists at the cutout boundary unsupported.
+  for (const invPoly of invertedWorkPolygons) {
+    const invBounds = getBounds(invPoly);
+    // Bearer whose inner face aligns with the cutout's near edge
+    const beforeCutout = invBounds.minY - bearerWidth;
+    // Bearer whose outer face aligns with the cutout's far edge
+    const afterCutout = invBounds.maxY;
+    for (const pos of [beforeCutout, afterCutout]) {
+      if (pos < minY || pos + bearerWidth > maxY + 1) continue;
+      // Skip if already within 2× bearer-widths of an existing position
+      if (bearerYPositions.some(e => Math.abs(e - pos) < bearerWidth * 2)) continue;
+      bearerYPositions.push(pos);
+    }
+  }
+  bearerYPositions.sort((a, b) => a - b);
 
   for (const by of bearerYPositions) {
     // Scan at bearer centre for polygon intersection (avoids exclusive-top edge issues)
