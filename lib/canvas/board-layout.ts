@@ -252,59 +252,53 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
   }
 
   // Step 4: Bearers -- perpendicular to joists at bearerSpacing centres
-  // Always include minY and maxY so the deck edges are supported
+  // Distribute evenly so overhangs are equal on both sides: divide the total
+  // depth into n = ceil(depth/spacing) equal spans, then place at each node.
   const bearers: BearerPiece[] = [];
   let bearerIndex = 0;
 
+  const totalDepth = maxY - minY;
+  const numBearerSpans = Math.max(1, Math.ceil(totalDepth / bearerSpacing_mm));
+  const actualBearerSpacing = totalDepth / numBearerSpans;
   const bearerYPositions: number[] = [];
-  for (let by = minY; by <= maxY; by += bearerSpacing_mm) {
-    bearerYPositions.push(by);
-  }
-  if (bearerYPositions.length === 0 || (bearerYPositions.at(-1) ?? -Infinity) < maxY) {
-    bearerYPositions.push(maxY);
+  for (let i = 0; i <= numBearerSpans; i++) {
+    bearerYPositions.push(minY + i * actualBearerSpacing);
   }
 
   for (const by of bearerYPositions) {
-    // Bearer runs along X axis; find extent from polygon bounds
-    const segs = intersectScanline(by, workPolygon);
-
-    // Bearer spans the full X range covered by all segments at this Y
-    let bearerMinX = Infinity;
-    let bearerMaxX = -Infinity;
+    // Clip bearer against polygon and cutouts — one piece per contiguous segment
+    let segs = intersectScanline(by, workPolygon);
+    if (invertedWorkPolygons.length > 0) {
+      for (const invPoly of invertedWorkPolygons) {
+        segs = subtractIntervals(segs, intersectScanline(by, invPoly));
+      }
+    }
 
     for (const [sx1, sx2] of segs) {
-      if (sx1 < bearerMinX) bearerMinX = sx1;
-      if (sx2 > bearerMaxX) bearerMaxX = sx2;
+      const bearerLength = sx2 - sx1;
+      if (bearerLength <= 0) continue;
+
+      const bearerStock = pickStock(bearerLength, bearerDimension.availableLengths_mm);
+
+      let bxPos = sx1;
+      let byPos = by;
+
+      if (needsRotation) {
+        [bxPos, byPos] = rotatePoint(bxPos, byPos, boardDirection_deg);
+      }
+
+      bearers.push({
+        id: `bearer-${bearerIndex}`,
+        x: bxPos,
+        y: byPos,
+        length_mm: bearerLength,
+        width_mm: bearerDimension.width_mm,
+        thickness_mm: bearerDimension.thickness_mm,
+        stock_length_mm: bearerStock,
+      });
+
+      bearerIndex++;
     }
-
-    if (bearerMinX > bearerMaxX) continue;
-
-    const bearerLength = bearerMaxX - bearerMinX;
-    if (bearerLength <= 0) continue;
-
-    const bearerStock = pickStock(
-      bearerLength,
-      bearerDimension.availableLengths_mm
-    );
-
-    let bxPos = bearerMinX;
-    let byPos = by;
-
-    if (needsRotation) {
-      [bxPos, byPos] = rotatePoint(bxPos, byPos, boardDirection_deg);
-    }
-
-    bearers.push({
-      id: `bearer-${bearerIndex}`,
-      x: bxPos,
-      y: byPos,
-      length_mm: bearerLength,
-      width_mm: bearerDimension.width_mm,
-      thickness_mm: bearerDimension.thickness_mm,
-      stock_length_mm: bearerStock,
-    });
-
-    bearerIndex++;
   }
 
   // Step 5: Calculate fixings
