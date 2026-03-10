@@ -5,15 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Home,
   Navigation,
   Settings,
   FileText,
   Globe,
-  ShoppingBag,
   CalendarDays,
   GraduationCap,
-  Newspaper,
   Search as SearchIcon,
   Menu,
   X,
@@ -63,7 +60,6 @@ function buildSidebarNav(): NavGroup[] {
   // Content
   const contentItems: NavItem[] = [
     { href: "/admin/pages", label: "Pages", icon: Layers },
-    { href: "/admin/homepage", label: "Homepage", icon: Home },
   ];
   if (isEnabled("blog")) {
     contentItems.push({ href: "/admin/blog", label: "Blog", icon: FileText });
@@ -71,17 +67,11 @@ function buildSidebarNav(): NavGroup[] {
   if (isEnabled("portfolio")) {
     contentItems.push({ href: "/admin/portfolio", label: "Portfolio", icon: Image });
   }
-  if (isEnabled("shop")) {
-    contentItems.push({ href: "/admin/shop", label: "Shop", icon: ShoppingBag });
-  }
   if (isEnabled("booking")) {
     contentItems.push({ href: "/admin/booking", label: "Booking", icon: CalendarDays });
   }
   if (isEnabled("lms")) {
     contentItems.push({ href: "/admin/lms", label: "Courses", icon: GraduationCap });
-  }
-  if (isEnabled("newsletter")) {
-    contentItems.push({ href: "/admin/newsletter", label: "Newsletter", icon: Newspaper });
   }
   if (isEnabled("serviceAreaPages")) {
     contentItems.push({ href: "/admin/areas", label: "Service Areas", icon: MapPin });
@@ -111,16 +101,12 @@ function buildSidebarNav(): NavGroup[] {
   if (isEnabled("clientImport")) {
     manageItems.push({ href: "/admin/clients/import", label: "Client Import", icon: Users });
   }
-  groups.push({ title: "Manage", items: manageItems });
-
   // Deck Lab
-  groups.push({
-    title: "Deck Lab",
-    items: [
-      { href: "/admin/configurator", label: "Configurator", icon: Ruler },
-      { href: "/admin/pricing", label: "Markup & Pricing", icon: Calculator },
-    ],
-  });
+  manageItems.push(
+    { href: "/admin/configurator", label: "Configurator", icon: Ruler },
+    { href: "/admin/pricing", label: "Markup & Pricing", icon: Calculator },
+  );
+  groups.push({ title: "Manage", items: manageItems });
 
   // Site
   const siteItems: NavItem[] = [
