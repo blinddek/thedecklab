@@ -40,7 +40,6 @@ const GRID_SIZE_MM = 100; // 100mm grid lines
 const SNAP_SIZE_MM = 50; // snap to 50mm
 const MIN_ZOOM = 0.02;  // must handle up to 200 m² decks (~14 m wide)
 const MAX_ZOOM = 4;
-const ZOOM_STEP = 0.05;
 const MM_PER_M = 1000;
 
 // Colours — hardcoded to avoid CSS variable resolution failures in canvas context
@@ -599,11 +598,14 @@ function DesignerCanvas({
 
   // Drawing / dragging state
   const dragRef = useRef<{
-    type: "draw" | "move" | "pan";
+    type: "draw" | "move" | "pan" | "resize";
     startX: number;
     startY: number;
     shapeStartX?: number;
     shapeStartY?: number;
+    shapeStartW?: number;
+    shapeStartH?: number;
+    edge?: "left" | "right" | "top" | "bottom";
     shapeId?: string;
     panStartX?: number;
     panStartY?: number;
@@ -742,6 +744,31 @@ function DesignerCanvas({
     [design.shapes]
   );
 
+  // Edge hit test: find which edge of a shape the pointer is near (in model coords)
+  const edgeHitTest = useCallback(
+    (mx: number, my: number): { shape: DeckShape; edge: "left" | "right" | "top" | "bottom" } | null => {
+      const hitSize = 8 / zoom; // 8 screen-px in model coords
+      for (let i = design.shapes.length - 1; i >= 0; i--) {
+        const s = design.shapes[i];
+        const { x, y, width, height } = s;
+        // Right edge
+        if (Math.abs(mx - (x + width)) < hitSize && my >= y - hitSize && my <= y + height + hitSize)
+          return { shape: s, edge: "right" };
+        // Left edge
+        if (Math.abs(mx - x) < hitSize && my >= y - hitSize && my <= y + height + hitSize)
+          return { shape: s, edge: "left" };
+        // Bottom edge
+        if (Math.abs(my - (y + height)) < hitSize && mx >= x - hitSize && mx <= x + width + hitSize)
+          return { shape: s, edge: "bottom" };
+        // Top edge
+        if (Math.abs(my - y) < hitSize && mx >= x - hitSize && mx <= x + width + hitSize)
+          return { shape: s, edge: "top" };
+      }
+      return null;
+    },
+    [design.shapes, zoom]
+  );
+
   // Mouse handlers
   const handlePointerDown = useCallback(
     (e: ReactMouseEvent<HTMLCanvasElement>) => {
@@ -761,19 +788,36 @@ function DesignerCanvas({
       }
 
       if (tool === "select") {
-        const hit = hitTest(mx, my);
-        if (hit) {
-          setSelectedId(hit.id);
+        // Check edge resize first, then interior move
+        const edgeHit = edgeHitTest(mx, my);
+        if (edgeHit) {
+          setSelectedId(edgeHit.shape.id);
           dragRef.current = {
-            type: "move",
+            type: "resize",
             startX: mx,
             startY: my,
-            shapeStartX: hit.x,
-            shapeStartY: hit.y,
-            shapeId: hit.id,
+            shapeStartX: edgeHit.shape.x,
+            shapeStartY: edgeHit.shape.y,
+            shapeStartW: edgeHit.shape.width,
+            shapeStartH: edgeHit.shape.height,
+            edge: edgeHit.edge,
+            shapeId: edgeHit.shape.id,
           };
         } else {
-          setSelectedId(null);
+          const hit = hitTest(mx, my);
+          if (hit) {
+            setSelectedId(hit.id);
+            dragRef.current = {
+              type: "move",
+              startX: mx,
+              startY: my,
+              shapeStartX: hit.x,
+              shapeStartY: hit.y,
+              shapeId: hit.id,
+            };
+          } else {
+            setSelectedId(null);
+          }
         }
       } else if (tool === "rect" || tool === "lshape") {
         const snappedX = snapToGrid(mx, SNAP_SIZE_MM);
@@ -786,7 +830,7 @@ function DesignerCanvas({
         drawPreviewRef.current = { x: snappedX, y: snappedY, w: 0, h: 0 };
       }
     },
-    [tool, pan, screenToModel, hitTest]
+    [tool, pan, screenToModel, hitTest, edgeHitTest]
   );
 
   const handlePointerMove = useCallback(
@@ -795,12 +839,20 @@ function DesignerCanvas({
 
       // Update hover state when not dragging
       if (!dragRef.current) {
-        const hit = hitTest(mx, my);
-        setHoveredId(hit?.id ?? null);
         const canvas = canvasRef.current;
-        if (canvas) {
-          canvas.style.cursor =
-            tool === "select" ? (hit ? "move" : "default") : "crosshair";
+        if (tool === "select") {
+          const edgeHit = edgeHitTest(mx, my);
+          if (edgeHit) {
+            setHoveredId(edgeHit.shape.id);
+            if (canvas) canvas.style.cursor = edgeHit.edge === "left" || edgeHit.edge === "right" ? "ew-resize" : "ns-resize";
+          } else {
+            const hit = hitTest(mx, my);
+            setHoveredId(hit?.id ?? null);
+            if (canvas) canvas.style.cursor = hit ? "move" : "default";
+          }
+        } else {
+          setHoveredId(null);
+          if (canvas) canvas.style.cursor = "crosshair";
         }
         return;
       }
@@ -812,6 +864,46 @@ function DesignerCanvas({
           x: (dragRef.current.panStartX ?? 0) + dx,
           y: (dragRef.current.panStartY ?? 0) + dy,
         });
+        return;
+      }
+
+      if (dragRef.current.type === "resize" && dragRef.current.shapeId) {
+        const dx = mx - dragRef.current.startX;
+        const dy = my - dragRef.current.startY;
+        const { shapeStartX = 0, shapeStartY = 0, shapeStartW = 100, shapeStartH = 100, edge, shapeId } = dragRef.current;
+        const MIN_DIM = 100;
+
+        const newShapes = design.shapes.map((s) => {
+          if (s.id !== shapeId) return s;
+          let { x, y, width, height } = s;
+
+          if (edge === "right") {
+            width = Math.max(MIN_DIM, snapToGrid(shapeStartW + dx, SNAP_SIZE_MM));
+          } else if (edge === "left") {
+            const newX = Math.min(snapToGrid(shapeStartX + dx, SNAP_SIZE_MM), shapeStartX + shapeStartW - MIN_DIM);
+            width = shapeStartX + shapeStartW - newX;
+            x = newX;
+          } else if (edge === "bottom") {
+            height = Math.max(MIN_DIM, snapToGrid(shapeStartH + dy, SNAP_SIZE_MM));
+          } else if (edge === "top") {
+            const newY = Math.min(snapToGrid(shapeStartY + dy, SNAP_SIZE_MM), shapeStartY + shapeStartH - MIN_DIM);
+            height = shapeStartY + shapeStartH - newY;
+            y = newY;
+          }
+
+          // Clamp cutout so it doesn't exceed new shape bounds
+          let cutout = s.cutout;
+          if (cutout) {
+            cutout = {
+              ...cutout,
+              width: Math.min(cutout.width, width - MIN_DIM),
+              height: Math.min(cutout.height, height - MIN_DIM),
+            };
+          }
+
+          return { ...s, x, y, width, height, ...(cutout ? { cutout } : {}) };
+        });
+        onDesignChange(buildDesign(newShapes));
         return;
       }
 
@@ -849,7 +941,7 @@ function DesignerCanvas({
         };
       }
     },
-    [tool, screenToModel, hitTest, design.shapes, onDesignChange]
+    [tool, screenToModel, hitTest, edgeHitTest, design.shapes, onDesignChange]
   );
 
   const handlePointerUp = useCallback(
@@ -983,12 +1075,14 @@ function DesignerCanvas({
     [handlePointerUp]
   );
 
-  // Scroll wheel zoom
+  // Scroll wheel zoom — multiplicative so each tick is a constant % change
   const handleWheel = useCallback(
     (e: WheelEvent) => {
       e.preventDefault();
-      const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-      setZoom((z) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z + delta)));
+      // Normalise deltaY to ±1 so fast trackpad flicks don't jump several steps
+      const dir = e.deltaY > 0 ? -1 : 1;
+      const factor = dir > 0 ? 1.05 : 1 / 1.05;
+      setZoom((z) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, z * factor)));
     },
     []
   );
@@ -1222,9 +1316,7 @@ function DesignerCanvas({
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() =>
-              setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP))
-            }
+            onClick={() => setZoom((z) => Math.min(MAX_ZOOM, z * 1.25))}
             title="Zoom In"
             className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
           >
@@ -1233,9 +1325,7 @@ function DesignerCanvas({
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() =>
-              setZoom((z) => Math.max(MIN_ZOOM, z - ZOOM_STEP))
-            }
+            onClick={() => setZoom((z) => Math.max(MIN_ZOOM, z / 1.25))}
             title="Zoom Out"
             className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
           >
