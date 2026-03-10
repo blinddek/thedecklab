@@ -46,18 +46,33 @@ function pickStock(required_mm: number, availableLengths_mm: number[]): number {
 }
 
 /**
- * Aggregate pieces into stock summaries by their stock_length_mm.
+ * Aggregate pieces into stock summaries using greedy bin-packing.
+ * Multiple short pieces that fit on the same stock board are counted as one purchase.
  */
 function aggregateStock(
-  pieces: Array<{ stock_length_mm: number }>
+  pieces: Array<{ stock_length_mm: number; length_mm: number }>
 ): StockSummary[] {
-  const map = new Map<number, number>();
+  // Group cut lengths by their stock length
+  const groups = new Map<number, number[]>();
   for (const p of pieces) {
-    map.set(p.stock_length_mm, (map.get(p.stock_length_mm) ?? 0) + 1);
+    const cuts = groups.get(p.stock_length_mm) ?? [];
+    cuts.push(p.length_mm);
+    groups.set(p.stock_length_mm, cuts);
   }
   const summaries: StockSummary[] = [];
-  for (const [stock_length_mm, quantity] of map) {
-    summaries.push({ stock_length_mm, quantity });
+  for (const [stock_length_mm, cuts] of groups) {
+    // Greedy first-fit bin packing: sort largest first
+    cuts.sort((a, b) => b - a);
+    const remaining: number[] = [];
+    for (const cut of cuts) {
+      const idx = remaining.findIndex(r => r >= cut);
+      if (idx >= 0) {
+        remaining[idx] -= cut;
+      } else {
+        remaining.push(stock_length_mm - cut);
+      }
+    }
+    summaries.push({ stock_length_mm, quantity: remaining.length });
   }
   return summaries.sort((a, b) => a.stock_length_mm - b.stock_length_mm);
 }

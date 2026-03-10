@@ -53,13 +53,23 @@ export async function POST(req: NextRequest) {
     const bearerLengths = bearerDim?.available_lengths_mm ?? [3600, 4800, 6000];
     const bearerSpacing = 2400;
 
-    // Re-aggregate BOM from merged pieces
-    function aggregateStock(pieces: Array<{ stock_length_mm: number }>) {
-      const map = new Map<number, number>();
-      for (const p of pieces) map.set(p.stock_length_mm, (map.get(p.stock_length_mm) ?? 0) + 1);
-      return Array.from(map.entries())
-        .map(([stock_length_mm, quantity]) => ({ stock_length_mm, quantity }))
-        .sort((a, b) => a.stock_length_mm - b.stock_length_mm);
+    // Re-aggregate BOM from merged pieces using greedy bin-packing.
+    function aggregateStock(pieces: Array<{ stock_length_mm: number; length_mm: number }>) {
+      const groups = new Map<number, number[]>();
+      for (const p of pieces) {
+        const cuts = groups.get(p.stock_length_mm) ?? [];
+        cuts.push(p.length_mm);
+        groups.set(p.stock_length_mm, cuts);
+      }
+      return Array.from(groups.entries()).map(([stock_length_mm, cuts]) => {
+        cuts.sort((a, b) => b - a);
+        const remaining: number[] = [];
+        for (const cut of cuts) {
+          const idx = remaining.findIndex(r => r >= cut);
+          if (idx >= 0) { remaining[idx] -= cut; } else { remaining.push(stock_length_mm - cut); }
+        }
+        return { stock_length_mm, quantity: remaining.length };
+      }).sort((a, b) => a.stock_length_mm - b.stock_length_mm);
     }
 
     // Try each deck board candidate; pick the one with lowest waste_percent
