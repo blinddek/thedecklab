@@ -234,10 +234,19 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
   }
 
   // Step 4: Bearers -- perpendicular to joists at bearerSpacing centres
+  // Always include minY and maxY so the deck edges are supported
   const bearers: BearerPiece[] = [];
   let bearerIndex = 0;
 
+  const bearerYPositions: number[] = [];
   for (let by = minY; by <= maxY; by += bearerSpacing_mm) {
+    bearerYPositions.push(by);
+  }
+  if (bearerYPositions.length === 0 || (bearerYPositions.at(-1) ?? -Infinity) < maxY) {
+    bearerYPositions.push(maxY);
+  }
+
+  for (const by of bearerYPositions) {
     // Bearer runs along X axis; find extent from polygon bounds
     const segs = intersectScanline(by, workPolygon);
 
