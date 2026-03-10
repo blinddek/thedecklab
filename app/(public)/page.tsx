@@ -607,9 +607,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── Deck lifestyle strip ── */}
-      <WoodStrip src="/images/pexels-lelani-badenhorst-26647525-6790680.jpg" alt="Timber deck overlooking nature" />
-
       {/* ── 8. CTA Banner ── */}
       {cta?.heading?.en && (
         <section className="relative overflow-hidden py-24">
