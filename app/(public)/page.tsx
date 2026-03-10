@@ -264,7 +264,7 @@ export default async function HomePage() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-center opacity-35"
+          className="object-cover object-center opacity-50"
         />
         {/* Gradient: dark left (text) → translucent right (photo shows through) */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#1A1918] via-[#1A1918]/80 to-[#1A1918]/20 lg:via-[#1A1918]/75 lg:to-transparent" />
@@ -355,23 +355,29 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Wood strip ── */}
-      <WoodStrip src="/images/pexels-asphotography-518245.jpg" alt="Natural timber deck boards" />
-
-      {/* ── 2. Trust Stats ── */}
+      {/* ── 2. Trust Stats — wood photo background ── */}
       {trustStats?.items && trustStats.items.length > 0 && (
-        <section className="border-b border-border bg-muted/20 py-10">
-          <div className="mx-auto grid max-w-[1280px] grid-cols-2 gap-6 px-4 md:grid-cols-4 md:px-8">
+        <section className="relative overflow-hidden border-b border-[#2A2725] py-12">
+          <Image
+            src="/images/pexels-asphotography-518245.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          {/* Dark overlay — light enough to see the wood grain */}
+          <div className="pointer-events-none absolute inset-0 bg-[#1A1918]/45" />
+          <div className="relative mx-auto grid max-w-[1280px] grid-cols-2 gap-6 px-4 md:grid-cols-4 md:px-8">
             {trustStats.items.map((stat) => (
               <div key={stat.label?.en ?? stat.value} className="text-center">
-                {stat.icon && <span className="mb-1 block text-2xl">{stat.icon}</span>}
+                {stat.icon && <DynamicIcon name={stat.icon} className="mx-auto mb-2 h-6 w-6 text-[#F5F1EC]/70 drop-shadow-sm" />}
                 {stat.value && (
-                  <span className="block font-mono text-2xl font-semibold text-primary">
+                  <span className="block font-mono text-2xl font-semibold text-primary drop-shadow-md">
                     {stat.value}
                   </span>
                 )}
                 {stat.label?.en && (
-                  <span className="mt-1 block text-sm text-muted-foreground">{stat.label.en}</span>
+                  <span className="mt-1 block text-sm font-medium text-[#F5F1EC]/80 drop-shadow-sm">{stat.label.en}</span>
                 )}
               </div>
             ))}
@@ -432,23 +438,34 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── Wood strip ── */}
-      <WoodStrip src="/images/pexels-fwstudio-33348-139325.jpg" alt="Deck boards with screws" />
-
       {/* ── 4. Materials ── */}
       {materials?.items && materials.items.length > 0 && (
-        <section className="py-24">
-          <div className="mx-auto max-w-[1280px] px-4 md:px-8">
-            <div className="mb-14">
-              {materials.heading?.en && (
-                <h2 className="font-display text-[2rem] font-extrabold tracking-[-0.04em]">
-                  {materials.heading.en}
-                </h2>
-              )}
-              {materials.subheading?.en && (
-                <p className="mt-2 max-w-lg text-muted-foreground">{materials.subheading.en}</p>
-              )}
+        <section className="py-0">
+          {/* Section header — wood photo background */}
+          {(materials.heading?.en || materials.subheading?.en) && (
+            <div className="relative overflow-hidden py-16">
+              <Image
+                src="/images/pexels-didsss-33312430.jpg"
+                alt=""
+                fill
+                sizes="100vw"
+                className="object-cover object-bottom"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-[#1A1918]/55" />
+              <div className="relative mx-auto max-w-[1280px] px-4 md:px-8">
+                {materials.heading?.en && (
+                  <h2 className="font-display text-[2rem] font-extrabold tracking-[-0.04em] text-white drop-shadow-md">
+                    {materials.heading.en}
+                  </h2>
+                )}
+                {materials.subheading?.en && (
+                  <p className="mt-2 max-w-lg font-medium text-[#F5F1EC]/80 drop-shadow-sm">{materials.subheading.en}</p>
+                )}
+              </div>
             </div>
+          )}
+          <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-12 md:px-8">
+            <div />
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {materials.items.map((item) => (
