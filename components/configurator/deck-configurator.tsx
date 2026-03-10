@@ -13,6 +13,7 @@ import { StepExtras } from "./step-extras";
 import { StepQuote } from "./step-quote";
 import type { DeckQuote, DeckDesign, DesignMode, BoardLayoutResult, CutoffMetrics } from "@/types/deck";
 import { createDesignFromDimensions } from "./deck-canvas";
+import { shapeToPolygon } from "@/lib/canvas/geometry";
 
 /* ─── Types for configurator state ─────────────────────────── */
 
@@ -198,7 +199,7 @@ export function DeckConfigurator() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            polygon: design.polygon,
+            polygons: design.shapes.map((s) => shapeToPolygon(s)),
             material_type_id: state.material_type_id,
             board_direction_deg: design.board_direction,
           }),
