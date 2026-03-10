@@ -16,6 +16,17 @@ export async function generateMetadata() {
   return generatePageMetadata("home");
 }
 
+/* ---------- Photo strip divider ---------- */
+
+function WoodStrip({ src, alt = "" }: { src: string; alt?: string }) {
+  return (
+    <div className="relative h-24 w-full overflow-hidden">
+      <Image src={src} alt={alt} fill sizes="100vw" className="object-cover object-center" />
+      <div className="absolute inset-0 bg-[#1A1918]/30" />
+    </div>
+  );
+}
+
 /* ---------- Section content types ---------- */
 
 interface HeroContent {
@@ -245,7 +256,18 @@ export default async function HomePage() {
       />
 
       {/* ── 1. Hero ── */}
-      <section className="wood-grain-texture relative flex min-h-[92vh] items-center overflow-hidden">
+      <section className="relative flex min-h-[92vh] items-center overflow-hidden bg-[#1A1918]">
+        {/* Background deck photo */}
+        <Image
+          src="/images/pexels-didsss-33312430.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center opacity-35"
+        />
+        {/* Gradient: dark left (text) → translucent right (photo shows through) */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#1A1918] via-[#1A1918]/80 to-[#1A1918]/20 lg:via-[#1A1918]/75 lg:to-transparent" />
         {/* Ember ambient glow */}
         <div className="pointer-events-none absolute -right-40 -top-40 h-[700px] w-[700px] rounded-full bg-primary/[0.07] blur-3xl" />
 
@@ -333,8 +355,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Wood banner ── */}
-      <div className="wood-banner" />
+      {/* ── Wood strip ── */}
+      <WoodStrip src="/images/pexels-asphotography-518245.jpg" alt="Natural timber deck boards" />
 
       {/* ── 2. Trust Stats ── */}
       {trustStats?.items && trustStats.items.length > 0 && (
@@ -410,8 +432,8 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── Wood banner ── */}
-      <div className="wood-banner" />
+      {/* ── Wood strip ── */}
+      <WoodStrip src="/images/pexels-fwstudio-33348-139325.jpg" alt="Deck boards with screws" />
 
       {/* ── 4. Materials ── */}
       {materials?.items && materials.items.length > 0 && (
@@ -519,20 +541,40 @@ export default async function HomePage() {
 
       {/* ── 6. About Snippet ── */}
       {about?.heading?.en && (
-        <section className="border-y border-border bg-muted/20 py-20">
-          <div className="mx-auto max-w-2xl px-4 text-center md:px-8">
-            <h2 className="font-display text-[1.9rem] font-extrabold tracking-tight">
-              {about.heading.en}
-            </h2>
-            {about.body?.en && (
-              <p className="mt-4 leading-relaxed text-muted-foreground">{about.body.en}</p>
-            )}
-            <Link
-              href="/about"
-              className="mt-6 inline-block font-medium text-primary underline underline-offset-4 hover:text-primary/80"
-            >
-              Learn more about us →
-            </Link>
+        <section className="border-y border-[#2A2725] overflow-hidden">
+          <div className="mx-auto max-w-[1280px] grid lg:grid-cols-2 items-stretch">
+            {/* Text */}
+            <div className="flex flex-col justify-center py-20 px-4 md:px-8 lg:px-16">
+              <span className="mb-4 flex items-center gap-3">
+                <span className="h-px w-8 bg-primary" />
+                <span className="font-mono text-[11px] font-medium uppercase tracking-[2px] text-primary">
+                  About Us
+                </span>
+              </span>
+              <h2 className="font-display text-[1.9rem] font-extrabold tracking-tight text-[#F5F1EC]">
+                {about.heading.en}
+              </h2>
+              {about.body?.en && (
+                <p className="mt-4 leading-relaxed text-[#A8A099]">{about.body.en}</p>
+              )}
+              <Link
+                href="/about"
+                className="mt-6 inline-flex items-center gap-2 font-medium text-primary hover:text-primary/80"
+              >
+                Learn more about us →
+              </Link>
+            </div>
+            {/* Photo */}
+            <div className="relative min-h-[320px] lg:min-h-0">
+              <Image
+                src="/images/pexels-lelani-badenhorst-26647525-6790680.jpg"
+                alt="Timber deck with chairs overlooking nature"
+                fill
+                sizes="(max-width:1024px) 100vw, 50vw"
+                className="object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#1A1918]/60 to-transparent lg:from-[#1A1918]/80" />
+            </div>
           </div>
         </section>
       )}
@@ -548,12 +590,22 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ── Wood banner ── */}
-      <div className="wood-banner" />
+      {/* ── Deck lifestyle strip ── */}
+      <WoodStrip src="/images/pexels-lelani-badenhorst-26647525-6790680.jpg" alt="Timber deck overlooking nature" />
 
       {/* ── 8. CTA Banner ── */}
       {cta?.heading?.en && (
-        <section className="relative overflow-hidden bg-primary py-24">
+        <section className="relative overflow-hidden py-24">
+          {/* Wood plank photo */}
+          <Image
+            src="/images/pexels-rachel-claire-6752176.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          {/* Ember overlay */}
+          <div className="pointer-events-none absolute inset-0 bg-primary/80" />
           {/* Subtle board-grain texture */}
           <div
             className="pointer-events-none absolute inset-0 opacity-10"
