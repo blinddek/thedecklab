@@ -1,12 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useLocale } from "@/lib/locale";
-import { subscribeNewsletter } from "@/lib/newsletter/actions";
-import { isEnabled } from "@/config/features";
-import { Loader2, Send } from "lucide-react";
-import { toast } from "sonner";
 import type { FooterSection, SiteSettings } from "@/types/cms";
 
 interface FooterProps {
@@ -64,12 +59,6 @@ export function Footer({ sections, settings }: FooterProps) {
             </p>
           </div>
 
-          {/* Newsletter signup */}
-          {isEnabled("newsletter") && (
-            <div className="flex-shrink-0 md:max-w-sm">
-              <NewsletterForm />
-            </div>
-          )}
         </div>
 
         <BoardDivider />
@@ -106,54 +95,19 @@ export function Footer({ sections, settings }: FooterProps) {
           <p className="text-xs">
             &copy; {new Date().getFullYear()} {settings.company_name}. All rights reserved.
           </p>
-          <p className="font-mono text-[11px] text-[#D4622A]/60">Design. Build. Live.</p>
+          <p className="text-xs text-[#6B6560]">
+            Powered by{" "}
+            <a
+              href="https://yoros.co.za"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-[#A8A099]"
+            >
+              Yoros
+            </a>
+          </p>
         </div>
       </div>
     </footer>
-  );
-}
-
-function NewsletterForm() {
-  const { t } = useLocale();
-  const [state, formAction, isPending] = useActionState(subscribeNewsletter, null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  useEffect(() => {
-    if (state?.success) {
-      toast.success(t({ en: "You're subscribed!", af: "Jy is ingeteken!" }));
-      formRef.current?.reset();
-    }
-    if (state?.error) toast.error(state.error);
-  }, [state, t]);
-
-  return (
-    <div>
-      <h3 className="mb-1 font-display text-[11px] font-bold uppercase tracking-widest text-[#F5F1EC]">
-        {t({ en: "Stay in the loop", af: "Bly op hoogte" })}
-      </h3>
-      <p className="mb-3 text-sm">
-        {t({
-          en: "Tips, project ideas and offers — straight to your inbox.",
-          af: "Wenke en aanbiedinge na jou inkassie.",
-        })}
-      </p>
-      <form ref={formRef} action={formAction} className="flex gap-2">
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder={t({ en: "your@email.com", af: "jou@epos.com" })}
-          className="flex-1 rounded-lg border border-[#333028] bg-[#242220] px-3 py-2 text-sm text-[#F5F1EC] placeholder:text-[#6B6560] focus:outline-none focus:ring-2 focus:ring-[#D4622A]/30"
-        />
-        <button
-          type="submit"
-          disabled={isPending}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-[#D4622A] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#B5501E] disabled:opacity-50"
-        >
-          {isPending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
-          {t({ en: "Subscribe", af: "Teken in" })}
-        </button>
-      </form>
-    </div>
   );
 }

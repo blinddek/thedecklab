@@ -47,7 +47,7 @@ export function Navbar({ links, settings }: NavbarProps) {
   const { t } = useLocale();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full border-b border-[#2A2725] bg-[#1A1918]/95 backdrop-blur-xl">
       {/* Ember accent top-line */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
 
@@ -55,8 +55,8 @@ export function Navbar({ links, settings }: NavbarProps) {
         {/* Logo — plank mark + wordmark */}
         <Link href="/" className="group flex items-center gap-3">
           <PlankMark className="h-7 w-auto transition-opacity group-hover:opacity-85" />
-          <span className="font-display text-[1.05rem] font-extrabold tracking-tight text-foreground">
-            THE DECK <span className="font-medium opacity-50">LAB</span>
+          <span className="font-display text-[1.05rem] font-extrabold tracking-tight text-[#F5F1EC]">
+            THE DECK <span className="font-medium opacity-40">LAB</span>
           </span>
         </Link>
 
@@ -66,7 +66,7 @@ export function Navbar({ links, settings }: NavbarProps) {
             <Link
               key={link.id}
               href={link.href}
-              className="rounded-md px-3.5 py-2 text-[0.84rem] font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="rounded-md px-3.5 py-2 text-[0.84rem] font-medium text-[#A8A099] transition-colors hover:text-[#F5F1EC]"
             >
               {t(link.label)}
             </Link>
@@ -77,7 +77,7 @@ export function Navbar({ links, settings }: NavbarProps) {
         <div className="hidden items-center gap-2 md:flex">
           {siteConfig.features.i18n && <LanguageSelector />}
           {siteConfig.features.shop && <CartIcon />}
-          <div className="mx-1 h-4 w-px bg-border" />
+          <div className="mx-1 h-4 w-px bg-[#2A2725]" />
           <NavbarAuthButton />
           <Link
             href={settings.cta_url}
@@ -90,7 +90,7 @@ export function Navbar({ links, settings }: NavbarProps) {
         {/* Mobile menu button */}
         <button
           type="button"
-          className="rounded-md p-1.5 text-muted-foreground transition-colors hover:text-foreground md:hidden"
+          className="rounded-md p-1.5 text-[#A8A099] transition-colors hover:text-[#F5F1EC] md:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
@@ -101,20 +101,20 @@ export function Navbar({ links, settings }: NavbarProps) {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-border bg-background md:hidden">
+        <div className="border-t border-[#2A2725] bg-[#1A1918] md:hidden">
           <nav className="flex flex-col px-4 pb-4 pt-2">
             {links.map((link) => (
               <Link
                 key={link.id}
                 href={link.href}
-                className="rounded-md px-3 py-3 text-[0.95rem] font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="rounded-md px-3 py-3 text-[0.95rem] font-medium text-[#A8A099] transition-colors hover:text-[#F5F1EC]"
                 onClick={() => setMobileOpen(false)}
               >
                 {t(link.label)}
               </Link>
             ))}
           </nav>
-          <div className="flex items-center justify-between border-t border-border px-4 py-3">
+          <div className="flex items-center justify-between border-t border-[#2A2725] px-4 py-3">
             <div className="flex items-center gap-2">
               {siteConfig.features.i18n && <LanguageSelector />}
               {siteConfig.features.shop && <CartIcon />}
