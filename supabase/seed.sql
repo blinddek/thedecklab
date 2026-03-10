@@ -876,8 +876,8 @@ INSERT INTO public.homepage_sections (section_key, content, display_order, is_ac
   (
     'hero',
     '{
-      "heading": {"en":"Your Deck, Your Way","af":"Jou Dek, Jou Manier"},
-      "subheading": {"en":"Design online, choose your materials, and get an instant quote — or let us handle everything from design to installation.","af":"Ontwerp aanlyn, kies jou materiale en kry ''n onmiddellike kwotasie — of laat ons alles hanteer van ontwerp tot installasie."},
+      "heading": {"en":"Design Your Deck","af":"Ontwerp Jou Dek"},
+      "subheading": {"en":"Draw your deck online and get an exact quote — every board, joist, screw, and fixing calculated for you. Supply only, or full installation.","af":"Ontwerp jou dek aanlyn en kry 'n presiese kwotasie — elke plank, moerasplank, skroef en bevestiging bereken vir jou."},
       "cta_primary": {"label":{"en":"Design Your Deck","af":"Ontwerp Jou Dek"},"href":"/configurator"},
       "cta_secondary": {"label":{"en":"Browse Materials","af":"Blaai deur Materiale"},"href":"/shop"},
       "background_image": "/images/hero-deck.jpg"
