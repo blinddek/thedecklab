@@ -180,15 +180,79 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
   }
 
   // Step 3: Joists -- perpendicular to boards
-  // Effective joist spacing: minimum of (boardThickness * 20) and configured joistSpacing
+  //
+  // Layout rule (mirrors bearer logic, applied along the X axis):
+  //   • Use floor((width - joistW) / (spacing + joistW)) full clear spans.
+  //   • Remainder is split equally as overhang on both ends.
+  //   • If overhang exceeds max cantilever (min(spacing×0.25, 450mm)),
+  //     add a span and reduce clear span so everything fits with zero overhang.
+  //
+  // Effective max spacing: min(boardThickness×20, joistSpacing)
   const effectiveJoistSpacing = Math.min(
     boardThickness_mm * 20,
     joistSpacing_mm
   );
+
+  const joistWidth = joistDimension.width_mm;
+  const polygonWidth = maxX - minX;
+  const maxJoistCantilever = Math.min(effectiveJoistSpacing * 0.25, 450);
+
+  let numJoistClearSpans = Math.max(
+    1,
+    Math.floor((polygonWidth - joistWidth) / (effectiveJoistSpacing + joistWidth))
+  );
+  let joistClearSpan = effectiveJoistSpacing;
+  let joistOverhang =
+    (polygonWidth - (numJoistClearSpans + 1) * joistWidth - numJoistClearSpans * joistClearSpan) / 2;
+
+  if (joistOverhang < 0) {
+    // Deck too narrow for full-spacing span — compress span, no overhang
+    const spaceForSpans = polygonWidth - (numJoistClearSpans + 1) * joistWidth;
+    joistClearSpan = Math.max(0, spaceForSpans / numJoistClearSpans);
+    joistOverhang = 0;
+  } else if (joistOverhang > maxJoistCantilever) {
+    // Overhang too large — add a span and compress spacing to fit
+    numJoistClearSpans++;
+    const spaceForSpans = polygonWidth - (numJoistClearSpans + 1) * joistWidth;
+    if (spaceForSpans < numJoistClearSpans * effectiveJoistSpacing) {
+      joistClearSpan = Math.max(0, spaceForSpans / numJoistClearSpans);
+      joistOverhang = 0;
+    } else {
+      joistOverhang =
+        (polygonWidth - (numJoistClearSpans + 1) * joistWidth - numJoistClearSpans * joistClearSpan) / 2;
+    }
+  }
+
+  const numJoists = numJoistClearSpans + 1;
+  const joistXPositions: number[] = [];
+  for (let i = 0; i < numJoists; i++) {
+    joistXPositions.push(minX + joistOverhang + i * (joistClearSpan + joistWidth));
+  }
+  // FP clamp: prevent last joist drifting past maxX - joistWidth
+  if (joistXPositions.length > 0) {
+    const last = joistXPositions.length - 1;
+    if (joistXPositions[last] + joistWidth > maxX) {
+      joistXPositions[last] = maxX - joistWidth;
+    }
+  }
+
+  // Add structural joists at cutout X-edges
+  for (const invPoly of invertedWorkPolygons) {
+    const invBounds = getBounds(invPoly);
+    const beforeCutout = invBounds.minX - joistWidth;
+    const afterCutout = invBounds.maxX;
+    for (const pos of [beforeCutout, afterCutout]) {
+      if (pos < minX || pos + joistWidth > maxX + 1) continue;
+      if (joistXPositions.some(e => Math.abs(e - pos) < joistWidth * 2)) continue;
+      joistXPositions.push(pos);
+    }
+  }
+  joistXPositions.sort((a, b) => a - b);
+
   const joists: JoistPiece[] = [];
   let joistIndex = 0;
 
-  for (let jx = minX; jx <= maxX; jx += effectiveJoistSpacing) {
+  for (const jx of joistXPositions) {
     // Scan vertically, subtracting inverted polygons, to find valid Y ranges.
     const step = boardWidth_mm;
     const validYs: number[] = [];
