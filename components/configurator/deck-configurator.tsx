@@ -199,7 +199,8 @@ export function DeckConfigurator() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            polygons: design.shapes.map((s) => shapeToPolygon(s)),
+            polygons: design.shapes.filter(s => !s.inverted).map(s => shapeToPolygon(s)),
+            invertedPolygons: design.shapes.filter(s => !!s.inverted).map(s => shapeToPolygon(s)),
             material_type_id: state.material_type_id,
             board_direction_deg: design.board_direction,
           }),

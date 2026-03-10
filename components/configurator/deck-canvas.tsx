@@ -23,6 +23,7 @@ import {
 import type { DeckDesign, DeckShape, DesignMode, BoardLayoutResult } from "@/types/deck";
 import {
   Square,
+  Circle,
   MousePointer2,
   Hand,
   ZoomIn,
@@ -50,6 +51,8 @@ const PRIMARY_FILL_SELECTED = "rgba(212, 98, 42, 0.38)";  // ember at 38%
 const GRID_LINE_COLOR = "rgba(255,255,255,0.04)";
 const LABEL_COLOR = "#D4C9BC";                             // warm white
 const LABEL_BG = "rgba(15, 14, 13, 0.82)";                // near-black glass
+const CUTOUT_FILL = "rgba(239, 68, 68, 0.10)";
+const CUTOUT_STROKE = "rgba(239, 68, 68, 0.65)";
 
 /* ─── Helper: generate a short unique id ────────────────── */
 
@@ -62,20 +65,27 @@ function uniqueId(): string {
 /* ─── Helper: build DeckDesign from shapes ──────────────── */
 
 function buildDesign(shapes: DeckShape[]): DeckDesign {
-  let totalAreaMm2 = 0;
+  let positiveAreaMm2 = 0;
+  let negativeAreaMm2 = 0;
   let totalPerimeterMm = 0;
   const allPolygonPoints: [number, number][] = [];
 
   for (const shape of shapes) {
     const poly = shapeToPolygon(shape);
-    totalAreaMm2 += calculateArea(poly);
+    const area = calculateArea(poly);
+    if (shape.inverted) {
+      negativeAreaMm2 += area;
+    } else {
+      positiveAreaMm2 += area;
+    }
     totalPerimeterMm += calculatePerimeter(poly);
     allPolygonPoints.push(...poly);
   }
 
-  // Use first shape polygon for merged outline (simple case)
+  const totalAreaMm2 = Math.max(0, positiveAreaMm2 - negativeAreaMm2);
+  const nonInverted = shapes.filter(s => !s.inverted);
   const polygon: [number, number][] =
-    shapes.length === 1 ? shapeToPolygon(shapes[0]) : allPolygonPoints;
+    nonInverted.length === 1 ? shapeToPolygon(nonInverted[0]) : allPolygonPoints;
 
   return {
     shapes,
@@ -177,30 +187,53 @@ function drawShape(
   isHovered: boolean,
   canvas: HTMLCanvasElement
 ) {
-  const poly = shapeToPolygon(shape);
+  const isInverted = !!shape.inverted;
+  const fillColor = isInverted
+    ? CUTOUT_FILL
+    : isSelected
+      ? resolveColor(PRIMARY_FILL_SELECTED, canvas)
+      : resolveColor(PRIMARY_FILL, canvas);
+  const strokeColor = isInverted ? CUTOUT_STROKE : resolveColor(PRIMARY_STROKE, canvas);
 
-  // Fill
-  const fillColor = isSelected
-    ? resolveColor(PRIMARY_FILL_SELECTED, canvas)
-    : resolveColor(PRIMARY_FILL, canvas);
-  ctx.fillStyle = fillColor;
+  // Build path
   ctx.beginPath();
-  for (let i = 0; i < poly.length; i++) {
-    const [px, py] = poly[i];
-    if (i === 0) ctx.moveTo(px, py);
-    else ctx.lineTo(px, py);
+  if (shape.type === "circle") {
+    const cx = shape.x + shape.width / 2;
+    const cy = shape.y + shape.height / 2;
+    ctx.ellipse(cx, cy, shape.width / 2, shape.height / 2, 0, 0, Math.PI * 2);
+  } else if (shape.type === "rounded-rect") {
+    const { x, y, width, height } = shape;
+    const r = Math.min(
+      shape.cornerRadius ?? Math.min(width, height) * 0.15,
+      Math.min(width, height) / 2
+    );
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + width, y, x + width, y + height, r);
+    ctx.arcTo(x + width, y + height, x, y + height, r);
+    ctx.arcTo(x, y + height, x, y, r);
+    ctx.arcTo(x, y, x + width, y, r);
+    ctx.closePath();
+  } else {
+    const poly = shapeToPolygon(shape);
+    for (let i = 0; i < poly.length; i++) {
+      const [px, py] = poly[i];
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
   }
-  ctx.closePath();
+
+  ctx.fillStyle = fillColor;
   ctx.fill();
 
-  // Stroke
-  const strokeColor = resolveColor(PRIMARY_STROKE, canvas);
   ctx.strokeStyle = strokeColor;
   ctx.lineWidth = isSelected || isHovered ? 3 : 2;
+  if (isInverted) ctx.setLineDash([12, 6]);
   ctx.stroke();
+  if (isInverted) ctx.setLineDash([]);
 
-  // Dashed selection box
-  if (isSelected) {
+  // Selection bounding box for non-circle shapes
+  if (isSelected && shape.type !== "circle") {
     ctx.save();
     ctx.setLineDash([6, 4]);
     ctx.strokeStyle = strokeColor;
@@ -210,11 +243,20 @@ function drawShape(
     ctx.restore();
   }
 
-  // Dimension labels on edges
-  drawDimensionLabels(ctx, shape, poly, canvas);
-
-  // Area label centered
-  drawAreaLabel(ctx, shape, canvas);
+  // Labels
+  drawDimensionLabels(ctx, shape, shapeToPolygon(shape), canvas);
+  if (isInverted) {
+    const cx = shape.x + shape.width / 2;
+    const cy = shape.y + shape.height / 2;
+    ctx.save();
+    ctx.font = "bold 14px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    drawLabelPill(ctx, "\u2296 Cutout", cx, cy, "#EF4444", resolveColor(LABEL_BG, canvas));
+    ctx.restore();
+  } else {
+    drawAreaLabel(ctx, shape, canvas);
+  }
 }
 
 function drawDimensionLabels(
@@ -436,15 +478,29 @@ function drawQuickShape(
 ) {
   const { x, y, width, height } = shape;
 
+  // Build clip path for this shape
+  ctx.save();
+  ctx.beginPath();
+  if (shape.type === "circle") {
+    ctx.ellipse(x + width / 2, y + height / 2, width / 2, height / 2, 0, 0, Math.PI * 2);
+  } else if (shape.type === "rounded-rect") {
+    const r = Math.min(shape.cornerRadius ?? Math.min(width, height) * 0.15, Math.min(width, height) / 2);
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + width, y, x + width, y + height, r);
+    ctx.arcTo(x + width, y + height, x, y + height, r);
+    ctx.arcTo(x, y + height, x, y, r);
+    ctx.arcTo(x, y, x + width, y, r);
+    ctx.closePath();
+  } else {
+    ctx.rect(x, y, width, height);
+  }
+  ctx.clip();
+
   // Warm timber fill
   ctx.fillStyle = "rgba(196, 164, 118, 0.13)";
   ctx.fillRect(x, y, width, height);
 
-  // Vertical plank lines (140 mm = typical board width + gap)
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(x, y, width, height);
-  ctx.clip();
+  // Vertical plank lines
   ctx.strokeStyle = "rgba(196, 164, 118, 0.28)";
   ctx.lineWidth = 1 / zoom;
   const plankMm = 140;
@@ -456,10 +512,24 @@ function drawQuickShape(
   }
   ctx.restore();
 
-  // Ember border
+  // Ember border — re-draw the shape outline
+  ctx.beginPath();
+  if (shape.type === "circle") {
+    ctx.ellipse(x + width / 2, y + height / 2, width / 2, height / 2, 0, 0, Math.PI * 2);
+  } else if (shape.type === "rounded-rect") {
+    const r = Math.min(shape.cornerRadius ?? Math.min(width, height) * 0.15, Math.min(width, height) / 2);
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + width, y, x + width, y + height, r);
+    ctx.arcTo(x + width, y + height, x, y + height, r);
+    ctx.arcTo(x, y + height, x, y, r);
+    ctx.arcTo(x, y, x + width, y, r);
+    ctx.closePath();
+  } else {
+    ctx.rect(x, y, width, height);
+  }
   ctx.strokeStyle = PRIMARY_STROKE;
   ctx.lineWidth = 2 / zoom;
-  ctx.strokeRect(x, y, width, height);
+  ctx.stroke();
 
   // Dimension labels
   drawDimensionLabels(ctx, shape, shapeToPolygon(shape), ctx.canvas);
@@ -566,7 +636,7 @@ function QuickCanvas({
 
 /* ─── Designer Mode ─────────────────────────────────────── */
 
-type DesignerTool = "rect" | "lshape" | "select" | "pan";
+type DesignerTool = "rect" | "lshape" | "circle" | "rounded-rect" | "select" | "pan";
 
 interface HistoryState {
   past: DeckDesign[];
@@ -718,6 +788,14 @@ function DesignerCanvas({
       // Reverse iterate for z-order (last drawn = on top)
       for (let i = design.shapes.length - 1; i >= 0; i--) {
         const s = design.shapes[i];
+        if (s.type === "circle") {
+          const cx = s.x + s.width / 2;
+          const cy = s.y + s.height / 2;
+          const rx = s.width / 2;
+          const ry = s.height / 2;
+          if (rx > 0 && ry > 0 && (mx - cx) ** 2 / rx ** 2 + (my - cy) ** 2 / ry ** 2 <= 1) return s;
+          continue;
+        }
         if (mx >= s.x && mx <= s.x + s.width && my >= s.y && my <= s.y + s.height) {
           // For L-shapes, refine with polygon hit test
           if (s.type === "l-shape" && s.cutout) {
@@ -820,7 +898,7 @@ function DesignerCanvas({
             setSelectedId(null);
           }
         }
-      } else if (tool === "rect" || tool === "lshape") {
+      } else if (tool === "rect" || tool === "lshape" || tool === "circle" || tool === "rounded-rect") {
         const snappedX = snapToGrid(mx, SNAP_SIZE_MM);
         const snappedY = snapToGrid(my, SNAP_SIZE_MM);
         dragRef.current = {
@@ -943,12 +1021,22 @@ function DesignerCanvas({
         const sx = dragRef.current.startX;
         const sy = dragRef.current.startY;
 
-        drawPreviewRef.current = {
-          x: Math.min(sx, snappedX),
-          y: Math.min(sy, snappedY),
-          w: Math.abs(snappedX - sx),
-          h: Math.abs(snappedY - sy),
-        };
+        if (tool === "circle") {
+          const size = snapToGrid(Math.max(Math.abs(snappedX - sx), Math.abs(snappedY - sy)), SNAP_SIZE_MM);
+          drawPreviewRef.current = {
+            x: snappedX >= sx ? sx : sx - size,
+            y: snappedY >= sy ? sy : sy - size,
+            w: size,
+            h: size,
+          };
+        } else {
+          drawPreviewRef.current = {
+            x: Math.min(sx, snappedX),
+            y: Math.min(sy, snappedY),
+            w: Math.abs(snappedX - sx),
+            h: Math.abs(snappedY - sy),
+          };
+        }
       }
     },
     [tool, screenToModel, hitTest, edgeHitTest, design.shapes, onDesignChange]
@@ -970,22 +1058,26 @@ function DesignerCanvas({
       if (dragRef.current.type === "draw" && drawPreviewRef.current) {
         const { x, y, w, h } = drawPreviewRef.current;
         if (w >= SNAP_SIZE_MM && h >= SNAP_SIZE_MM) {
+          const shapeType = tool === "lshape" ? "l-shape"
+            : tool === "circle" ? "circle"
+            : tool === "rounded-rect" ? "rounded-rect"
+            : "rect";
+
           const newShape: DeckShape = {
             id: uniqueId(),
-            type: tool === "lshape" ? "l-shape" : "rect",
+            type: shapeType,
             x,
             y,
             width: w,
             height: h,
-            ...(tool === "lshape"
-              ? {
-                  cutout: {
-                    corner: "bottom-right" as const,
-                    width: Math.round(w / 3),
-                    height: Math.round(h / 3),
-                  },
-                }
-              : {}),
+            ...(tool === "lshape" ? {
+              cutout: {
+                corner: "bottom-right" as const,
+                width: Math.round(w / 3),
+                height: Math.round(h / 3),
+              },
+            } : {}),
+            ...(tool === "rounded-rect" ? { cornerRadius: Math.round(Math.min(w, h) * 0.15) } : {}),
           };
           const newShapes = [...design.shapes, newShape];
           updateDesign(buildDesign(newShapes));
@@ -1212,7 +1304,7 @@ function DesignerCanvas({
       ctx.restore();
     }
 
-    // Draw preview rect when drawing
+    // Draw preview shape when drawing
     if (drawPreviewRef.current && dragRef.current?.type === "draw") {
       const { x, y, w: rw, h: rh } = drawPreviewRef.current;
       ctx.save();
@@ -1222,8 +1314,24 @@ function DesignerCanvas({
       ctx.strokeStyle = resolveColor(PRIMARY_STROKE, canvas);
       ctx.setLineDash([6, 4]);
       ctx.lineWidth = 2;
-      ctx.fillRect(x, y, rw, rh);
-      ctx.strokeRect(x, y, rw, rh);
+      ctx.beginPath();
+      if (tool === "circle") {
+        ctx.ellipse(x + rw / 2, y + rh / 2, rw / 2, rh / 2, 0, 0, Math.PI * 2);
+      } else if (tool === "rounded-rect") {
+        const r = Math.min(Math.min(rw, rh) * 0.15, Math.min(rw, rh) / 2);
+        if (rw > 0 && rh > 0) {
+          ctx.moveTo(x + r, y);
+          ctx.arcTo(x + rw, y, x + rw, y + rh, r);
+          ctx.arcTo(x + rw, y + rh, x, y + rh, r);
+          ctx.arcTo(x, y + rh, x, y, r);
+          ctx.arcTo(x, y, x + rw, y, r);
+          ctx.closePath();
+        }
+      } else {
+        ctx.rect(x, y, rw, rh);
+      }
+      ctx.fill();
+      ctx.stroke();
       ctx.setLineDash([]);
       ctx.restore();
     }
@@ -1250,7 +1358,7 @@ function DesignerCanvas({
 
   // Update selected shape dimensions from side panel
   const updateShapeDimension = useCallback(
-    (field: "width" | "height" | "x" | "y", value: number) => {
+    (field: "width" | "height" | "x" | "y" | "cornerRadius", value: number) => {
       if (!selectedId) return;
       const valueMm = field === "x" || field === "y" ? value : value;
       const newShapes = design.shapes.map((s) =>
@@ -1287,6 +1395,13 @@ function DesignerCanvas({
     [selectedId, design.shapes, updateDesign]
   );
 
+  const toggleInverted = useCallback((id: string) => {
+    const newShapes = design.shapes.map(s =>
+      s.id === id ? { ...s, inverted: !s.inverted } : s
+    );
+    updateDesign(buildDesign(newShapes));
+  }, [design.shapes, updateDesign]);
+
   return (
     <div className="flex flex-col gap-4 lg:flex-row">
       {/* Canvas area */}
@@ -1319,6 +1434,24 @@ function DesignerCanvas({
             className={tool !== "rect" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
           >
             <Square className="size-4" />
+          </Button>
+          <Button
+            variant={tool === "circle" ? "default" : "ghost"}
+            size="icon-sm"
+            onClick={() => setTool("circle")}
+            title="Draw Circle / Ellipse"
+            className={tool !== "circle" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
+          >
+            <Circle className="size-4" />
+          </Button>
+          <Button
+            variant={tool === "rounded-rect" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setTool("rounded-rect")}
+            title="Draw Rounded Rectangle"
+            className={`text-xs ${tool !== "rounded-rect" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}`}
+          >
+            R▭
           </Button>
           <Button
             variant="ghost"
@@ -1431,22 +1564,31 @@ function DesignerCanvas({
           />
           {design.shapes.length === 0 && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-[#736B62]">
-              Click &amp; drag to draw a rectangle, or use the L-Shape button
+              Click &amp; drag to draw — Rectangle, Circle, or Rounded Rect. Use toolbar for L-Shape.
             </div>
           )}
         </div>
 
         {/* Total area readout */}
         <div className="rounded-lg border border-[#2A2725] bg-[#1A1918] p-3">
-          <div className="flex items-baseline justify-between">
-            <span className="text-sm text-[#736B62]">
-              Total area ({design.shapes.length}{" "}
-              {design.shapes.length === 1 ? "shape" : "shapes"})
-            </span>
-            <span className="text-xl font-bold tabular-nums text-[#F5F1EC]">
-              {design.total_area_m2.toFixed(1)} m²
-            </span>
-          </div>
+          {(() => {
+            const cutoutCount = design.shapes.filter(s => s.inverted).length;
+            const positiveCount = design.shapes.filter(s => !s.inverted).length;
+            const shapeLabel = positiveCount === 1 ? "shape" : "shapes";
+            const totalLabel = cutoutCount > 0
+              ? `${positiveCount} ${shapeLabel}, ${cutoutCount} cutout${cutoutCount > 1 ? "s" : ""}`
+              : `${design.shapes.length} ${shapeLabel}`;
+            return (
+              <div className="flex items-baseline justify-between">
+                <span className="text-sm text-[#736B62]">
+                  Total area ({totalLabel})
+                </span>
+                <span className="text-xl font-bold tabular-nums text-[#F5F1EC]">
+                  {design.total_area_m2.toFixed(1)} m²
+                </span>
+              </div>
+            );
+          })()}
           {(design.total_area_m2 < 1 || design.total_area_m2 > 200) &&
             design.shapes.length > 0 && (
               <p className="mt-1 text-sm text-destructive">
@@ -1466,7 +1608,7 @@ function DesignerCanvas({
           {!selectedShape ? (
             <div className="space-y-2 text-sm text-[#A8A099]">
               <p>
-                <strong>Draw:</strong> Select Rectangle or L-Shape tool, then click
+                <strong>Draw:</strong> Select Rectangle, Circle, Rounded Rect, or L-Shape tool, then click
                 and drag on the canvas.
               </p>
               <p>
@@ -1485,9 +1627,27 @@ function DesignerCanvas({
             </div>
           ) : (
             <div className="space-y-3">
-              <div className="rounded bg-[#2A2725] px-2 py-1 text-xs text-[#A8A099]">
-                {selectedShape.type === "l-shape" ? "L-Shape" : "Rectangle"}
-              </div>
+              {(() => {
+                const typeLabel = selectedShape.type === "l-shape" ? "L-Shape"
+                  : selectedShape.type === "circle" ? "Circle"
+                  : selectedShape.type === "rounded-rect" ? "Rounded Rect"
+                  : "Rectangle";
+                return (
+                  <div className="rounded bg-[#2A2725] px-2 py-1 text-xs text-[#A8A099]">{typeLabel}</div>
+                );
+              })()}
+
+              <button
+                onClick={() => toggleInverted(selectedShape.id)}
+                className={cn(
+                  "w-full rounded border px-3 py-1.5 text-xs transition-colors",
+                  selectedShape.inverted
+                    ? "border-red-500/50 bg-red-500/10 text-red-400"
+                    : "border-[#2A2725] text-[#736B62] hover:border-[#D4622A]/50 hover:text-[#A8A099]"
+                )}
+              >
+                {selectedShape.inverted ? "⊖ Cutout (click to restore)" : "Make Cutout / Hole"}
+              </button>
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
@@ -1551,15 +1711,36 @@ function DesignerCanvas({
                 </div>
               </div>
 
+              {/* Corner radius for rounded-rect */}
+              {selectedShape.type === "rounded-rect" && (
+                <div className="space-y-1">
+                  <Label className="text-xs text-[#A8A099]">Corner Radius (mm)</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    step={50}
+                    value={selectedShape.cornerRadius ?? Math.round(Math.min(selectedShape.width, selectedShape.height) * 0.15)}
+                    onChange={(e) => updateShapeDimension("cornerRadius", Math.max(0, Number(e.target.value)))}
+                    className="h-8 border-[#2A2725] bg-[#0F0E0D] font-mono text-[#F5F1EC] focus-visible:ring-[#D4622A]/50"
+                  />
+                </div>
+              )}
+
               {/* Dimensions in metres */}
               <div className="rounded bg-[#2A2725] px-2 py-1.5 text-xs text-[#A8A099]">
-                {(selectedShape.width / MM_PER_M).toFixed(2)}m ×{" "}
-                {(selectedShape.height / MM_PER_M).toFixed(2)}m ={" "}
-                {(
-                  calculateArea(shapeToPolygon(selectedShape)) /
-                  (MM_PER_M * MM_PER_M)
-                ).toFixed(1)}{" "}
-                m²
+                {selectedShape.inverted ? (
+                  <span className="text-red-400">⊖ Cutout — subtracted from total</span>
+                ) : (
+                  <>
+                    {(selectedShape.width / MM_PER_M).toFixed(2)}m ×{" "}
+                    {(selectedShape.height / MM_PER_M).toFixed(2)}m ={" "}
+                    {(
+                      calculateArea(shapeToPolygon(selectedShape)) /
+                      (MM_PER_M * MM_PER_M)
+                    ).toFixed(1)}{" "}
+                    m²
+                  </>
+                )}
               </div>
 
               {/* L-shape cutout controls */}

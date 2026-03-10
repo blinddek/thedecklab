@@ -78,15 +78,50 @@ export function lShapeToPolygon(shape: DeckShape): [number, number][] {
   }
 }
 
+export function circleToPolygon(shape: DeckShape, segments = 48): [number, number][] {
+  const cx = shape.x + shape.width / 2;
+  const cy = shape.y + shape.height / 2;
+  const rx = shape.width / 2;
+  const ry = shape.height / 2;
+  const points: [number, number][] = [];
+  for (let i = 0; i < segments; i++) {
+    const angle = (i / segments) * Math.PI * 2;
+    points.push([cx + rx * Math.cos(angle), cy + ry * Math.sin(angle)]);
+  }
+  return points;
+}
+
+export function roundedRectToPolygon(shape: DeckShape, arcSegments = 8): [number, number][] {
+  const { x, y, width, height } = shape;
+  const r = Math.min(
+    shape.cornerRadius ?? Math.min(width, height) * 0.15,
+    Math.min(width, height) / 2
+  );
+  if (r <= 0) return rectToPolygon(shape);
+  const points: [number, number][] = [];
+  const corners = [
+    { cx: x + r,         cy: y + r,          startAngle: Math.PI,       endAngle: 1.5 * Math.PI },
+    { cx: x + width - r, cy: y + r,          startAngle: 1.5 * Math.PI, endAngle: 2 * Math.PI   },
+    { cx: x + width - r, cy: y + height - r, startAngle: 0,             endAngle: 0.5 * Math.PI },
+    { cx: x + r,         cy: y + height - r, startAngle: 0.5 * Math.PI, endAngle: Math.PI       },
+  ];
+  for (const { cx, cy, startAngle, endAngle } of corners) {
+    for (let i = 0; i <= arcSegments; i++) {
+      const angle = startAngle + (i / arcSegments) * (endAngle - startAngle);
+      points.push([cx + r * Math.cos(angle), cy + r * Math.sin(angle)]);
+    }
+  }
+  return points;
+}
+
 /** Get polygon from any shape type */
 export function shapeToPolygon(shape: DeckShape): [number, number][] {
   switch (shape.type) {
-    case "rect":
-      return rectToPolygon(shape);
-    case "l-shape":
-      return lShapeToPolygon(shape);
-    default:
-      return rectToPolygon(shape);
+    case "rect": return rectToPolygon(shape);
+    case "l-shape": return lShapeToPolygon(shape);
+    case "circle": return circleToPolygon(shape);
+    case "rounded-rect": return roundedRectToPolygon(shape);
+    default: return rectToPolygon(shape);
   }
 }
 

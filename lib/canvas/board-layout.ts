@@ -27,6 +27,7 @@ export interface BoardLayoutInput {
     thickness_mm: number;
     availableLengths_mm: number[];
   };
+  invertedPolygons?: [number, number][][];
 }
 
 /**
@@ -75,6 +76,24 @@ function rotatePoint(
   return [x * cos - y * sin, x * sin + y * cos];
 }
 
+function subtractIntervals(
+  positives: [number, number][],
+  inverses: [number, number][]
+): [number, number][] {
+  if (inverses.length === 0) return positives;
+  let result: [number, number][] = [...positives];
+  for (const [ix1, ix2] of inverses) {
+    result = result.flatMap(([px1, px2]): [number, number][] => {
+      if (ix2 <= px1 || ix1 >= px2) return [[px1, px2]];
+      const parts: [number, number][] = [];
+      if (px1 < ix1) parts.push([px1, ix1]);
+      if (px2 > ix2) parts.push([ix2, px2]);
+      return parts;
+    });
+  }
+  return result;
+}
+
 export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult {
   const {
     polygon: originalPolygon,
@@ -95,6 +114,10 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
     ? rotatePolygon(originalPolygon, -boardDirection_deg)
     : originalPolygon;
 
+  const invertedWorkPolygons: [number, number][][] = (input.invertedPolygons ?? []).map(poly =>
+    needsRotation ? rotatePolygon(poly, -boardDirection_deg) : poly
+  );
+
   const bounds = getBounds(workPolygon);
   const { minX, minY, maxX, maxY } = bounds;
 
@@ -108,7 +131,13 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
     laneY <= maxY - boardWidth_mm / 2;
     laneY += laneSpacing
   ) {
-    const segments = intersectScanline(laneY, workPolygon);
+    let segments = intersectScanline(laneY, workPolygon);
+    if (invertedWorkPolygons.length > 0) {
+      for (const invPoly of invertedWorkPolygons) {
+        const invSegs = intersectScanline(laneY, invPoly);
+        segments = subtractIntervals(segments, invSegs);
+      }
+    }
 
     for (const [x1, x2] of segments) {
       const cutLength = x2 - x1;
@@ -268,6 +297,7 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
     total_boards: boards.length,
     total_joists: joists.length,
     total_bearers: bearers.length,
+    board_width_mm: boardWidth_mm,
   };
 
   return { boards, joists, bearers, bom };

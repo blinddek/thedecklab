@@ -237,7 +237,7 @@ export type ConsultationStatus = "new" | "contacted" | "scheduled" | "visited" |
 
 // ─── Canvas / Designer ──────────────────────────────────────
 
-export type ShapeType = "rect" | "l-shape";
+export type ShapeType = "rect" | "l-shape" | "circle" | "rounded-rect";
 
 export interface DeckShape {
   id: string;
@@ -246,6 +246,8 @@ export interface DeckShape {
   y: number; // mm from origin
   width: number; // mm
   height: number; // mm
+  inverted?: boolean;       // true = this shape is a hole/cutout
+  cornerRadius?: number;    // mm, for rounded-rect type
   /** L-shape cutout (only when type === 'l-shape') */
   cutout?: {
     corner: "top-left" | "top-right" | "bottom-left" | "bottom-right";
@@ -314,6 +316,7 @@ export interface BillOfMaterials {
   total_boards: number;
   total_joists: number;
   total_bearers: number;
+  board_width_mm: number;
 }
 
 export interface BoardLayoutResult {
