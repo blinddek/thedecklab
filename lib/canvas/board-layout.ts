@@ -114,31 +114,39 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
       const cutLength = x2 - x1;
       if (cutLength <= 0) continue;
 
-      const stockLength = pickStock(cutLength, availableLengths_mm);
+      const maxStock = Math.max(...availableLengths_mm);
+      let remaining = cutLength;
+      let offsetX = x1;
 
-      // Board top-left position in work-space
-      let bx = x1;
-      let by = laneY - boardWidth_mm / 2;
+      // If the run is longer than any available board, split into joined pieces
+      while (remaining > 0) {
+        const pieceLength = Math.min(remaining, maxStock);
+        const stockLength = pickStock(pieceLength, availableLengths_mm);
 
-      // Rotate back to original space if needed
-      if (needsRotation) {
-        [bx, by] = rotatePoint(bx, by, boardDirection_deg);
+        let bx = offsetX;
+        let by = laneY - boardWidth_mm / 2;
+
+        if (needsRotation) {
+          [bx, by] = rotatePoint(bx, by, boardDirection_deg);
+        }
+
+        boards.push({
+          id: `board-${boardIndex}`,
+          x: bx,
+          y: by,
+          length_mm: pieceLength,
+          width_mm: boardWidth_mm,
+          thickness_mm: boardThickness_mm,
+          stock_length_mm: stockLength,
+          cut_length_mm: pieceLength,
+          rotation: boardDirection_deg,
+          source: "new",
+        });
+
+        boardIndex++;
+        remaining -= pieceLength;
+        offsetX += pieceLength;
       }
-
-      boards.push({
-        id: `board-${boardIndex}`,
-        x: bx,
-        y: by,
-        length_mm: cutLength,
-        width_mm: boardWidth_mm,
-        thickness_mm: boardThickness_mm,
-        stock_length_mm: stockLength,
-        cut_length_mm: cutLength,
-        rotation: boardDirection_deg,
-        source: "new",
-      });
-
-      boardIndex++;
     }
   }
 
