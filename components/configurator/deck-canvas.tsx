@@ -1194,6 +1194,7 @@ function DesignerCanvas({
             size="icon-sm"
             onClick={() => setTool("select")}
             title="Select / Move"
+            className={tool !== "select" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
           >
             <MousePointer2 className="size-4" />
           </Button>
@@ -1202,6 +1203,7 @@ function DesignerCanvas({
             size="icon-sm"
             onClick={() => setTool("rect")}
             title="Draw Rectangle"
+            className={tool !== "rect" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
           >
             <Square className="size-4" />
           </Button>
@@ -1210,7 +1212,7 @@ function DesignerCanvas({
             size="sm"
             onClick={addLShapeTemplate}
             title="Add L-Shape Template"
-            className="text-xs"
+            className="text-xs text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
           >
             L-Shape
           </Button>
@@ -1224,6 +1226,7 @@ function DesignerCanvas({
               setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP))
             }
             title="Zoom In"
+            className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
           >
             <ZoomIn className="size-4" />
           </Button>
@@ -1234,6 +1237,7 @@ function DesignerCanvas({
               setZoom((z) => Math.max(MIN_ZOOM, z - ZOOM_STEP))
             }
             title="Zoom Out"
+            className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
           >
             <ZoomOut className="size-4" />
           </Button>
@@ -1242,6 +1246,7 @@ function DesignerCanvas({
             size="icon-sm"
             onClick={fitToContent}
             title="Fit to Content"
+            className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
           >
             <Maximize className="size-4" />
           </Button>
@@ -1257,6 +1262,7 @@ function DesignerCanvas({
             onClick={undo}
             disabled={history.past.length === 0}
             title="Undo (Ctrl+Z)"
+            className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
           >
             <Undo2 className="size-4" />
           </Button>
@@ -1266,6 +1272,7 @@ function DesignerCanvas({
             onClick={redo}
             disabled={history.future.length === 0}
             title="Redo (Ctrl+Shift+Z)"
+            className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
           >
             <Redo2 className="size-4" />
           </Button>
@@ -1278,7 +1285,7 @@ function DesignerCanvas({
                 size="icon-sm"
                 onClick={deleteSelected}
                 title="Delete Selected"
-                className="text-destructive hover:text-destructive"
+                className="text-red-500 hover:text-red-400 hover:bg-[#2A2725]"
               >
                 <Trash2 className="size-4" />
               </Button>
