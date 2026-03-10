@@ -156,7 +156,8 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
 
     for (const [x1, x2] of segments) {
       const cutLength = x2 - x1;
-      if (cutLength <= 0) continue;
+      // Skip slivers shorter than one board-width (polygon approximation artefacts)
+      if (cutLength < boardWidth_mm) continue;
 
       const maxStock = Math.max(...availableLengths_mm);
       let remaining = cutLength;
