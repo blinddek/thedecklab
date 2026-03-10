@@ -268,10 +268,10 @@ export function DeckConfigurator() {
 
   if (loading || !options) {
     return (
-      <Card>
+      <Card className="border-[#2A2725] bg-[#1A1918]">
         <CardContent className="flex items-center justify-center py-20">
-          <Loader2 className="size-6 animate-spin text-muted-foreground" />
-          <span className="ml-2 text-muted-foreground">
+          <Loader2 className="size-6 animate-spin text-[#736B62]" />
+          <span className="ml-2 text-[#736B62]">
             Loading configurator...
           </span>
         </CardContent>
@@ -293,7 +293,7 @@ export function DeckConfigurator() {
     <div className="space-y-6">
       {/* Progress bar */}
       <div className="space-y-2">
-        <div className="flex justify-between text-sm text-muted-foreground">
+        <div className="flex justify-between text-sm text-[#736B62]">
           <span>
             Step {step + 1} of {STEP_LABELS.length}
           </span>
@@ -301,27 +301,26 @@ export function DeckConfigurator() {
         </div>
         <Progress value={progress} className="h-2" />
         <div className="flex justify-between">
-          {STEP_LABELS.map((label, i) => (
-            <button
-              key={label}
-              onClick={() => i < step && setStep(i)}
-              disabled={i >= step}
-              className={`text-xs transition-colors ${
-                i === step
-                  ? "font-semibold text-primary"
-                  : i < step
-                    ? "cursor-pointer text-muted-foreground hover:text-foreground"
-                    : "text-muted-foreground/50"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+          {STEP_LABELS.map((label, i) => {
+            let stepCls = "text-[#4A4540]";
+            if (i === step) stepCls = "font-semibold text-[#D4622A]";
+            else if (i < step) stepCls = "cursor-pointer text-[#736B62] hover:text-[#A8A099]";
+            return (
+              <button
+                key={label}
+                onClick={() => i < step && setStep(i)}
+                disabled={i >= step}
+                className={`text-xs transition-colors ${stepCls}`}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Step content */}
-      <Card>
+      <Card className="border-[#2A2725] bg-[#1A1918]">
         <CardContent className="pt-6">
           {step === 0 && (
             <StepDeckType
@@ -402,6 +401,7 @@ export function DeckConfigurator() {
           variant="outline"
           onClick={() => setStep((s) => s - 1)}
           disabled={step === 0}
+          className="border-[#2A2725] bg-[#1A1918] text-[#A8A099] hover:bg-[#2A2725] hover:text-[#F5F1EC]"
         >
           <ChevronLeft className="size-4" />
           Back

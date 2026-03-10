@@ -43,13 +43,13 @@ const MAX_ZOOM = 4;
 const ZOOM_STEP = 0.25;
 const MM_PER_M = 1000;
 
-// Colours — CSS vars evaluated at render time
-const PRIMARY_FILL = "hsla(var(--primary) / 0.22)";
-const PRIMARY_STROKE = "hsl(var(--primary))";
-const PRIMARY_FILL_SELECTED = "hsla(var(--primary) / 0.4)";
+// Colours — hardcoded to avoid CSS variable resolution failures in canvas context
+const PRIMARY_FILL = "rgba(212, 98, 42, 0.20)";          // ember at 20%
+const PRIMARY_STROKE = "#D4622A";                          // ember
+const PRIMARY_FILL_SELECTED = "rgba(212, 98, 42, 0.38)";  // ember at 38%
 const GRID_LINE_COLOR = "rgba(255,255,255,0.04)";
-const LABEL_COLOR = "hsl(var(--foreground))";
-const LABEL_BG = "hsla(var(--background) / 0.85)";
+const LABEL_COLOR = "#D4C9BC";                             // warm white
+const LABEL_BG = "rgba(15, 14, 13, 0.82)";                // near-black glass
 
 /* ─── Helper: generate a short unique id ────────────────── */
 
@@ -427,6 +427,45 @@ interface DeckCanvasProps {
 
 /* ─── Quick Mode Canvas (simple preview) ─────────────── */
 
+/* ─── Quick mode: plank board visualisation ─────────────── */
+
+function drawQuickShape(
+  ctx: CanvasRenderingContext2D,
+  shape: DeckShape,
+  zoom: number
+) {
+  const { x, y, width, height } = shape;
+
+  // Warm timber fill
+  ctx.fillStyle = "rgba(196, 164, 118, 0.13)";
+  ctx.fillRect(x, y, width, height);
+
+  // Vertical plank lines (140 mm = typical board width + gap)
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, width, height);
+  ctx.clip();
+  ctx.strokeStyle = "rgba(196, 164, 118, 0.28)";
+  ctx.lineWidth = 1 / zoom;
+  const plankMm = 140;
+  for (let lx = x + plankMm; lx < x + width; lx += plankMm) {
+    ctx.beginPath();
+    ctx.moveTo(lx, y);
+    ctx.lineTo(lx, y + height);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Ember border
+  ctx.strokeStyle = PRIMARY_STROKE;
+  ctx.lineWidth = 2 / zoom;
+  ctx.strokeRect(x, y, width, height);
+
+  // Dimension labels
+  drawDimensionLabels(ctx, shape, shapeToPolygon(shape), ctx.canvas);
+  drawAreaLabel(ctx, shape, ctx.canvas);
+}
+
 function QuickCanvas({
   design,
 }: {
@@ -476,7 +515,19 @@ function QuickCanvas({
     const panX = (w - deckW * zoom) / 2;
     const panY = (h - deckH * zoom) / 2;
 
-    renderCanvas(ctx, design, zoom, panX, panY, null, w, h, null);
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.translate(panX, panY);
+    ctx.scale(zoom, zoom);
+
+    drawGrid(ctx, w, h, zoom, panX, panY, 1, canvas);
+
+    for (const shape of design.shapes) {
+      drawQuickShape(ctx, shape, zoom);
+    }
+
+    ctx.restore();
   }, [design]);
 
   useEffect(() => {
