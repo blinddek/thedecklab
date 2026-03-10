@@ -242,8 +242,28 @@ function drawShape(
     ctx.closePath();
   }
 
-  ctx.fillStyle = fillColor;
-  ctx.fill();
+  if (isInverted) {
+    // Dark base fill
+    ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
+    ctx.fill();
+    // Diagonal hatch overlay
+    const hatchCanvas = document.createElement("canvas");
+    hatchCanvas.width = 14;
+    hatchCanvas.height = 14;
+    const hCtx = hatchCanvas.getContext("2d");
+    if (hCtx) {
+      hCtx.strokeStyle = "rgba(239, 68, 68, 0.55)";
+      hCtx.lineWidth = 1.5;
+      for (const [x1, y1, x2, y2] of [[-2, 16, 16, -2], [0, 14, 14, 0], [2, 16, 16, 2]] as [number,number,number,number][]) {
+        hCtx.beginPath(); hCtx.moveTo(x1, y1); hCtx.lineTo(x2, y2); hCtx.stroke();
+      }
+    }
+    const pattern = ctx.createPattern(hatchCanvas, "repeat");
+    if (pattern) { ctx.fillStyle = pattern; ctx.fill(); }
+  } else {
+    ctx.fillStyle = fillColor;
+    ctx.fill();
+  }
 
   ctx.strokeStyle = strokeColor;
   ctx.lineWidth = isSelected || isHovered ? 3 : 2;
