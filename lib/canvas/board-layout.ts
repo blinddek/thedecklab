@@ -266,11 +266,16 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
   }
 
   for (const by of bearerYPositions) {
+    // intersectScanline uses y < yMax (exclusive top edge), so positions at
+    // exactly maxY return nothing. Nudge the scan point fractionally inward
+    // so the edge bearer is found while still being placed at the true `by`.
+    const scanY = by >= maxY ? maxY - 0.01 : by;
+
     // Clip bearer against polygon and cutouts — one piece per contiguous segment
-    let segs = intersectScanline(by, workPolygon);
+    let segs = intersectScanline(scanY, workPolygon);
     if (invertedWorkPolygons.length > 0) {
       for (const invPoly of invertedWorkPolygons) {
-        segs = subtractIntervals(segs, intersectScanline(by, invPoly));
+        segs = subtractIntervals(segs, intersectScanline(scanY, invPoly));
       }
     }
 
