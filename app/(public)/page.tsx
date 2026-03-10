@@ -441,25 +441,23 @@ export default async function HomePage() {
       {/* ── 4. Materials ── */}
       {materials?.items && materials.items.length > 0 && (
         <section className="py-0">
-          {/* Section header — wood photo background */}
+          {/* Section header — dark brand surface */}
           {(materials.heading?.en || materials.subheading?.en) && (
-            <div className="relative overflow-hidden py-16">
-              <Image
-                src="/images/pexels-didsss-33312430.jpg"
-                alt=""
-                fill
-                sizes="100vw"
-                className="object-cover object-bottom"
-              />
-              <div className="pointer-events-none absolute inset-0 bg-[#1A1918]/55" />
-              <div className="relative mx-auto max-w-[1280px] px-4 md:px-8">
+            <div className="border-b border-[#2A2725] bg-[#1A1918] py-14">
+              <div className="mx-auto max-w-[1280px] px-4 md:px-8">
+                <span className="mb-4 flex items-center gap-3">
+                  <span className="h-px w-8 bg-primary" />
+                  <span className="font-mono text-[11px] font-medium uppercase tracking-[2px] text-primary">
+                    Materials
+                  </span>
+                </span>
                 {materials.heading?.en && (
-                  <h2 className="font-display text-[2rem] font-extrabold tracking-[-0.04em] text-white drop-shadow-md">
+                  <h2 className="font-display text-[2rem] font-extrabold tracking-[-0.04em] text-[#F5F1EC]">
                     {materials.heading.en}
                   </h2>
                 )}
                 {materials.subheading?.en && (
-                  <p className="mt-2 max-w-lg font-medium text-[#F5F1EC]/80 drop-shadow-sm">{materials.subheading.en}</p>
+                  <p className="mt-2 max-w-lg text-[#A8A099]">{materials.subheading.en}</p>
                 )}
               </div>
             </div>
@@ -482,7 +480,7 @@ export default async function HomePage() {
                     {item.image && (
                       <Image
                         src={item.image}
-                        alt={item.title?.en ?? ""}
+                        alt=""
                         fill
                         sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 25vw"
                         className="object-cover opacity-60 mix-blend-multiply"
