@@ -24,6 +24,7 @@ import type { DeckDesign, DeckShape, DesignMode, BoardLayoutResult } from "@/typ
 import {
   Square,
   MousePointer2,
+  Hand,
   ZoomIn,
   ZoomOut,
   Maximize,
@@ -565,7 +566,7 @@ function QuickCanvas({
 
 /* ─── Designer Mode ─────────────────────────────────────── */
 
-type DesignerTool = "rect" | "lshape" | "select";
+type DesignerTool = "rect" | "lshape" | "select" | "pan";
 
 interface HistoryState {
   past: DeckDesign[];
@@ -775,8 +776,8 @@ function DesignerCanvas({
       e.preventDefault();
       const { mx, my } = screenToModel(e.clientX, e.clientY);
 
-      // Middle click = pan
-      if (e.button === 1) {
+      // Middle click OR pan tool = pan
+      if (e.button === 1 || tool === "pan") {
         dragRef.current = {
           type: "pan",
           startX: e.clientX,
@@ -840,7 +841,10 @@ function DesignerCanvas({
       // Update hover state when not dragging
       if (!dragRef.current) {
         const canvas = canvasRef.current;
-        if (tool === "select") {
+        if (tool === "pan") {
+          setHoveredId(null);
+          if (canvas) canvas.style.cursor = "grab";
+        } else if (tool === "select") {
           const edgeHit = edgeHitTest(mx, my);
           if (edgeHit) {
             setHoveredId(edgeHit.shape.id);
@@ -855,6 +859,12 @@ function DesignerCanvas({
           if (canvas) canvas.style.cursor = "crosshair";
         }
         return;
+      }
+
+      // Show grabbing cursor while panning
+      if (dragRef.current.type === "pan") {
+        const canvas = canvasRef.current;
+        if (canvas) canvas.style.cursor = "grabbing";
       }
 
       if (dragRef.current.type === "pan") {
@@ -1293,6 +1303,15 @@ function DesignerCanvas({
             <MousePointer2 className="size-4" />
           </Button>
           <Button
+            variant={tool === "pan" ? "default" : "ghost"}
+            size="icon-sm"
+            onClick={() => setTool("pan")}
+            title="Pan (Hand Tool)"
+            className={tool !== "pan" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
+          >
+            <Hand className="size-4" />
+          </Button>
+          <Button
             variant={tool === "rect" ? "default" : "ghost"}
             size="icon-sm"
             onClick={() => setTool("rect")}
@@ -1400,7 +1419,10 @@ function DesignerCanvas({
                 dragRef.current = null;
                 drawPreviewRef.current = null;
               }
-              setHoveredId(null);
+              // Keep pan drag active when mouse leaves canvas
+              if (dragRef.current?.type !== "pan") {
+                setHoveredId(null);
+              }
             }}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -1457,8 +1479,8 @@ function DesignerCanvas({
                 <strong>Zoom:</strong> Scroll wheel or use the +/- buttons.
               </p>
               <p>
-                <strong>Pan:</strong> Middle-click drag or two-finger drag on
-                mobile.
+                <strong>Pan:</strong> Use the hand tool, middle-click drag, or
+                two-finger drag on mobile.
               </p>
             </div>
           ) : (
