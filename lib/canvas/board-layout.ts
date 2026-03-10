@@ -189,48 +189,66 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
   let joistIndex = 0;
 
   for (let jx = minX; jx <= maxX; jx += effectiveJoistSpacing) {
-    // Scan vertically to find joist extent: use a vertical scanline approach.
-    // Find min and max Y where the vertical line at jx intersects the polygon.
-    let joistMinY = Infinity;
-    let joistMaxY = -Infinity;
-
-    // Sample at fine intervals to find extent
+    // Scan vertically, subtracting inverted polygons, to find valid Y ranges.
     const step = boardWidth_mm;
+    const validYs: number[] = [];
+
     for (let sy = minY; sy <= maxY; sy += step) {
-      const segs = intersectScanline(sy, workPolygon);
+      let segs = intersectScanline(sy, workPolygon);
+      if (invertedWorkPolygons.length > 0) {
+        for (const invPoly of invertedWorkPolygons) {
+          segs = subtractIntervals(segs, intersectScanline(sy, invPoly));
+        }
+      }
       for (const [sx1, sx2] of segs) {
         if (jx >= sx1 && jx <= sx2) {
-          if (sy < joistMinY) joistMinY = sy;
-          if (sy > joistMaxY) joistMaxY = sy;
+          validYs.push(sy);
+          break;
         }
       }
     }
 
-    if (joistMinY > joistMaxY) continue; // joist not within polygon
+    if (validYs.length === 0) continue;
 
-    const joistLength = joistMaxY - joistMinY;
-    if (joistLength <= 0) continue;
-
-    const joistStock = pickStock(joistLength, joistDimension.availableLengths_mm);
-
-    let jxPos = jx;
-    let jyPos = joistMinY;
-
-    if (needsRotation) {
-      [jxPos, jyPos] = rotatePoint(jxPos, jyPos, boardDirection_deg);
+    // Group consecutive valid Y positions into contiguous segments.
+    // A gap > 1.5× step means a cutout lies between them → separate joists.
+    const ySegments: [number, number][] = [];
+    let segStart = validYs[0];
+    let segEnd = validYs[0];
+    for (let i = 1; i < validYs.length; i++) {
+      if (validYs[i] - validYs[i - 1] > step * 1.5) {
+        ySegments.push([segStart, segEnd]);
+        segStart = validYs[i];
+      }
+      segEnd = validYs[i];
     }
+    ySegments.push([segStart, segEnd]);
 
-    joists.push({
-      id: `joist-${joistIndex}`,
-      x: jxPos,
-      y: jyPos,
-      length_mm: joistLength,
-      width_mm: joistDimension.width_mm,
-      thickness_mm: joistDimension.thickness_mm,
-      stock_length_mm: joistStock,
-    });
+    for (const [segMinY, segMaxY] of ySegments) {
+      const joistLength = segMaxY - segMinY;
+      if (joistLength <= 0) continue;
 
-    joistIndex++;
+      const joistStock = pickStock(joistLength, joistDimension.availableLengths_mm);
+
+      let jxPos = jx;
+      let jyPos = segMinY;
+
+      if (needsRotation) {
+        [jxPos, jyPos] = rotatePoint(jxPos, jyPos, boardDirection_deg);
+      }
+
+      joists.push({
+        id: `joist-${joistIndex}`,
+        x: jxPos,
+        y: jyPos,
+        length_mm: joistLength,
+        width_mm: joistDimension.width_mm,
+        thickness_mm: joistDimension.thickness_mm,
+        stock_length_mm: joistStock,
+      });
+
+      joistIndex++;
+    }
   }
 
   // Step 4: Bearers -- perpendicular to joists at bearerSpacing centres
