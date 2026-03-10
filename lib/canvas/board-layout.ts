@@ -372,6 +372,9 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
   // Add structural bearers flush with each cutout's Y-edges.
   // A cutout can remove or split the regular bearer at those positions,
   // leaving joists at the cutout boundary unsupported.
+  // These bearers are short — they only span the cutout's X extent.
+  const cutoutEdgeBearerXBounds = new Map<number, [number, number]>();
+
   for (const invPoly of invertedWorkPolygons) {
     const invBounds = getBounds(invPoly);
     // Bearer whose inner face aligns with the cutout's near edge
@@ -383,6 +386,7 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
       // Skip if already within 2× bearer-widths of an existing position
       if (bearerYPositions.some(e => Math.abs(e - pos) < bearerWidth * 2)) continue;
       bearerYPositions.push(pos);
+      cutoutEdgeBearerXBounds.set(pos, [invBounds.minX, invBounds.maxX]);
     }
   }
   bearerYPositions.sort((a, b) => a - b);
@@ -397,6 +401,16 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
       for (const invPoly of invertedWorkPolygons) {
         segs = subtractIntervals(segs, intersectScanline(scanY, invPoly));
       }
+    }
+
+    // Cutout-edge bearers only span the cutout's X width, not the full deck
+    const cutoutXBounds = cutoutEdgeBearerXBounds.get(by);
+    if (cutoutXBounds) {
+      segs = segs.flatMap(([sx1, sx2]): [number, number][] => {
+        const cx1 = Math.max(sx1, cutoutXBounds[0]);
+        const cx2 = Math.min(sx2, cutoutXBounds[1]);
+        return cx1 < cx2 ? [[cx1, cx2]] : [];
+      });
     }
 
     for (const [sx1, sx2] of segs) {
