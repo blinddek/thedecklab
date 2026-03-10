@@ -427,10 +427,9 @@ export function calculateBoardLayout(input: BoardLayoutInput): BoardLayoutResult
   }
 
   // Step 5: Calculate fixings
-  const polygonWidth = maxX - minX;
   const joistCrossings = Math.max(
     1,
-    Math.ceil(polygonWidth / effectiveJoistSpacing)
+    Math.ceil((maxX - minX) / effectiveJoistSpacing)
   );
   const screwsCount = boards.length * joistCrossings * 2;
 
