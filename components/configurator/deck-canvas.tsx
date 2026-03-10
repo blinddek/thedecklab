@@ -21,6 +21,7 @@ import {
   snapToGrid,
 } from "@/lib/canvas/geometry";
 import type { DeckDesign, DeckShape, DesignMode, BoardLayoutResult } from "@/types/deck";
+import Link from "next/link";
 import {
   Square,
   Circle,
@@ -33,8 +34,26 @@ import {
   Redo2,
   Trash2,
   MessageSquare,
+  Scissors,
 } from "lucide-react";
-import Link from "next/link";
+
+/* ─── Toolbar shape icons (inline SVG) ──────────────────── */
+
+function RoundedRectIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1.5" y="3.5" width="13" height="9" rx="2.5" />
+    </svg>
+  );
+}
+
+function LShapeIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 2 L3 14 L13 14 L13 10 L7 10 L7 2 Z" />
+    </svg>
+  );
+}
 
 /* ─── Constants ─────────────────────────────────────────── */
 
@@ -657,6 +676,8 @@ function DesignerCanvas({
   const animFrameRef = useRef<number>(0);
 
   const [tool, setTool] = useState<DesignerTool>("select");
+  const [isCutoutMode, setIsCutoutMode] = useState(false);
+  const [cutoutMenuOpen, setCutoutMenuOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [zoom, setZoom] = useState(0.1);
@@ -1070,6 +1091,7 @@ function DesignerCanvas({
             y,
             width: w,
             height: h,
+            ...(isCutoutMode ? { inverted: true } : {}),
             ...(tool === "lshape" ? {
               cutout: {
                 corner: "bottom-right" as const,
@@ -1082,6 +1104,7 @@ function DesignerCanvas({
           const newShapes = [...design.shapes, newShape];
           updateDesign(buildDesign(newShapes));
           setSelectedId(newShape.id);
+          setIsCutoutMode(false);
           setTool("select");
         }
       }
@@ -1089,7 +1112,7 @@ function DesignerCanvas({
       dragRef.current = null;
       drawPreviewRef.current = null;
     },
-    [tool, design.shapes, updateDesign]
+    [tool, isCutoutMode, design.shapes, updateDesign]
   );
 
   // Touch handlers for mobile
@@ -1310,8 +1333,8 @@ function DesignerCanvas({
       ctx.save();
       ctx.translate(pan.x, pan.y);
       ctx.scale(zoom, zoom);
-      ctx.fillStyle = resolveColor(PRIMARY_FILL, canvas);
-      ctx.strokeStyle = resolveColor(PRIMARY_STROKE, canvas);
+      ctx.fillStyle = isCutoutMode ? CUTOUT_FILL : resolveColor(PRIMARY_FILL, canvas);
+      ctx.strokeStyle = isCutoutMode ? CUTOUT_STROKE : resolveColor(PRIMARY_STROKE, canvas);
       ctx.setLineDash([6, 4]);
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -1337,7 +1360,7 @@ function DesignerCanvas({
     }
 
     setContainerSize({ w, h });
-  }, [design, zoom, pan, selectedId, hoveredId, boardLayout]);
+  }, [design, zoom, pan, selectedId, hoveredId, boardLayout, tool, isCutoutMode]);
 
   useEffect(() => {
     animFrameRef.current = requestAnimationFrame(render);
@@ -1411,7 +1434,7 @@ function DesignerCanvas({
           <Button
             variant={tool === "select" ? "default" : "ghost"}
             size="icon-sm"
-            onClick={() => setTool("select")}
+            onClick={() => { setTool("select"); setIsCutoutMode(false); }}
             title="Select / Move"
             className={tool !== "select" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
           >
@@ -1420,7 +1443,7 @@ function DesignerCanvas({
           <Button
             variant={tool === "pan" ? "default" : "ghost"}
             size="icon-sm"
-            onClick={() => setTool("pan")}
+            onClick={() => { setTool("pan"); setIsCutoutMode(false); }}
             title="Pan (Hand Tool)"
             className={tool !== "pan" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
           >
@@ -1429,7 +1452,7 @@ function DesignerCanvas({
           <Button
             variant={tool === "rect" ? "default" : "ghost"}
             size="icon-sm"
-            onClick={() => setTool("rect")}
+            onClick={() => { setTool("rect"); setIsCutoutMode(false); }}
             title="Draw Rectangle"
             className={tool !== "rect" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
           >
@@ -1438,7 +1461,7 @@ function DesignerCanvas({
           <Button
             variant={tool === "circle" ? "default" : "ghost"}
             size="icon-sm"
-            onClick={() => setTool("circle")}
+            onClick={() => { setTool("circle"); setIsCutoutMode(false); }}
             title="Draw Circle / Ellipse"
             className={tool !== "circle" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
           >
@@ -1446,22 +1469,68 @@ function DesignerCanvas({
           </Button>
           <Button
             variant={tool === "rounded-rect" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => setTool("rounded-rect")}
+            size="icon-sm"
+            onClick={() => { setTool("rounded-rect"); setIsCutoutMode(false); }}
             title="Draw Rounded Rectangle"
-            className={`text-xs ${tool !== "rounded-rect" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}`}
+            className={tool !== "rounded-rect" ? "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]" : ""}
           >
-            R▭
+            <RoundedRectIcon />
           </Button>
           <Button
             variant="ghost"
-            size="sm"
+            size="icon-sm"
             onClick={addLShapeTemplate}
-            title="Add L-Shape Template"
-            className="text-xs text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
+            title="Add L-Shape"
+            className="text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
           >
-            L-Shape
+            <LShapeIcon />
           </Button>
+
+          {/* Cutout / Hole tool */}
+          <div className="relative">
+            <Button
+              variant={isCutoutMode ? "default" : "ghost"}
+              size="icon-sm"
+              onClick={() => setCutoutMenuOpen((o) => !o)}
+              title="Add Cutout / Hole"
+              className={isCutoutMode
+                ? "bg-red-600 text-white hover:bg-red-500"
+                : "text-[#A8A099] hover:text-[#F5F1EC] hover:bg-[#2A2725]"
+              }
+            >
+              <Scissors className="size-4" />
+            </Button>
+            {cutoutMenuOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setCutoutMenuOpen(false)}
+                />
+                <div className="absolute left-0 top-full z-50 mt-1 min-w-[130px] rounded-lg border border-[#2A2725] bg-[#1A1918] p-1 shadow-xl">
+                  <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-[#736B62]">
+                    Add Cutout
+                  </p>
+                  {([
+                    { ct: "rect" as const, label: "Rectangle", icon: <Square className="size-3.5" /> },
+                    { ct: "circle" as const, label: "Circle", icon: <Circle className="size-3.5" /> },
+                    { ct: "rounded-rect" as const, label: "Rounded", icon: <RoundedRectIcon /> },
+                  ]).map(({ ct, label, icon }) => (
+                    <button
+                      key={ct}
+                      onClick={() => {
+                        setTool(ct);
+                        setIsCutoutMode(true);
+                        setCutoutMenuOpen(false);
+                      }}
+                      className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs text-[#A8A099] hover:bg-[#2A2725] hover:text-[#F5F1EC]"
+                    >
+                      {icon} {label}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
 
           <div className="mx-1 h-5 w-px bg-[#2A2725]" />
 
@@ -1564,7 +1633,7 @@ function DesignerCanvas({
           />
           {design.shapes.length === 0 && (
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-[#736B62]">
-              Click &amp; drag to draw — Rectangle, Circle, or Rounded Rect. Use toolbar for L-Shape.
+              Click &amp; drag to draw a shape. Use the scissors button to add a cutout/hole.
             </div>
           )}
         </div>
