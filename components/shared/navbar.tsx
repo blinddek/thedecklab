@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { LanguageSelector } from "@/components/shared/language-selector";
+import { Menu, X, LogIn } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
+// import { LanguageSelector } from "@/components/shared/language-selector";
 import { NavbarAuthButton } from "@/components/shared/navbar-auth-button";
 import { useLocale } from "@/lib/locale";
 import { CartIcon } from "@/components/shop/cart-icon";
@@ -74,16 +76,16 @@ export function Navbar({ links, settings }: NavbarProps) {
         </nav>
 
         {/* Desktop actions */}
-        <div className="hidden items-center gap-2 md:flex">
-          {siteConfig.features.i18n && <LanguageSelector />}
+        <div className="hidden items-center gap-1 md:flex">
+          {/* <LanguageSelector /> */}
+          <ThemeToggle />
           {siteConfig.features.shop && <CartIcon />}
           <div className="mx-1 h-4 w-px bg-[#2A2725]" />
           <NavbarAuthButton />
-          <Link
-            href={settings.cta_url}
-            className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_20px_rgba(212,98,42,0.3)] active:scale-[0.97]"
-          >
-            {t(settings.cta_label)}
+          <Link href="/login" aria-label="Login">
+            <Button variant="ghost" size="icon" className="h-9 w-9 text-[#A8A099] hover:text-[#F5F1EC]">
+              <LogIn className="h-4 w-4" />
+            </Button>
           </Link>
         </div>
 
@@ -115,20 +117,12 @@ export function Navbar({ links, settings }: NavbarProps) {
             ))}
           </nav>
           <div className="flex items-center justify-between border-t border-[#2A2725] px-4 py-3">
-            <div className="flex items-center gap-2">
-              {siteConfig.features.i18n && <LanguageSelector />}
+            <div className="flex items-center gap-1">
+              {/* <LanguageSelector /> */}
+              <ThemeToggle />
               {siteConfig.features.shop && <CartIcon />}
             </div>
-            <div className="flex items-center gap-2">
-              <NavbarAuthButton />
-              <Link
-                href={settings.cta_url}
-                onClick={() => setMobileOpen(false)}
-                className="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
-              >
-                {t(settings.cta_label)}
-              </Link>
-            </div>
+            <NavbarAuthButton />
           </div>
         </div>
       )}
