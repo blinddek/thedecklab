@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "secrets": "node scripts/sync-secrets.mjs status",
+    "secrets:pull": "node scripts/sync-secrets.mjs pull",
+    "secrets:push": "node scripts/sync-secrets.mjs push"
   },
   "dependencies": {
     "@react-email/components": "^1.0.7",
